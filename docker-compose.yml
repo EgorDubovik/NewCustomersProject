@@ -1,0 +1,65 @@
+services:
+   mysql:
+      image: mysql:latest
+      container_name: mysql
+      environment:
+         MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+         MYSQL_DATABASE: test
+         MYSQL_USER: ${MYSQL_USER}
+         MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      volumes:
+         - ./mysql:/var/lib/mysql
+      networks:
+         - test-network
+      
+      ports:
+         - "3306:3306"
+
+   laravel:
+      container_name: laravel
+      image: bitnami/laravel:latest
+      environment:
+         - DB_CONNECTION=mysql
+         - DB_HOST=mysql
+         - DB_PORT=3306
+         - DB_DATABASE=test
+         - DB_USERNAME=${MYSQL_USER}
+         - DB_PASSWORD=${MYSQL_PASSWORD}
+      volumes:
+         - ./backend:/app
+      ports:
+         - "8000:8000"
+      networks:
+         - test-network
+      depends_on:
+         - mysql
+      restart: on-failure
+
+   phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin
+      environment:
+         PMA_HOST: mysql
+         PMA_PORT: 3306
+         MYSQL_ROOT_PASSWORD: ilaveusa
+      networks:
+         - test-network
+      ports:
+         - "8080:80"
+      depends_on:
+         - mysql
+   ngnix:
+      image: nginx:latest
+      container_name: ngnix
+      volumes:
+         - ./nginx.conf:/etc/nginx/nginx.conf
+         - ./frontend/dist:/var/www/html
+      ports:
+         - "80:80"
+      depends_on:
+         - phpmyadmin
+      networks:
+         - test-network
+   
+networks:
+   test-network:

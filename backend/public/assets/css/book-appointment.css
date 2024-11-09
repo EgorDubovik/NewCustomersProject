@@ -1,0 +1,145 @@
+.conteiner-tab{
+   margin-top: 50px;
+}
+
+.service-description{
+   font-size: 13px;
+   color: #787878;
+   margin-bottom: 0;
+}
+
+.service-price{
+   text-align: right;
+   margin-bottom: 0;
+}
+.card-box{
+   cursor: pointer;
+   margin-bottom: 20px;
+}
+
+.card-box.border-primary{
+   background-color: #f9faff;
+}
+.button-next{
+   margin-top: 20px;
+   padding: 0 20px;
+}
+
+.choose-conteiner{
+   padding: 20px;
+   background: #fff;
+   border-radius: 10px;
+   font-size: 15px;
+}
+
+.hourBtn{
+   margin: 0 5px 10px 5px;
+}
+.hours-conteiner .hours{
+   margin-top: 10px;
+}
+.time-title{
+   margin-top: 20px;
+   font-size: 18px;
+   font-weight: bold;
+   margin-bottom: 10px;
+}
+
+.appointment_infor_conteiner{
+   text-align: center;
+}
+
+.appointment_infor_conteiner .title{
+   margin-top: 30px;
+   font-weight: bold;
+}
+.appointment_infor_conteiner .title-line2{
+   margin-top: 10px;
+   color: #666666;
+}
+.customer-information{
+   margin-top: 10px;
+}
+.customer-information .customer-name{
+   font-size: 20px;
+}
+.customer-information .appointment-time{
+   margin-top: 15px;
+   font-weight: bold;
+   font-size: 14px;
+}
+.customer-information .customer-address{
+   margin-top: 20px;
+   color: #666666;
+}
+
+.appointment-services{
+   margin-top: 15px;
+}
+.appointment-service{
+   font-size: 15px;
+   color: #666666;
+}
+.service-head{
+   font-weight: 500;
+   display: flex;
+}
+.cont-icon{
+   display: none;
+   margin-right: -0.5rem;
+   margin-left: auto;
+}
+.border-primary .cont-icon{
+   display: flex;
+}
+.cont-icon svg{
+   color : #0d6efd;
+}
+
+#service-list li{
+   background:#fff;
+}
+.double-price{
+   display: none;
+}
+
+.appointment-create.loading{
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   text-align: center;
+   /* background: #ffffff80; */
+   backdrop-filter: blur(5px);
+   z-index: 1;
+}
+
+@media (max-width: 1000px) 
+{
+   .button-next{
+      position: fixed;
+      bottom: 0px;
+      right: 0px;
+      background: #fff;
+      padding: 5px 0;
+      width: 100%;
+      padding-top: 15px;
+      border-top: 1px solid #eeeeee;
+   }
+   .button-next button{
+      margin-right: 20px;
+      margin-bottom: 10px;
+   }
+   /* .service-description{
+      display: none;
+   } */
+   .service-price{
+      display: none;
+   }
+   .double-price{
+      display: inline-block;
+      margin-left: 20px;
+   }
+   .pignose-calendar {
+      width: 90%;
+   }
+}
