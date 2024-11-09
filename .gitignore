@@ -2,3 +2,4 @@
 mysql
 .vscode
 backups
+nginx.conf
