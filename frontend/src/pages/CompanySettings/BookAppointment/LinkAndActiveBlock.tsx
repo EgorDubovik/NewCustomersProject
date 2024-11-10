@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import IconCopy from '../../../components/Icon/IconCopy';
 import axiosClient from '../../../store/axiosClient';
 import {ButtonLoader} from '../../../components/loading/ButtonLoader';
+import { alertError, alertSuccsess } from '../../../helpers/helper';
 
 const LinkAndActiveBlock = (props: any) => {
 	const [settings, setSettings] = useState<any>(props.settings);
@@ -13,9 +14,11 @@ const LinkAndActiveBlock = (props: any) => {
 			navigator.clipboard
 				.writeText(linkRef.current?.value || '')
 				.then(() => {
+					alertSuccsess('Link copied successfully');
 					console.log('copied');
 				})
 				.catch((err) => {
+					alertError('Failed to copy link');
 					console.log(err);
 				});
 		}
