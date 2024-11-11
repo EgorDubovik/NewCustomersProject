@@ -82,18 +82,29 @@ const CustomerInfoBlock = (props: any) => {
 							)}
 						</li>
 						<li>
-							<button className="flex justify-between w-full" onClick={() => navigate('/invoice/send/' + appointment?.id)}>
-								<div className="flex gap-2">
-									<IconMail className="w-5 h-5 shrink-0" />
-									<span className="truncate">{appointment?.customer?.email}</span>
-								</div>
-								{appointment?.customer?.email && (
-									<div className="flex gap-2 hover:text-primary">
-										<IconSend className="w-5 h-5 shrink-0" />
-										Send Invoice
+							{appointment?.customer?.email ? (
+								<button className="flex justify-between w-full" onClick={() => navigate('/invoice/send/' + appointment?.id)}>
+									<div className="flex gap-2">
+										<IconMail className="w-5 h-5 shrink-0" />
+										<span className="truncate">{appointment?.customer?.email}</span>
 									</div>
-								)}
-							</button>
+									
+										<div className="flex gap-2 hover:text-primary">
+											<IconSend className="w-5 h-5 shrink-0" />
+											Send Invoice
+										</div>
+								</button>
+							): (
+								<div className="flex justify-between gap-2">
+									<div className='flex gap-2'>
+										<IconMail className="w-5 h-5 shrink-0" />
+										<span className="truncate">No email</span>
+									</div>
+									<Link to={'/customer/update/' + (appointment?.customer?.id ?? 0) + '?redirectTo=' + window.location.pathname} className="text-primary">
+										Please Add email
+									</Link>
+								</div>
+							)}
 						</li>
 						<div className='border-t border-[#ebedf2] dark:border-[#191e3a] mt-4'></div>
 						<div className="mt-2">
