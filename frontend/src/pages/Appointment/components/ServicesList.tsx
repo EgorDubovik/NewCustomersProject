@@ -122,14 +122,14 @@ const ServicesList = (props: any) => {
 								<td className="py-3 px-2 md:p-3 border-b border-[#ebedf2] dark:border-[#191e3a] text-right">
 									<div className="text-right">
 										{isEditble && (
-											<button onClick={() => editServiceHandle(service)} type="button" className="mr-4">
+											<button onClick={() => editServiceHandle(service)} type="button" className="mr-4 hover:text-warning">
 												<IconPencil />
 											</button>
 										)}
 										{loadingRemove === service.id ? (
 											<SmallDangerLoader />
 										) : (
-											<button onClick={() => handleRemoveService(service.id)} type="button">
+											<button onClick={() => handleRemoveService(service.id)} type="button" className='hover:text-danger'>
 												<IconTrashLines />
 											</button>
 										)}
@@ -160,7 +160,7 @@ const ServicesList = (props: any) => {
 			</div>
 			<div className="flex items-center justify-between mt-4">
 				<div className="flex justify-center w-full">
-					<span className="flex cursor-pointer border-b dark:border-gray-800 border-gray-200 py-2" onClick={() => addNewService()}>
+					<span className="flex cursor-pointer hover:text-primary border-b dark:border-gray-800 border-gray-200 py-2" onClick={() => addNewService()}>
 						<IconPlus className="mr-2" />
 						Add new Service
 					</span>
