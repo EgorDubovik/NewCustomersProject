@@ -15,14 +15,14 @@ class JobImagesController extends Controller
    function store(Request $request, $appointment_id)
    {
       $request->validate([
-         'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+         'image' => 'required|image|mimes:jpeg,png,jpg,heic,heif|max:2048',
       ]);
 
       $appointment = Appointment::find($appointment_id);
 
       $this->authorize('update-remove-appointment', $appointment);
 
-      $filePath = 'images/app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
+      $filePath = 'images/'.(env('APP_DEBUG') ? 'debug/' : "").'app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
       $s3path = env('AWS_FILE_ACCESS_URL');
 
       $image = Imagec::make($request->image);
