@@ -30,6 +30,7 @@ class InvoiceMail extends Mailable
      *
      * @return $this
      */
+    
     public function build()
     {
         return $this->view('emails.invoice-v2')
@@ -38,8 +39,8 @@ class InvoiceMail extends Mailable
                         'as' => $this->invoice->pdf_url,
                         'mime' => 'application/pdf'
                     ])
-                    ->replyTo(Auth::user()->company->email,Auth::user()->company->name)
-                    ->from(Auth::user()->company->email,Auth::user()->company->name);
+                    ->replyTo($this->company->email,$this->company->name)
+                    ->from($this->company->email,$this->company->name);
     }
 
     // private function getReferralCode(){

@@ -19,6 +19,7 @@ const Create = () => {
 	const [invoice, setInvoice] = useState<IInvoice>();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
+	const [loadingStatus, setLoadingStatus] = useState('loading');
 	const [sendLoading, setSendLoading] = useState(false);
 	useEffect(() => {
 		dispatch(setPageTitle('Invoice Preview'));

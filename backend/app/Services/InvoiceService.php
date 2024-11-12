@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendCustomerInvoice;
 use App\Models\Appointment;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,9 @@ class InvoiceService
    protected function sendEmail($invoice)
    {
       $file = $invoice->pdf_url;
-      Mail::to($invoice->email)->send(new InvoiceMail($invoice,$file));
+     
+      SendCustomerInvoice::dispatch($invoice, $file);
+      
+      // Mail::to($invoice->email)->send(new InvoiceMail($invoice,$file));
    }
 }

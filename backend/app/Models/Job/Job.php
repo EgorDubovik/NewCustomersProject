@@ -98,7 +98,7 @@ class Job extends Model
         $tax = 0;
         foreach($this->services as $service){
             if($service->taxable)
-                $tax += $service->price * GeneralInfoSettings::getSettingByKey(Auth::user()->company_id,'taxRate')/100;
+                $tax += $service->price * GeneralInfoSettings::getSettingByKey($this->company_id,'taxRate')/100;
         }
         return $tax;
     }
