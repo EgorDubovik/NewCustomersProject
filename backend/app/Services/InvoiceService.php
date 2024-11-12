@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InvoiceMail;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceService
 {
@@ -24,14 +25,16 @@ class InvoiceService
 
       DB::beginTransaction();
       try {
+         $key = Str::random(50);
          $invoice = new Invoice();
          $invoice->company_id = $appointment->company_id;
          $invoice->creator_id = Auth::user()->id;
          $invoice->job_id = $appointment->job_id;
          $invoice->email = $appointment->job->customer->email;
-         $invoice->pdf_path = $this->createPDF($invoice); // Create PDF
-         $key = Str::random(50);
          $invoice->key = $key;
+         $invoice->save();
+
+         $invoice->pdf_path = $this->createPDF($invoice); // Create PDF
          $invoice->save();
          
          // Send email
