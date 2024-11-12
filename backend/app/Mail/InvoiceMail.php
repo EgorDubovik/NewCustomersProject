@@ -11,14 +11,12 @@ class InvoiceMail extends Mailable
     use Queueable, SerializesModels;
     
     public $invoice;
-    public $file;
     public $referralCode = null;
     public $headerTitle;
     public $company;
     
-    public function __construct($invoice, $file)
+    public function __construct($invoice)
     {
-        $this->file = $file;
         $this->invoice = $invoice;
         $this->headerTitle = 'Invoice';
         $this->company = $invoice->company;
@@ -35,8 +33,8 @@ class InvoiceMail extends Mailable
     {
         return $this->view('emails.invoice-v2')
                     ->subject('New invoice')
-                    ->attach($this->file,[
-                        'as' => $this->invoice->pdf_url,
+                    ->attach($this->invoice->pdf_path,[
+                        'as' => $this->invoice->pdf_path,
                         'mime' => 'application/pdf'
                     ])
                     ->replyTo($this->company->email,$this->company->name)

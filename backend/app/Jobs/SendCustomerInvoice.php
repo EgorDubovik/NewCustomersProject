@@ -14,36 +14,25 @@ use Illuminate\Support\Facades\Log;
 
 class SendCustomerInvoice implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     */
-    protected $invoice;
-    protected $file;
-    public $tries = 2;
-    public $retryAfter = 20;
+   /**
+    * Create a new job instance.
+    */
+   protected $invoice;
+   public $tries = 2;
+   public $retryAfter = 20;
 
-    public function __construct($invoice, $file)
-    {
-        $this->invoice = $invoice;
-        $this->file = $file;
-    }
+   public function __construct($invoice)
+   {
+      $this->invoice = $invoice;
+   }
 
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
-    {
-        try {
-            Mail::to($this->invoice->email)->send(new InvoiceMail($this->invoice,$this->file));
-        } catch (\Exception $e) {
-            Log::error('Ошибка в задаче SendCustomerInvoice: ' . $e->getMessage(), [
-                'exception' => $e
-            ]);
-    
-            // Можно также пробросить исключение, если нужно
-            throw $e;
-        }
-    }
+   /**
+    * Execute the job.
+    */
+   public function handle(): void
+   {
+      Mail::to($this->invoice->email)->send(new InvoiceMail($this->invoice));
+   }
 }

@@ -29,14 +29,13 @@ class InvoiceService
          $invoice->creator_id = Auth::user()->id;
          $invoice->job_id = $appointment->job_id;
          $invoice->email = $appointment->job->customer->email;
-         $pdfname = $this->createPDF($invoice); // Create PDF
-         $invoice->pdf_path = $pdfname;
+         $invoice->pdf_path = $this->createPDF($invoice); // Create PDF
          $key = Str::random(50);
          $invoice->key = $key;
-
          $invoice->save();
-
-         $this->sendEmail($invoice); // Send Email
+         
+         // Send email
+         SendCustomerInvoice::dispatch($invoice);
 
          DB::commit();
       } catch (\Exception $e) {
@@ -49,17 +48,8 @@ class InvoiceService
    {
       $pdf = PDF::loadView('invoice.PDF',['invoice' => $invoice]);
       $content = $pdf->download()->getOriginalContent();
-      $filename = (env('APP_DEBUG') ? 'debug-' : "").'Invoice_'.date('m-d-Y').'-'.time().Str::random(50).'.pdf';
-      Storage::disk('s3')->put('invoices/'.$filename, $content);
-      return $filename;
-   }
-
-   protected function sendEmail($invoice)
-   {
-      $file = $invoice->pdf_url;
-     
-      SendCustomerInvoice::dispatch($invoice, $file);
-      
-      // Mail::to($invoice->email)->send(new InvoiceMail($invoice,$file));
+      $file_path = 'invoices/'.(env('APP_DEBUG') ? 'debug/' : "").'Invoice_'.date('m-d-Y').'-'.time().Str::random(50).'.pdf';
+      Storage::disk('s3')->put($file_path, $content);
+      return env('AWS_FILE_ACCESS_URL').$file_path;
    }
 }

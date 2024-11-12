@@ -113,7 +113,7 @@
 <tr>
     <td align="center" style="padding: 20px;">
         <p style="color: #666666; text-align: center">Please click the button below to download your invoice as a PDF.</p>
-        <a href="{{ $invoice->pdf_url }}"
+        <a href="{{ $invoice->pdf_path }}"
             style="background-color: #007bff; color: #ffffff; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 5px;">⬇️
             Download Invoice (PDF)</a>
     </td>

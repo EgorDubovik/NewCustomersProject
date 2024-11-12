@@ -27,7 +27,8 @@ class Invoice extends Model
     protected $appends = ['pdf_url'];
 
     public function getPdfUrlAttribute(){
-        return $this->pdf_path ? env('AWS_FILE_ACCESS_URL').'invoices/'.$this->pdf_path : null;
+        // return $this->pdf_path ? env('AWS_FILE_ACCESS_URL').'invoices/'.$this->pdf_path : null;
+        return $this->pdf_path;
     }
 
     function job(){
