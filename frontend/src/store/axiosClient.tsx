@@ -15,6 +15,7 @@ axiosClient.interceptors.request.use((config)=>{
    const token = cookies.get('_auth');
    if(token){
       config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Access-Control-Allow-Origin'] = '*';
    }
    return config;
 });

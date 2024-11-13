@@ -8,30 +8,31 @@ use App\Models\Appointment;
 use App\Models\Job\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\ImageManagerStatic as Imagec;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class JobImagesController extends Controller
 {
    function store(Request $request, $appointment_id)
    {
       $request->validate([
-         'image' => 'required|image|mimes:jpeg,png,jpg,heic,heif|max:2048',
-      ]);
+         'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
+      ]);      
 
       $appointment = Appointment::find($appointment_id);
 
       $this->authorize('update-remove-appointment', $appointment);
 
+      
       $filePath = 'images/'.(env('APP_DEBUG') ? 'debug/' : "").'app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
       $s3path = env('AWS_FILE_ACCESS_URL');
 
-      $image = Imagec::make($request->image);
-      if ($image->width() > env('UPLOAD_WIDTH_SIZE'))
-         $image->resize(env('UPLOAD_WIDTH_SIZE'), null, function ($constraint) {
-            $constraint->aspectRatio();
-         });
-      $image = $image->encode();
+      $manager = new ImageManager(new Driver());
 
+      $image = $manager->read($request->image);
+      $image->scaleDown(width:env('UPLOAD_WIDTH_SIZE'));
+      $image = $image->toJpeg();
+      $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
       $path = Storage::disk('s3')->put($filePath, $image);
       if (!$path)
          return response()->json(['error' => 'Something went wrong'], 500);
@@ -44,13 +45,29 @@ class JobImagesController extends Controller
       return response()->json(['success' => 'You have successfully uploaded the image.', 'path' => $s3path.$filePath], 200);
    }
 
-   function index (Request $request, Appointment $appointment)
+   function destroy($appointment_id, $image_id)
    {
-      $this->authorize('view-appointment', $appointment);
-
-      $images = $appointment->images;
-
-      return response()->json(['images' => $images], 200);
+      $appointment = Appointment::find($appointment_id);
+      $this->authorize('update-remove-appointment', $appointment);
       
+      $image = Image::find($image_id);
+      if($appointment->job_id != $image->job_id)
+         return response()->json(['error' => 'No premitions'], 404);
+
+      if (!$image)
+         return response()->json(['error' => 'Image not found'], 404);
+
+      // Extract relative path from full S3 URL
+      $path = parse_url($image->path, PHP_URL_PATH);
+      $relativePath = ltrim($path, '/'); // Remove leading slash if present
+      $deleted = Storage::disk('s3')->delete($relativePath);
+   
+      if ($deleted) {
+            $image->delete();
+            return response()->json(['success' => 'You have successfully deleted the image.'], 200);
+      } else {
+            return response()->json(['error' => 'Failed to delete image from S3'], 500);
+      }
    }
+
 }

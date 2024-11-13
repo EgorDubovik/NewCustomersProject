@@ -133,6 +133,7 @@ Route::prefix('v1')->group(function () {
             // Job images
             Route::post('images/{appointment_id}', [JobImagesController::class, 'store']);
             Route::get('images/{appointment_id}', [JobImagesController::class, 'index']);
+            Route::delete('images/{appointment_id}/{image_id}', [JobImagesController::class, 'destroy']);
 
             // Job expances
             Route::post('expense/{job_id}', [ExpenseController::class, 'store']);

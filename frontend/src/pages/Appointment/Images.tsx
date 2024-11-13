@@ -2,19 +2,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import IconPlus from '../../components/Icon/IconPlus';
 import axiosClient from '../../store/axiosClient';
 import { useAppointmentContext } from './context/AppointmentContext';
+import IconTrash from '../../components/Icon/IconTrash';
+import { alertError } from '../../helpers/helper';
+import { SmallDangerLoader } from '../../components/loading/SmallCirculeLoader';
 const Images = (props: any) => {
 	const { appointment, updateImages } = useAppointmentContext();
-	
+
 	const appointmentId = appointment?.id;
 	const [images, setImages] = useState<any[]>(appointment?.images || []);
-	const [uploadingStatus, setUploadingStatus] = useState(false);
+	const [uploadingStatus, setUploadingStatus] = useState('');
 	const fileInputRef = useRef(null);
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [showGallery, setShowGallery] = useState(false);
 	const [showImageIndex, setShowImageIndex] = useState(0);
+	const [delytingImageId, setDelytingImageId] = useState(0);
 
 	useEffect(() => {
-		
 		handleUpload();
 	}, [selectedFiles]);
 
@@ -24,78 +27,110 @@ const Images = (props: any) => {
 
 	const handleLinkClick = () => {
 		if (fileInputRef.current && !uploadingStatus) {
-			
 			(fileInputRef.current as HTMLInputElement).click();
 		}
 	};
 
 	const handleUpload = async () => {
-		setUploadingStatus(true);
-
-		const uploadPromises = selectedFiles.map(async (file) => {
-			const formData = new FormData();
-			formData.append('image', file);
-			try {
-				const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				});
-				console.log('File uploaded successfully:', response.data);
-				setImages([...images, response.data]);
-				return response.data;
-			} catch (error) {
-				console.error('Error uploading file:', error);
-				throw error;
-			}
-		});
-
+		if(selectedFiles.length == 0) return;
 		try {
-			const results = await Promise.all(uploadPromises);
-			console.log('All files uploaded successfully:', results);
+			for (let i = 0; i < selectedFiles.length; i++) {
+				const file = selectedFiles[i];
+				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
+
+				const formData = new FormData();
+				formData.append('image', file);
+				try {
+					const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
+						headers: {
+							'Content-Type': 'multipart/form-data',
+						},
+					});
+					console.log('File uploaded successfully:', response.data);
+					setImages((prevImages) => [...prevImages, response.data]);
+				} catch (error) {
+					console.error('Error uploading file:', error);
+					throw error;
+				}
+			}
+			console.log('All files uploaded successfully');
 		} catch (error) {
 			console.error('Error uploading one or more files:', error);
 		} finally {
-			setUploadingStatus(false);
+			setUploadingStatus('Uploading completed');
+			setTimeout(() => {
+				setUploadingStatus('');
+			}, 2000);
+			setSelectedFiles([]);
 		}
 	};
 
-	const openGallery = (index:number) => {
+	const openGallery = (index: number) => {
 		console.log('open gallery');
 		setShowImageIndex(index);
 		setShowGallery(true);
 	};
 	const setNextImage = () => {
-		if(showImageIndex < images.length - 1){
+		if (showImageIndex < images.length - 1) {
 			setShowImageIndex(showImageIndex + 1);
 		} else {
 			setShowImageIndex(0);
 		}
-	}
+	};
 
 	const setPrevImage = () => {
-		if(showImageIndex > 0){
+		if (showImageIndex > 0) {
 			setShowImageIndex(showImageIndex - 1);
 		} else {
 			setShowImageIndex(images.length - 1);
 		}
-	}
+	};
 
+	const destroyImage = (id: number) => {
+		setDelytingImageId(id);
+		axiosClient
+			.delete('appointment/images/' + appointment?.id + '/' + id)
+			.then((response) => {
+				console.log('Image deleted successfully:', response.data);
 
+				setImages(images.filter((image) => image.id !== id));
+			})
+			.catch((error) => {
+				alertError('Error deleting image');
+				console.error('Error deleting image:', error);
+			})
+			.finally(() => {
+				setDelytingImageId(0);
+			});
+	};
 	return (
 		<>
 			<div className="flex items-center justify-between px-4 py-2">
 				<h3 className="font-semibold text-lg dark:text-white-light">Images</h3>
+				{uploadingStatus && <div className='ml-2'>{uploadingStatus}</div>}
 				<button onClick={handleLinkClick} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 					<IconPlus className="w-4 h-4" />
 				</button>
 				<input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" multiple />
 			</div>
-			<div className="px-4 py-1 text-center">{uploadingStatus && <div>Uploading...</div>}</div>
-			<div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 p-4">
+			<div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 p-2">
 				{images.map((image: any, index: number) => (
-					<div key={index} className="relative">
-						<img src={image.path} className="w-full h-20 object-cover rounded-lg cursor-pointer" onClick={() => openGallery(index)} />
+					<div key={index} className={`relative group`}>
+						{delytingImageId == image.id && (
+							<div className="absolute z-10 top-0 left-0 w-full h-full flex items-center justify-center">
+								<SmallDangerLoader />
+							</div>
+						)}
+						{delytingImageId != image.id && (
+							<div
+								onClick={() => destroyImage(image.id)}
+								className="absolute top-[-1px] right-0 w-full h-[20px] rounded-t-lg bg-gray-950/90 flex justify-center hover:text-danger cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+							>
+								<IconTrash />
+							</div>
+						)}
+						{delytingImageId == image.id && <div className="absolute w-full h-full z-10 blur bg-gray-950/50"></div>}
+						<img src={image.path} className={`w-full cursor-pointer rounded-lg h-20 ${delytingImageId == image.id ? 'blur' : ''}`} onClick={() => openGallery(index)} />
 					</div>
 				))}
 			</div>

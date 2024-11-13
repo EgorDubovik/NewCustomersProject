@@ -17,7 +17,10 @@ services:
 
    laravel:
       container_name: laravel
-      image: bitnami/laravel:latest
+      # image: bitnami/laravel:latest
+      build:
+         context: .
+         dockerfile: Dockerfile-laravel
       environment:
          - DB_CONNECTION=mysql
          - DB_HOST=mysql
@@ -34,7 +37,8 @@ services:
       ports:
          - "8000:8000"
       command:
-         sh -c "composer install && php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000 & php artisan queue:work redis"
+         # sh -c "composer install && php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000 & php artisan queue:work redis"
+          sh -c "php artisan serve --host=0.0.0.0 --port=8000 & php artisan queue:work redis"
       networks:
          - test-network
       depends_on:

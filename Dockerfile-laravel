@@ -1,0 +1,8 @@
+# Dockerfile
+FROM bitnami/laravel:latest
+
+# Install build tools and Imagick dependencies
+RUN apt-get update && \
+    apt-get install -y libmagickwand-dev make gcc && \
+    pecl install imagick && \
+    echo "extension=imagick.so" >> /opt/bitnami/php/etc/php.ini
