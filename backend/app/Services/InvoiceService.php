@@ -51,7 +51,7 @@ class InvoiceService
    {
       $pdf = PDF::loadView('invoice.PDF',['invoice' => $invoice]);
       $content = $pdf->download()->getOriginalContent();
-      $file_path = 'invoices/'.(env('APP_DEBUG') ? 'debug/' : "").'Invoice_'.date('m-d-Y').'-'.time().Str::random(50).'.pdf';
+      $file_path = 'invoices/'.(env('APP_DEBUG') ? 'debug/' : "prod/").'Invoice_'.date('m-d-Y').'-'.time().Str::random(50).'.pdf';
       Storage::disk('s3')->put($file_path, $content);
       return env('AWS_FILE_ACCESS_URL').$file_path;
    }

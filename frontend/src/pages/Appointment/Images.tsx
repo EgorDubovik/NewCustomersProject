@@ -47,7 +47,7 @@ const Images = (props: any) => {
 						},
 					});
 					console.log('File uploaded successfully:', response.data);
-					setImages((prevImages) => [...prevImages, response.data]);
+					setImages((prevImages) => [...prevImages, response.data.image]);
 				} catch (error) {
 					console.error('Error uploading file:', error);
 					throw error;

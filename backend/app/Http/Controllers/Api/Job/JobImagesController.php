@@ -24,7 +24,7 @@ class JobImagesController extends Controller
       $this->authorize('update-remove-appointment', $appointment);
 
       
-      $filePath = 'images/'.(env('APP_DEBUG') ? 'debug/' : "").'app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
+      $filePath = 'images/'.(env('APP_DEBUG') ? 'debug/' : "prod/").'app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
       $s3path = env('AWS_FILE_ACCESS_URL');
 
       $manager = new ImageManager(new Driver());
@@ -36,13 +36,13 @@ class JobImagesController extends Controller
       $path = Storage::disk('s3')->put($filePath, $image);
       if (!$path)
          return response()->json(['error' => 'Something went wrong'], 500);
-      Image::create([
+      $image = Image::create([
          'job_id' => $appointment->job_id,
          'path' => $s3path.$filePath,
          'owner_id' => Auth::user()->id,
       ]);
 
-      return response()->json(['success' => 'You have successfully uploaded the image.', 'path' => $s3path.$filePath], 200);
+      return response()->json(['success' => 'You have successfully uploaded the image.', 'image'=>$image], 200);
    }
 
    function destroy($appointment_id, $image_id)
