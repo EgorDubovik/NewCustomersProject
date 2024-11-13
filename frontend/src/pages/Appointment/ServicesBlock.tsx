@@ -80,7 +80,7 @@ const ServicesBlock = () => {
          <div className="flex items-center justify-between">
             <h3 className="font-semibold text-lg dark:text-white-light">Services</h3>
          </div>
-         <div className="mt-5">
+         <div className="mt-3">
             <ServicesList
                services={services}
                onRemoveService={handleRemoveService}

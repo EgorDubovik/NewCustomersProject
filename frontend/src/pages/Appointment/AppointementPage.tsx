@@ -61,12 +61,12 @@ const AppointmentPage = () => {
 						</div>
 						<div className="panel p-4">
 							<h3 className="font-semibold text-lg dark:text-white-light">All Visits</h3>
-							<div className="text-right">
+							<div className="text-right mt-2">
 								{appointment?.job.appointments.map((jappointment: any, index: number) => (
 									<div key={index} className="mb-2 last:mb-0">
 										<Link  to={`/appointment/${jappointment.id}`}>
 											<div
-												className={`rounded-md p-2 ${appointment.id === jappointment.id ? 'dark:bg-gray-800 dark:shadow-gray-600 bg-gray-200 shadow-gray-500 shadow-sm' : 'dark:bg-dark-dark-light bg-gray-100'}   border-l-2`}
+												className={`rounded-md p-2 ${appointment.id === jappointment.id ? 'dark:bg-gray-800 dark:shadow-gray-600 bg-gray-200 shadow-gray-500 shadow-sm text-primary' : 'dark:bg-dark-dark-light bg-gray-100'}   border-l-2`}
 												style={{ borderColor: jappointment.techs?.length > 0 ? jappointment.techs[jappointment.techs.length - 1].color : '#1565C0' }}
 											>
 												<div className="text-sm font-semibold flex justify-between">

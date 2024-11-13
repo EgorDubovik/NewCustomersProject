@@ -113,7 +113,7 @@ const Images = (props: any) => {
 				</button>
 				<input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept="image/*" multiple />
 			</div>
-			<div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 p-2">
+			<div className="grid grid-cols-4 md:grid-cols-7 gap-3 p-2">
 				{images.map((image: any, index: number) => (
 					<div key={index} className={`relative group`}>
 						{delytingImageId == image.id && (
