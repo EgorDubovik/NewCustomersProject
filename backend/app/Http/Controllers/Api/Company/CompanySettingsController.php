@@ -9,7 +9,8 @@ use App\Models\CompanySettings\GeneralInfoSettings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class CompanySettingsController extends Controller
 {
@@ -44,16 +45,11 @@ class CompanySettingsController extends Controller
         ]);
 
         $filePath = 'logos/' . time() . '_' . $request->file('logo')->hashName();
-
-        $image = Image::make($request->file('logo'));
-
-        if ($image->width() > env('UPLOAD_WIDTH_SIZE'))
-
-            $image->resize(env('UPLOAD_WIDTH_SIZE'), env('UPLOAD_WIDTH_SIZE'), function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-        $image = $image->encode();
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read($request->file('logo'));
+        $image->scaleDown(width: env('UPLOAD_WIDTH_SIZE'));
+        $image = $image->toJpeg();
+        $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
         $path = Storage::disk('s3')->put($filePath, $image);
         if (!$path)
             return response()->json(['message' => 'Error uploading image'], 500);
