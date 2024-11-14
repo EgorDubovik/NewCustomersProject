@@ -42,24 +42,24 @@ const Images = (props: any) => {
 				let file = selectedFiles[i];
 				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
 				console.log('Uploading file:', file.type);
-				if (file.type === 'image/heic' || file.type === 'image/heif') {
+				// if (file.type === 'image/heic' || file.type === 'image/heif') {
 
-					try {
-						const convertedBlob = await heic2any({
-							blob: file,
-							toType: 'image/jpeg',
-						});
-						file = new File([convertedBlob as Blob], `${file.name.split('.')[0]}.jpeg`, {
-							type: 'image/jpeg',
-						});
-					} catch (conversionError) {
-						console.error('Error converting HEIC to JPEG:', conversionError);
-						continue; // Skip this file if conversion fails
-					}
-				}
-
+				// 	try {
+				// 		const convertedBlob = await heic2any({
+				// 			blob: file,
+				// 			toType: 'image/jpeg',
+				// 		});
+				// 		file = new File([convertedBlob as Blob], `${file.name.split('.')[0]}.jpeg`, {
+				// 			type: 'image/jpeg',
+				// 		});
+				// 	} catch (conversionError) {
+				// 		console.error('Error converting HEIC to JPEG:', conversionError);
+				// 		continue; // Skip this file if conversion fails
+				// 	}
+				// }
+				file = new File([file], file.name, { type: 'image/heic' });
 				const formData = new FormData();
-				formData.append('image', file, file.name);
+				formData.append('image', file);
 
 				try {
 					const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
