@@ -17,6 +17,7 @@ class JobImagesController extends Controller
    function store(Request $request, $appointment_id)
    {
 
+      Log::info('Start uploading photo');
       try{
          $request->validate([
             'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
@@ -46,6 +47,7 @@ class JobImagesController extends Controller
             'owner_id' => Auth::user()->id,
          ]);
 
+         Log::info('End uploading photo');
          return response()->json(['success' => 'You have successfully uploaded the image.', 'image'=>$image], 200);
       } catch (\Exception $e) {
          Log::error($e->getMessage());
