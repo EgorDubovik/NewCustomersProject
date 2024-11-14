@@ -35,30 +35,29 @@ const Images = (props: any) => {
 		}
 	};
 
+	const removeMetadata = async (file: File): Promise<File> => {
+		return new Promise((resolve, reject) => {
+		  const reader = new FileReader();
+		  reader.readAsArrayBuffer(file);
+		  reader.onloadend = () => {
+			 const buffer = reader.result as ArrayBuffer;
+			 const blob = new Blob([buffer], { type: file.type });
+			 resolve(new File([blob], file.name, { type: file.type }));
+		  };
+		  reader.onerror = reject;
+		});
+	 };
+
 	const handleUpload = async () => {
 		if (selectedFiles.length == 0) return;
 		try {
 			for (let i = 0; i < selectedFiles.length; i++) {
 				let file = selectedFiles[i];
-				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
-				console.log('Uploading file:', file.type);
-				// if (file.type === 'image/heic' || file.type === 'image/heif') {
 
-				// 	try {
-				// 		const convertedBlob = await heic2any({
-				// 			blob: file,
-				// 			toType: 'image/jpeg',
-				// 		});
-				// 		file = new File([convertedBlob as Blob], `${file.name.split('.')[0]}.jpeg`, {
-				// 			type: 'image/jpeg',
-				// 		});
-				// 	} catch (conversionError) {
-				// 		console.error('Error converting HEIC to JPEG:', conversionError);
-				// 		continue; // Skip this file if conversion fails
-				// 	}
-				// }
-				alertSuccsess(file.type);
-				file = new File([file], file.name, { type: 'image/heic' });
+				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
+				
+				alertSuccsess(file.size.toString());
+				file = await removeMetadata(file);
 				const formData = new FormData();
 				formData.append('image', file);
 
