@@ -52,7 +52,7 @@ const Images = (props: any) => {
 				} catch (error) {
 					if (axios.isAxiosError(error)) {
 						// Use optional chaining to safely access nested properties
-						const errorMessage = error.response?.data?.error ?? 'An unknown error occurred';
+						const errorMessage = error.response?.data?.messge ?? 'An unknown error occurred';
 						alertError(errorMessage);
 				  } else {
 						alertError('An unknown error occurred');
