@@ -17,13 +17,14 @@ class JobImagesController extends Controller
    function store(Request $request, $appointment_id)
    {
 
-      $request->validate([
-         'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
-      ]);      
-
-      $appointment = Appointment::find($appointment_id);
-
       try{
+         $request->validate([
+            'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
+         ]);      
+
+         $appointment = Appointment::find($appointment_id);
+
+      
          $this->authorize('update-remove-appointment', $appointment);
 
          
@@ -48,7 +49,7 @@ class JobImagesController extends Controller
          return response()->json(['success' => 'You have successfully uploaded the image.', 'image'=>$image], 200);
       } catch (\Exception $e) {
          Log::error($e->getMessage());
-         return response()->json(['error' => 'Something went wrong'], 500);
+         return response()->json(['error' => $e->getMessage()], 500);
       }
    }
 
