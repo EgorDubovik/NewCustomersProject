@@ -17,6 +17,7 @@ const Images = (props: any) => {
 	const [showGallery, setShowGallery] = useState(false);
 	const [showImageIndex, setShowImageIndex] = useState(0);
 	const [delytingImageId, setDelytingImageId] = useState(0);
+	const [testError, setTestError] = useState('');
 
 	useEffect(() => {
 		handleUpload();
@@ -53,6 +54,7 @@ const Images = (props: any) => {
 					if (axios.isAxiosError(error)) {
 						// Use optional chaining to safely access nested properties
 						const errorMessage = error.response?.data?.messge ?? 'An unknown error occurred';
+						setTestError(JSON.stringify(error));
 						alertError(JSON.stringify(error));
 						
 				  } else {
@@ -117,6 +119,7 @@ const Images = (props: any) => {
 		<>
 			<div className="flex items-center justify-between px-4 py-2">
 				<h3 className="font-semibold text-lg dark:text-white-light">Images</h3>
+				<div >{testError}</div>
 				{uploadingStatus && <div className='ml-2'>{uploadingStatus}</div>}
 				<button onClick={handleLinkClick} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 					<IconPlus className="w-4 h-4" />
