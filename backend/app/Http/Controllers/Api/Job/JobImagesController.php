@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\Job\Image;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Drivers\Imagick\Driver;
@@ -15,34 +16,40 @@ class JobImagesController extends Controller
 {
    function store(Request $request, $appointment_id)
    {
+
       $request->validate([
          'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
       ]);      
 
       $appointment = Appointment::find($appointment_id);
 
-      $this->authorize('update-remove-appointment', $appointment);
+      try{
+         $this->authorize('update-remove-appointment', $appointment);
 
-      
-      $filePath = 'images/'.(env('APP_DEBUG') ? 'debug/' : "prod/").'app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
-      $s3path = env('AWS_FILE_ACCESS_URL');
+         
+         $filePath = 'images/'.(env('APP_DEBUG') ? 'debug/' : "prod/").'app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
+         $s3path = env('AWS_FILE_ACCESS_URL');
 
-      $manager = new ImageManager(new Driver());
+         $manager = new ImageManager(new Driver());
 
-      $image = $manager->read($request->image);
-      $image->scaleDown(width:env('UPLOAD_WIDTH_SIZE'));
-      $image = $image->toJpeg();
-      $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
-      $path = Storage::disk('s3')->put($filePath, $image);
-      if (!$path)
+         $image = $manager->read($request->image);
+         $image->scaleDown(width:env('UPLOAD_WIDTH_SIZE'));
+         $image = $image->toJpeg();
+         $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
+         $path = Storage::disk('s3')->put($filePath, $image);
+         if (!$path)
+            return response()->json(['error' => 'Something went wrong'], 500);
+         $image = Image::create([
+            'job_id' => $appointment->job_id,
+            'path' => $s3path.$filePath,
+            'owner_id' => Auth::user()->id,
+         ]);
+
+         return response()->json(['success' => 'You have successfully uploaded the image.', 'image'=>$image], 200);
+      } catch (\Exception $e) {
+         Log::error($e->getMessage());
          return response()->json(['error' => 'Something went wrong'], 500);
-      $image = Image::create([
-         'job_id' => $appointment->job_id,
-         'path' => $s3path.$filePath,
-         'owner_id' => Auth::user()->id,
-      ]);
-
-      return response()->json(['success' => 'You have successfully uploaded the image.', 'image'=>$image], 200);
+      }
    }
 
    function destroy($appointment_id, $image_id)
