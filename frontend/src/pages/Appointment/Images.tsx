@@ -67,6 +67,7 @@ const Images = (props: any) => {
 						headers: {
 							'Content-Type': 'multipart/form-data',
 						},
+						maxContentLength: 50 * 1024 * 1024,
 					});
 					console.log('File uploaded successfully:', response.data);
 					setImages((prevImages) => [...prevImages, response.data.image]);
