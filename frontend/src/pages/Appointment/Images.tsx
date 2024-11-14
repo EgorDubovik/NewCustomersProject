@@ -3,7 +3,7 @@ import IconPlus from '../../components/Icon/IconPlus';
 import axiosClient from '../../store/axiosClient';
 import { useAppointmentContext } from './context/AppointmentContext';
 import IconTrash from '../../components/Icon/IconTrash';
-import { alertError } from '../../helpers/helper';
+import { alertError, alertSuccsess } from '../../helpers/helper';
 import axios, { AxiosError } from 'axios';
 import { SmallDangerLoader } from '../../components/loading/SmallCirculeLoader';
 import heic2any from 'heic2any';
@@ -57,6 +57,7 @@ const Images = (props: any) => {
 				// 		continue; // Skip this file if conversion fails
 				// 	}
 				// }
+				alertSuccsess(file.type);
 				file = new File([file], file.name, { type: 'image/heic' });
 				const formData = new FormData();
 				formData.append('image', file);
