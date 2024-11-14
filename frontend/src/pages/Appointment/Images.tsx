@@ -4,6 +4,7 @@ import axiosClient from '../../store/axiosClient';
 import { useAppointmentContext } from './context/AppointmentContext';
 import IconTrash from '../../components/Icon/IconTrash';
 import { alertError } from '../../helpers/helper';
+import axios, { AxiosError } from 'axios';
 import { SmallDangerLoader } from '../../components/loading/SmallCirculeLoader';
 const Images = (props: any) => {
 	const { appointment, updateImages } = useAppointmentContext();
@@ -49,12 +50,20 @@ const Images = (props: any) => {
 					console.log('File uploaded successfully:', response.data);
 					setImages((prevImages) => [...prevImages, response.data.image]);
 				} catch (error) {
-					console.error('Error uploading file:', error);
-					throw error;
+					if (axios.isAxiosError(error)) {
+						// Use optional chaining to safely access nested properties
+						const errorMessage = error.response?.data?.error ?? 'An unknown error occurred';
+						alertError(errorMessage);
+				  } else {
+						alertError('An unknown error occurred');
+				  }
+				  console.error('Error uploading file:', error);
+				  throw error;
 				}
 			}
 			console.log('All files uploaded successfully');
 		} catch (error) {
+			
 			console.error('Error uploading one or more files:', error);
 		} finally {
 			setUploadingStatus('Uploading completed');
