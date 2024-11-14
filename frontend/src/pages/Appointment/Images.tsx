@@ -39,30 +39,31 @@ const Images = (props: any) => {
 			for (let i = 0; i < selectedFiles.length; i++) {
 				const file = selectedFiles[i];
 				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
-
-				const formData = new FormData();
-				formData.append('image', file);
-				try {
-					const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
-						headers: {
-							'Content-Type': 'multipart/form-data',
-						},
-					});
-					console.log('File uploaded successfully:', response.data);
-					setImages((prevImages) => [...prevImages, response.data.image]);
-				} catch (error) {
-					if (axios.isAxiosError(error)) {
-						// Use optional chaining to safely access nested properties
-						const errorMessage = error.response?.data?.messge ?? 'An unknown error occurred';
-						setTestError(JSON.stringify(error));
-						alertError(JSON.stringify(error));
+				alertError(file.type);
+				// const formData = new FormData();
+				// formData.append('image', file);
+				
+				// try {
+				// 	const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
+				// 		headers: {
+				// 			'Content-Type': 'multipart/form-data',
+				// 		},
+				// 	});
+				// 	console.log('File uploaded successfully:', response.data);
+				// 	setImages((prevImages) => [...prevImages, response.data.image]);
+				// } catch (error) {
+				// 	if (axios.isAxiosError(error)) {
+				// 		// Use optional chaining to safely access nested properties
+				// 		const errorMessage = error.response?.data?.messge ?? 'An unknown error occurred';
+				// 		setTestError(JSON.stringify(error));
+				// 		//alertError(JSON.stringify(error));
 						
-				  } else {
-						alertError('An unknown error occurred');
-				  }
-				  console.error('Error uploading file:', error);
-				  throw error;
-				}
+				//   } else {
+				// 		alertError('An unknown error occurred');
+				//   }
+				//   console.error('Error uploading file:', error);
+				//   throw error;
+				// }
 			}
 			console.log('All files uploaded successfully');
 		} catch (error) {
