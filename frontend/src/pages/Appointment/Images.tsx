@@ -6,6 +6,8 @@ import IconTrash from '../../components/Icon/IconTrash';
 import { alertError } from '../../helpers/helper';
 import axios, { AxiosError } from 'axios';
 import { SmallDangerLoader } from '../../components/loading/SmallCirculeLoader';
+import heic2any from 'heic2any';
+
 const Images = (props: any) => {
 	const { appointment, updateImages } = useAppointmentContext();
 
@@ -34,15 +36,30 @@ const Images = (props: any) => {
 	};
 
 	const handleUpload = async () => {
-		if(selectedFiles.length == 0) return;
+		if (selectedFiles.length == 0) return;
 		try {
 			for (let i = 0; i < selectedFiles.length; i++) {
-				const file = selectedFiles[i];
+				let file = selectedFiles[i];
 				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
-				
+
+				if (file.type === 'image/heic' || file.type === 'image/heif') {
+					try {
+						const convertedBlob = await heic2any({
+							blob: file,
+							toType: 'image/jpeg',
+						});
+						file = new File([convertedBlob as Blob], `${file.name.split('.')[0]}.jpeg`, {
+							type: 'image/jpeg',
+						});
+					} catch (conversionError) {
+						console.error('Error converting HEIC to JPEG:', conversionError);
+						continue; // Skip this file if conversion fails
+					}
+				}
+
 				const formData = new FormData();
 				formData.append('image', file);
-				
+
 				try {
 					const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
 						headers: {
@@ -55,18 +72,15 @@ const Images = (props: any) => {
 					if (axios.isAxiosError(error)) {
 						const errorMessage = error.response?.data?.messge ?? 'An unknown error occurred';
 						setTestError(JSON.stringify(error));
-						
-						
-				  } else {
+					} else {
 						alertError('An unknown error occurred');
-				  }
-				  console.error('Error uploading file:', error);
-				  throw error;
+					}
+					console.error('Error uploading file:', error);
+					throw error;
 				}
 			}
 			console.log('All files uploaded successfully');
 		} catch (error) {
-			
 			console.error('Error uploading one or more files:', error);
 		} finally {
 			setUploadingStatus('Uploading completed');
@@ -119,8 +133,8 @@ const Images = (props: any) => {
 		<>
 			<div className="flex items-center justify-between px-4 py-2">
 				<h3 className="font-semibold text-lg dark:text-white-light">Images</h3>
-				<div >{testError}</div>
-				{uploadingStatus && <div className='ml-2'>{uploadingStatus}</div>}
+				<div>{testError}</div>
+				{uploadingStatus && <div className="ml-2">{uploadingStatus}</div>}
 				<button onClick={handleLinkClick} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 					<IconPlus className="w-4 h-4" />
 				</button>
