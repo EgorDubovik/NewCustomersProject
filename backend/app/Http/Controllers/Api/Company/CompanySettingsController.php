@@ -40,26 +40,43 @@ class CompanySettingsController extends Controller
     {
         $company = Auth::user()->company;
         Gate::authorize('edit-company', ['company' => $company]);
+
         $request->validate([
-            'logo' => 'required|image|mimes:jpeg,png,jpg'
+            'logo' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
         ]);
 
-        $filePath = 'logos/' . time() . '_' . $request->file('logo')->hashName();
+        $file = $request->file('logo');
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        $filePath = 'logos/' . time() . '_' . $file->hashName();
+
         $manager = new ImageManager(new Driver());
-        $image = $manager->read($request->file('logo'));
+        $image = $manager->read($file);
         $image->scaleDown(width: env('UPLOAD_WIDTH_SIZE'));
-        $image = $image->toJpeg();
-        $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
+
+        if ($extension !== 'png') {
+            // Convert to JPEG if not PNG
+            $image = $image->toJpeg();
+            $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
+        } else {
+            // Keep as PNG
+            $image = $image->toPng();
+        }
+
         $path = Storage::disk('s3')->put($filePath, $image);
-        if (!$path)
+        if (!$path) {
             return response()->json(['message' => 'Error uploading image'], 500);
+        }
 
         if ($company->logo) {
-            Storage::disk('s3')->delete($company->logo);
+            $path = parse_url($company->logo, PHP_URL_PATH);
+            $relativePath = ltrim($path, '/'); // Remove leading slash if present
+            Storage::disk('s3')->delete($relativePath); // Remove old logo
         }
 
         $company->logo = env('AWS_FILE_ACCESS_URL') . $filePath;
         $company->save();
+
         return response()->json(['message' => 'Logo updated', 'newPath' => env('AWS_FILE_ACCESS_URL') . $filePath], 200);
     }
 
@@ -72,15 +89,14 @@ class CompanySettingsController extends Controller
         $company->name = $request->name ?? '';
         $company->phone = $request->phone ?? '';
         $company->email = $request->email ?? '';
-        if($company->address){
+        if ($company->address) {
             $company->address->line1 = $request->address['line1'] ?? '';
             $company->address->line2 = $request->address['line2'] ?? '';
             $company->address->city = $request->address['city'] ?? '';
             $company->address->state = $request->address['state'] ?? '';
             $company->address->zip = $request->address['zip'] ?? '';
             $company->address->save();
-        }
-        else{
+        } else {
             $newAddress = Addresses::create([
                 'line1' => $request->address['line1'] ?? '',
                 'line2' => $request->address['line2'] ?? '',
@@ -89,9 +105,8 @@ class CompanySettingsController extends Controller
                 'zip' => $request->address['zip'] ?? '',
             ]);
             $company->address_id = $newAddress->id;
-            
         }
         $company->save();
-        return response()->json(['message' => 'Company info updated','return'=>$request->address], 200);
+        return response()->json(['message' => 'Company info updated', 'return' => $request->address], 200);
     }
 }
