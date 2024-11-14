@@ -41,8 +41,9 @@ const Images = (props: any) => {
 			for (let i = 0; i < selectedFiles.length; i++) {
 				let file = selectedFiles[i];
 				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
-
+				console.log('Uploading file:', file.type);
 				if (file.type === 'image/heic' || file.type === 'image/heif') {
+
 					try {
 						const convertedBlob = await heic2any({
 							blob: file,
@@ -58,7 +59,7 @@ const Images = (props: any) => {
 				}
 
 				const formData = new FormData();
-				formData.append('image', file);
+				formData.append('image', file, file.name);
 
 				try {
 					const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
