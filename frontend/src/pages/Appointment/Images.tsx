@@ -57,7 +57,9 @@ const Images = (props: any) => {
 				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
 				
 				
-				// file = await removeMetadata(file);
+				console.log('File name:', file.name);
+				console.log('File type:', file.type);
+				console.log('File size (KB):', file.size / 1024);
 				const formData = new FormData();
 				// const reader = new FileReader();
 				// reader.readAsDataURL(file);
