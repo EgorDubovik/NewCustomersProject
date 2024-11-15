@@ -19,7 +19,7 @@ const Images = (props: any) => {
 	const [showGallery, setShowGallery] = useState(false);
 	const [showImageIndex, setShowImageIndex] = useState(0);
 	const [delytingImageId, setDelytingImageId] = useState(0);
-	const [testError, setTestError] = useState('');
+	const [testError, setTestError] = useState<String[]>([]);
 
 	useEffect(() => {
 		handleUpload();
@@ -80,11 +80,11 @@ const Images = (props: any) => {
 					});
 					console.log('File uploaded successfully:', response.data);
 					setImages((prevImages) => [...prevImages, response.data.image]);
-				} catch (error) {
+				} catch (error:any) {
 					if (axios.isAxiosError(error)) {
 						
 						alertError(JSON.stringify(error.response));
-						// setTestError(JSON.stringify(error.response?.data));
+						setTestError((prev) => [...prev, JSON.stringify(error?.response?.data)]);
 					} else {
 						alertError('An unknown error occurred');
 					}
@@ -93,8 +93,8 @@ const Images = (props: any) => {
 				}
 			}
 			console.log('All files uploaded successfully');
-		} catch (error) {
-			setTestError(JSON.stringify(error));
+		} catch (error: any) {
+			setTestError((prev) => [...prev, JSON.stringify(error?.response?.data)]);
 			console.error('Error uploading one or more files:', error);
 		} finally {
 			setUploadingStatus('Uploading completed');
@@ -147,7 +147,11 @@ const Images = (props: any) => {
 		<>
 			<div className="flex items-center justify-between px-4 py-2">
 				<h3 className="font-semibold text-lg dark:text-white-light">Images</h3>
-				<div>{testError}</div>
+				<div>
+					{testError.map((err, index) => (
+						<div key={index}>{err}</div>
+					))}
+				</div>
 				{uploadingStatus && <div className="ml-2">{uploadingStatus}</div>}
 				<button onClick={handleLinkClick} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 					<IconPlus className="w-4 h-4" />
