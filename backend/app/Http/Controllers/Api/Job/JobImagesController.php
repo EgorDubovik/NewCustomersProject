@@ -20,14 +20,11 @@ class JobImagesController extends Controller
       Log::info('Start uploading photo');
       try{
          $request->validate([
-            'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
+            'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:10240',
          ]);      
 
          $appointment = Appointment::find($appointment_id);
-
-      
          $this->authorize('update-remove-appointment', $appointment);
-
          
          $filePath = 'images/'.(env('APP_DEBUG') ? 'debug/' : "prod/").'app'.$appointment_id.'-' . time() . '_' . $request->image->hashName();
          $s3path = env('AWS_FILE_ACCESS_URL');

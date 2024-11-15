@@ -4,9 +4,7 @@ import axiosClient from '../../store/axiosClient';
 import { useAppointmentContext } from './context/AppointmentContext';
 import IconTrash from '../../components/Icon/IconTrash';
 import { alertError, alertSuccsess } from '../../helpers/helper';
-import axios, { AxiosError } from 'axios';
 import { SmallDangerLoader } from '../../components/loading/SmallCirculeLoader';
-import heic2any from 'heic2any';
 
 const Images = (props: any) => {
 	const { appointment, updateImages } = useAppointmentContext();
@@ -53,24 +51,8 @@ const Images = (props: any) => {
 		try {
 			for (let i = 0; i < selectedFiles.length; i++) {
 				let file = selectedFiles[i];
-
 				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
-				
-				
-				console.log('File name:', file.name);
-				console.log('File type:', file.type);
-				console.log('File size (KB):', file.size / 1024);
 				const formData = new FormData();
-				// const reader = new FileReader();
-				// reader.readAsDataURL(file);
-				// await new Promise((resolve, reject) => {
-				// 	reader.onloadend = () => {
-				// 		const base64String = typeof reader.result === 'string' ? reader.result.split(',')[1] : '';
-				// 		formData.append('image', base64String);
-				// 		resolve(void 0);
-				// 	};
-				// 	reader.onerror = reject;
-				// });
 				formData.append('image', file);
 
 				try {
@@ -78,25 +60,17 @@ const Images = (props: any) => {
 						headers: {
 							'Content-Type': 'multipart/form-data',
 						},
-						maxContentLength: 50 * 1024 * 1024,
+						maxContentLength: 10 * 1024 * 1024,
 					});
 					console.log('File uploaded successfully:', response.data);
 					setImages((prevImages) => [...prevImages, response.data.image]);
 				} catch (error:any) {
-					if (axios.isAxiosError(error)) {
-						
-						alertError(JSON.stringify(error.response));
-						setTestError((prev) => [...prev, JSON.stringify(error?.response)]);
-					} else {
-						alertError('An unknown error occurred');
-					}
-					console.error('Error uploading file:', error);
-					throw error;
+					alertError('Error uploading image');
 				}
 			}
 			console.log('All files uploaded successfully');
 		} catch (error: any) {
-			setTestError((prev) => [...prev, JSON.stringify(error?.response)]);
+			alertError('Error uploading one or more files');
 			console.error('Error uploading one or more files:', error);
 		} finally {
 			setUploadingStatus('Uploading completed');
