@@ -84,7 +84,7 @@ const Images = (props: any) => {
 					if (axios.isAxiosError(error)) {
 						
 						alertError(JSON.stringify(error.response));
-						setTestError((prev) => [...prev, JSON.stringify(error?.response?.data)]);
+						setTestError((prev) => [...prev, JSON.stringify(error?.response)]);
 					} else {
 						alertError('An unknown error occurred');
 					}
@@ -94,7 +94,7 @@ const Images = (props: any) => {
 			}
 			console.log('All files uploaded successfully');
 		} catch (error: any) {
-			setTestError((prev) => [...prev, JSON.stringify(error?.response?.data)]);
+			setTestError((prev) => [...prev, JSON.stringify(error?.response)]);
 			console.error('Error uploading one or more files:', error);
 		} finally {
 			setUploadingStatus('Uploading completed');
