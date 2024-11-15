@@ -56,9 +56,19 @@ const Images = (props: any) => {
 
 				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
 				
-				alertSuccsess(file.size.toString());
-				file = await removeMetadata(file);
+				
+				// file = await removeMetadata(file);
 				const formData = new FormData();
+				// const reader = new FileReader();
+				// reader.readAsDataURL(file);
+				// await new Promise((resolve, reject) => {
+				// 	reader.onloadend = () => {
+				// 		const base64String = typeof reader.result === 'string' ? reader.result.split(',')[1] : '';
+				// 		formData.append('image', base64String);
+				// 		resolve(void 0);
+				// 	};
+				// 	reader.onerror = reject;
+				// });
 				formData.append('image', file);
 
 				try {
@@ -72,8 +82,8 @@ const Images = (props: any) => {
 					setImages((prevImages) => [...prevImages, response.data.image]);
 				} catch (error) {
 					if (axios.isAxiosError(error)) {
-						const errorMessage = error.response?.data?.messge ?? 'An unknown error occurred';
-						setTestError(JSON.stringify(error));
+						
+						setTestError(JSON.stringify(error.response?.data));
 					} else {
 						alertError('An unknown error occurred');
 					}
