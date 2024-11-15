@@ -83,7 +83,8 @@ const Images = (props: any) => {
 				} catch (error) {
 					if (axios.isAxiosError(error)) {
 						
-						setTestError(JSON.stringify(error.response?.data));
+						alertError(JSON.stringify(error.response));
+						// setTestError(JSON.stringify(error.response?.data));
 					} else {
 						alertError('An unknown error occurred');
 					}
@@ -93,6 +94,7 @@ const Images = (props: any) => {
 			}
 			console.log('All files uploaded successfully');
 		} catch (error) {
+			setTestError(JSON.stringify(error));
 			console.error('Error uploading one or more files:', error);
 		} finally {
 			setUploadingStatus('Uploading completed');
