@@ -8,7 +8,7 @@ set +a
 MYSQL_USER="root"
 MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
 MYSQL_HOST=mysql
-MYSQL_DATABASE=test
+MYSQL_DATABASE=$MYSQL_DATABASE
 
 # Папка для хранения бекапов
 BACKUP_DIR="./backups"
