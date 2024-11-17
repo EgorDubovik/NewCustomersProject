@@ -49,7 +49,8 @@
 
 <tr>
    <td align="center" style="padding: 20px;">
-      <a href="{{ env('APP_DEBUG') ? 'http://localhost:5173/appointment/book/view/'.$key : 'https://dev.edservicetx.com/appointment/book/view/'.$key }}" style="background-color: #007bff; color: #ffffff; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 5px;">View appointment info</a>
+      {{-- <a href="{{ env('APP_DEBUG') ? 'http://localhost:5173/appointment/book/view/'.$key : 'https://prod.edservicetx.com/appointment/book/view/'.$key }}" style="background-color: #007bff; color: #ffffff; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 5px;">View appointment info</a> --}}
+      <a href="{{ env('APP_URL').'/appointment/book/view/'.$key }}" style="background-color: #007bff; color: #ffffff; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 5px;">View appointment info</a>
    </td>
 </tr>
 
