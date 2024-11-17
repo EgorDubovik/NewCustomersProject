@@ -132,7 +132,7 @@ const SelectDateTime = () => {
             </div>
             <div className='p-2 text-left text-sm mt-2'>
                <h2 className='font-bold text-left text-base'>Choose time:</h2>
-               <div className='grid grid-cols-1 sm:grid-cols-6 gap-3 mt-4'>
+               <div className='grid grid-cols-3 sm:grid-cols-6 gap-3 mt-4'>
                {
                   timeArray.map((time,index) => {
                      return (
