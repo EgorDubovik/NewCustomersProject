@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailsBookAppointmentOnline;
 use Illuminate\Http\Request;
 use App\Models\BookAppointment;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,7 @@ use App\Models\Job\Job;
 use App\Models\Service;
 use App\Models\Job\Service as JobService;
 use App\Models\AppointmentTechs;
+use Illuminate\Support\Facades\Log;
 
 class BookAppointmentOnlineController extends Controller
 {
@@ -139,13 +141,17 @@ class BookAppointmentOnlineController extends Controller
                 'key'               => $key,
             ]);
 
-            // Send email to customer
-            if($request->customer['email'])
-                Mail::to($request->customer['email'])->send(new BookOnline($appointment,$bookAppointmentProvider->key));
+            Log::info('SendEmailsBookAppointmentOnline:'.$appointment->job->customer->email);
             
-            // Send email to company
-            if($appointment->company->email)
-                Mail::to($appointment->company->email)->send(new BookOnlineForCompany($appointment));
+            SendEmailsBookAppointmentOnline::dispatch($appointment,$bookAppointmentProvider->key);
+
+            // // Send email to customer
+            // if($request->customer['email'])
+            //     Mail::to($request->customer['email'])->send(new BookOnline($appointment,$bookAppointmentProvider->key));
+            
+            // // Send email to company
+            // if($appointment->company->email)
+            //     Mail::to($appointment->company->email)->send(new BookOnlineForCompany($appointment));
 
             DB::commit();
             return response()->json(['providerKey'=>$key],200);
