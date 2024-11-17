@@ -39,6 +39,7 @@ class InvoiceService
          
          // Send email
          SendCustomerInvoice::dispatch($invoice);
+         // Mail::to($invoice->email)->send(new InvoiceMail($invoice));
 
          DB::commit();
       } catch (\Exception $e) {
