@@ -4,3 +4,4 @@ mysql
 .vscode
 backups
 certbot
+backup.sh
