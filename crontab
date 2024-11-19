@@ -1,1 +1,2 @@
-* * * * * cd /var/www/customers && /bin/bash backup.sh >> /dev/null 2>&1
+0 2 * * * cd /var/www/customers && /bin/bash backup.sh >> /dev/null 2>&1
+* * * * * cd /var/www/customers && docker-compose exec laravel php artisan schedule:run >> /dev/null 2>&1
