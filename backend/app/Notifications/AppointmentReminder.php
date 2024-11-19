@@ -44,7 +44,7 @@ class AppointmentReminder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('edservicetx00@gmail.com', $this->appointment->company->name)
+            ->from('edservicetx@gmail.com', $this->appointment->company->name)
             ->subject('Appointment Reminder')
             ->view('emails.appointment.reminder', [
                 'appointment' => $this->appointment

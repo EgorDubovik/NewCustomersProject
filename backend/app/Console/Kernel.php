@@ -15,8 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('appointment_reminder:send')->hourlyAt(3);
-        // $schedule->command('appointment_reminder:send')->everyMinute();
+        // $schedule->command('appointment_reminder:send')->hourlyAt(3);
+        $schedule->command('appointment_reminder:send')->everyMinute();
     }
 
     /**
