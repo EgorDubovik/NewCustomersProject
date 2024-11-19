@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Job\Job;
 use App\Models\Role;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
 {
@@ -161,7 +162,18 @@ class AppointmentController extends Controller
         $this->authorize('update-remove-appointment', $appointment);
 
         $appointment->techs()->detach();
+        $job = $appointment->job;
         $appointment->delete();
+
+        // Delete job if no appointments
+        if($job->appointments->count() == 0){
+            $job->services()->delete();
+            $job->notes()->delete();
+            $job->expenses()->delete();
+            $job->images()->delete();
+            
+            $job->delete();
+        }
 
         return response()->json(['message' => 'Appointment deleted'], 200);
     }
