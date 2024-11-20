@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DeleteAppointment;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Job\Job;
 use App\Models\Role;
-use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
 {
@@ -161,6 +161,11 @@ class AppointmentController extends Controller
 
         $this->authorize('update-remove-appointment', $appointment);
 
+        // Sending notification to techs that appointment is deleted
+        foreach ($appointment->techs as $tech) {
+            // $tech->notify(new DeleteAppointment($appointment));
+        }
+
         $appointment->techs()->detach();
         $job = $appointment->job;
         $appointment->delete();
@@ -171,7 +176,7 @@ class AppointmentController extends Controller
             $job->notes()->delete();
             $job->expenses()->delete();
             $job->images()->delete();
-            
+
             $job->delete();
         }
 

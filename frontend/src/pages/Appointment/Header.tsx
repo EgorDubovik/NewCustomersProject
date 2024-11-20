@@ -74,6 +74,7 @@ const Header = () => {
 					send_invoice: isSendInvoice,
 				})
 				.then((res) => {
+					console.log(res.data);
 					updatePayments([...(appointment?.job.payments || []), res.data.payment]);
 					setModal(false);
 				})

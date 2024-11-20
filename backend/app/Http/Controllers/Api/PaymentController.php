@@ -89,11 +89,13 @@ class PaymentController extends Controller
       ]);
 
       if ($request->send_invoice) {
-         $invoiceService = new InvoiceService();
-         try {
-            $invoiceService->sendInvoice($job->appointments->first());
-         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+         if($job->customer->email){  
+            $invoiceService = new InvoiceService();
+            try {
+               $invoiceService->sendInvoice($job->appointments->first());
+            } catch (\Exception $e) {
+               return response()->json(['payment' => $payment,'error' => $e->getMessage()], 200);
+            }
          }
       }
 
