@@ -136,3 +136,17 @@ export const alertError =(text:string) =>{
 		padding: '10px 20px',
 	});
 }
+
+export const alertInfo =(text:string) =>{
+	const toast = Swal.mixin({
+		toast: true,
+		position: 'top',
+		showConfirmButton: false,
+		timer: 3000,
+	});
+	toast.fire({
+		icon: 'info',
+		title: text,
+		padding: '10px 20px',
+	});
+}

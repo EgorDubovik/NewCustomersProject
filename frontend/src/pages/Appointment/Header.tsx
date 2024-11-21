@@ -8,7 +8,7 @@ import IconClock from '../../components/Icon/IconClock';
 import { ButtonLoader } from '../../components/loading/ButtonLoader';
 import { useAppointmentContext } from './context/AppointmentContext';
 import { Dialog, Transition } from '@headlessui/react';
-import { viewCurrency, formatDate, manualIsoString } from '../../helpers/helper';
+import { viewCurrency, formatDate, manualIsoString, alertInfo } from '../../helpers/helper';
 import TimePicker from 'edtimepicker';
 
 const Header = () => {
@@ -74,7 +74,9 @@ const Header = () => {
 					send_invoice: isSendInvoice,
 				})
 				.then((res) => {
-					console.log(res.data);
+					if (res.data.info) {
+						alertInfo(res.data.info);
+					}
 					updatePayments([...(appointment?.job.payments || []), res.data.payment]);
 					setModal(false);
 				})

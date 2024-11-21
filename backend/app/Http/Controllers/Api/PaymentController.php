@@ -89,13 +89,13 @@ class PaymentController extends Controller
       ]);
 
       if ($request->send_invoice) {
-         if($job->customer->email){  
+         if(!$job->customer->email)
+            return response()->json(['payment' => $payment,'info' => 'Customer email not found. Invoice was not sent'], 200);
+         try {
             $invoiceService = new InvoiceService();
-            try {
-               $invoiceService->sendInvoice($job->appointments->first());
-            } catch (\Exception $e) {
-               return response()->json(['payment' => $payment,'error' => $e->getMessage()], 200);
-            }
+            $invoiceService->sendInvoice($job->appointments->first());
+         } catch (\Exception $e) {
+            return response()->json(['payment' => $payment,'info' => $e->getMessage()], 200);
          }
       }
 
