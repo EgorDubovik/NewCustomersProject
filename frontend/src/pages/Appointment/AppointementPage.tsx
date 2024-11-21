@@ -13,9 +13,13 @@ import ServicesBlock from './ServicesBlock';
 import { formatDate } from '../../helpers/helper';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import { PageLoadError } from '../../components/loading/Errors';
+import { useSelector } from 'react-redux';
+import { IRootState } from '../../store';
 
 const AppointmentPage = () => {
 	const navigate = useNavigate();
+	const user = useSelector((state: IRootState) => state.themeConfig.user);
+	console.log(user.roles);
 	const [deleteStatus, setDeleteStatus] = useState(false);
 	const { appointment, fetchAppointmentData, loadingStatus } = useAppointmentContext();
    const { id } = useParams();
@@ -116,11 +120,13 @@ const AppointmentPage = () => {
 						</div>
 					</div>
 				</div>
+				{(user.roles.includes(3) || user.roles.includes(1)) && (
 				<div className="text-center mt-6">
 					<div className="text-danger cursor-pointer" onClick={cancelAppointment}>
 						{deleteStatus ? 'Canceling...' : 'Cancel Appointment'}
 					</div>
 				</div>
+				)}
 			</div>
          </>
          )}
