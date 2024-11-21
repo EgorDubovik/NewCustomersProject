@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import axiosClient from '../../store/axiosClient';
 import { viewCurrency } from '../../helpers/helper';
+import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
+import { PageLoadError } from '../../components/loading/Errors';
 
 const Dashboard = () => {
-	const [currentMonth, setCurrentMonth] = useState(0);
+	const [loadingStatus, setLoadingStatus] = useState<string>('loading');
 	const [mainState, setMainState] = useState<any>({
 		currentMonth: 0,
 		currentWeek: 0,
@@ -13,6 +15,7 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		// Load data
+		setLoadingStatus('loading');
 		axiosClient
 			.get('/dashboard')
 			.then((res) => {
@@ -24,15 +27,20 @@ const Dashboard = () => {
                avarage: 0,
             }
 				setMainState(newStat);
+				setLoadingStatus('success');
 			})
 			.catch((err) => {
 				console.log(err);
+				setLoadingStatus('error');
 			});
 	}, []);
 
 	return (
 		<div>
 			<h1>Dashboard</h1>
+			{ loadingStatus === 'loading' && <PageCirclePrimaryLoader /> }
+			{ loadingStatus === 'error' && <PageLoadError /> }
+			{ loadingStatus === 'success' && (
 			<div className="py-4">
 				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 text-white">
 					{/* Total Today */}
@@ -57,6 +65,7 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
+			)}
 		</div>
 	);
 };
