@@ -61,12 +61,17 @@ const Create = () => {
 		axiosClient
 			.get('/invoice/download/' + appointmentId, { responseType: 'blob' })
 			.then((res) => {
+				console.log(res.data);
 				const blob = new Blob([res.data], { type: 'application/pdf' });
 				const url = window.URL.createObjectURL(blob);
 
 				// Open the PDF in a new tab
 				window.open(url, '_blank');
 
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = `Invoice-${appointmentId}.pdf`; // Specify a default file name
+				link.click();
 				// Optional: Revoke the object URL after some time to free up memory
 				setTimeout(() => window.URL.revokeObjectURL(url), 10000);
 			})
