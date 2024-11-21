@@ -104,6 +104,11 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
+        // Job
+        Gate::define('delete-job', function(User $user, Job $job){
+            return $user->company_id === $job->company_id && $user->isRole([Role::ADMIN, Role::DISP]);
+        });
+
         // Appointment
         Gate::define('make-appointment', function(User $user, $customer_id, $address_id){
             $customer = Customer::find($customer_id);
@@ -157,12 +162,7 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
-        // Appointment notes
-        // Gate::define('appointment-store-note',function (User $user, Appointment $appointment){
-        //     if ($user->company_id == $appointment->company_id)
-        //         return true;
-        //     return false;
-        // });
+        
 
         // Appointment srvices
         Gate::define('add-remove-service-from-appointment',function(User $user, Appointment $appointment){

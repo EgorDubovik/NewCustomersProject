@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\ReferalLinksCode;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 
 class CustomersController extends Controller
@@ -26,9 +27,18 @@ class CustomersController extends Controller
 
    public function show(Request $request, $id)
    {
-      $customer = Customer::where('company_id', Auth::user()->company->id)
+      $user = Auth::user() ?? $request->user();
+      $customer = Customer::where('company_id', $user->company->id)
          ->with([
             'address',
+            'jobs'=>function($query) use ($user){
+               $query->with('appointments');
+               if(!$user->isRole([Role::ADMIN, Role::DISP])){
+                  $query->whereHas('appointments.techs', function($q) use ($user){
+                     $q->where('tech_id', $user->id);
+                  });
+               }
+            },
             'jobs.appointments.techs',
             'jobs.services',
             'tags',
@@ -38,15 +48,6 @@ class CustomersController extends Controller
       if (!$customer) {
          return response()->json(['error' => 'Customer not found'], 404);
       }
-
-
-      
-
-      // foreach ($customer->jobs as $job) {
-      //    $job->totalPaid = $job->totalPaid();
-      //    $job->remainingBalance = $job->remainingBalance();
-      //    $job->techs = $job->techs;
-      // }
 
       return response()->json($customer, 200);
    }

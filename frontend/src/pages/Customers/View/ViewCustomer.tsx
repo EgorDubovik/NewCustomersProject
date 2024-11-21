@@ -10,6 +10,8 @@ import { PageLoadError } from '../../../components/loading/Errors';
 import IconCalendar from '../../../components/Icon/IconCalendar';
 import { useViewCustomer } from './useViewCustomer';
 import IconCopy from '../../../components/Icon/IconCopy';
+import IconTrashLines from '../../../components/Icon/IconTrashLines';
+import axiosClient from '../../../store/axiosClient';
 const ViewCustomer = () => {
 	const { customer, loadingStatus } = useViewCustomer();
 
@@ -23,6 +25,19 @@ const ViewCustomer = () => {
 				alertError('Failed to copy phone number');
 			});
 	};
+
+	const removeJob = (jobId: number) => {
+		if (window.confirm('Are you sure you want to remove this job?')) {
+			axiosClient('job/' + jobId, { method: 'DELETE' })
+				.then((res) => {
+					alertSuccsess('Job removed successfully');
+					window.location.reload();
+				})
+				.catch((err) => {
+					alertError('Failed to remove job');
+				});
+		}
+	}
 
 	return (
 		<>
@@ -117,7 +132,7 @@ const ViewCustomer = () => {
 												</div>
 											</Link>
 										) : (
-											<div className="p-2 shadow bg-[#f4f4f4] dark:bg-white-dark/20 rounded border-l-2 mb-3 border-gray-500">
+											<div className="p-2 shadow bg-[#f4f4f4] dark:bg-white-dark/20 rounded border-l-2 mb-3 border-gray-500" key={index}>
 												<div className="px-4 flex items-center justify-between w-full ">
 													<div>
 														<p className="font-bold dark:text-gray-300">{job?.services[0]?.title}</p>
@@ -136,7 +151,7 @@ const ViewCustomer = () => {
 															Create appointment
 														</Link>
 													</div>
-													<div className="">{job.appointments.length} Visits</div>
+													<div className="cursor-pointer text-danger flex" onClick={()=>{removeJob(job.id)}}><IconTrashLines className='mr-2'/>Remove job</div>
 												</div>
 											</div>
 										)
