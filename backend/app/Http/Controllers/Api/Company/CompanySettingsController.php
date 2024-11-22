@@ -9,7 +9,7 @@ use App\Models\CompanySettings\GeneralInfoSettings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
 class CompanySettingsController extends Controller
@@ -42,7 +42,7 @@ class CompanySettingsController extends Controller
         Gate::authorize('edit-company', ['company' => $company]);
 
         $request->validate([
-            'logo' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:2048',
+            'logo' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg|max:2048',
         ]);
 
         $file = $request->file('logo');

@@ -9,7 +9,7 @@ use App\Models\Job\Image;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
 class JobImagesController extends Controller
@@ -20,7 +20,7 @@ class JobImagesController extends Controller
       Log::info('Start uploading photo');
       try{
          $request->validate([
-            'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg,image/heic,image/heif|max:10240',
+            'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg|max:10240',
          ]);      
 
          $appointment = Appointment::find($appointment_id);
