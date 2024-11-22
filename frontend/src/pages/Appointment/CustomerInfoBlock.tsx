@@ -39,7 +39,7 @@ const CustomerInfoBlock = (props: any) => {
 		<div className="panel p-0 pb-4">
 			<div className="flex items-center justify-between p-4">
 				<h3 className="font-semibold text-lg dark:text-white-light">
-					<Link to={'/customer/' + appointment?.customer?.id} className="hover:underline">
+					<Link to={'/customer/' + appointment?.customer?.id} className="hover:underline text-primary">
 						{appointment?.customer?.name}
 					</Link>
 				</h3>

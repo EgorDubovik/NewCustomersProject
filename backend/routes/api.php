@@ -97,7 +97,12 @@ Route::prefix('v1')->group(function () {
         });
 
         // Jobs
-        Route::delete('job/{job_id}', [JobController::class, 'delete']);
+        Route::prefix('job')->group(function () {
+            Route::delete('/{job_id}', [JobController::class, 'delete']);
+            // Job notes
+            Route::post('notes/{jobId}', [JobNotesController::class, 'store']);
+            Route::delete('notes/{noteId}', [JobNotesController::class, 'delete']);
+        });
 
         Route::prefix('appointment')->group(function () {
 
@@ -115,10 +120,6 @@ Route::prefix('v1')->group(function () {
             //Appointment Techs
             Route::delete('tech/{appointment_id}/{tech_id}', [AppointmentController::class, 'removeTech']);
             Route::post('tech/{appointment_id}', [AppointmentController::class, 'addTech']);
-
-            // Job notes
-            Route::post('notes/{jobId}', [JobNotesController::class, 'store']);
-            Route::delete('notes/{noteId}', [JobNotesController::class, 'delete']);
 
             // job services
             Route::post('service/{job_id}', [JobServicesController::class, 'store']);
