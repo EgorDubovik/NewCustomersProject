@@ -14,6 +14,7 @@ class GeneralInfoSettings extends Model
 
     public static $DEFAULT_SETTINGS = [
         'taxRate' => 0,
+        'reviewLink' => '',
     ];
 
     protected $fillable = [

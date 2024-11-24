@@ -35,7 +35,19 @@ export const useCompanyTags = () => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedColor, setSelectedColor] = useState('primary'); // Default color
 
-	const colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark'];
+	// const colors = ['primary', 'success', 'danger', 'warning', 'info', '[#f0f]'];
+	const colors = [
+		'[#4A90E2]', // Soft blue
+		'[#7ED321]', // Lime green
+		'[#D0021B]', // Bright red
+		'[#F8E71C]', // Sun yellow
+		'[#50E3C2]', // Aqua teal
+		'[#D8D8D8]', // Soft gray
+		'[#4A4A4A]', // Charcoal gray
+		'[#9013FE]', // Deep purple
+		'[#FF4081]', // Blush pink
+		'[#00BCD4]', // Cool cyan
+	];
 	const handleColorClick = () => {
 		setIsDropdownOpen(!isDropdownOpen);
 	};
@@ -69,6 +81,7 @@ export const useCompanyTags = () => {
 				.then((res) => {
 					setTags([...tags, res.data]);
 					setNewTagTitle('');
+					setTag({...tag,['title']:''});
 				})
 				.catch((err) => {
 					alert('Something went wrong. Please try again later');

@@ -13,12 +13,12 @@
     <td style="font-size: 16px; color: #666666; line-height: 1.5; padding: 0 20px;">
         <p style="text-align: center;">We'd love to hear your feedback! How was your experience?</p>
         <p style="text-align: center;">
-            <a href="https://g.page/r/CWjtj_kg614sEBM/review" style="text-decoration: none; font-size: 40px;margin-right: 30px;">😃</a>
+            <a href="{{ App\Models\CompanySettings\GeneralInfoSettings::getSettingByKey($invoice->company->id,'reviewLink') }}" style="text-decoration: none; font-size: 40px;margin-right: 30px;">😃</a>
             &nbsp;&nbsp;&nbsp;
-            <a href="{{ env('BOOK_APP_BASE_URL') . '/review-feedback/' . $invoice->key }}"
+            <a href="{{ env('APP_URL') . '/review-feedback/' . $invoice->key }}"
                 style="text-decoration: none; font-size: 40px; margin-right: 30px;">😐</a>
             &nbsp;&nbsp;&nbsp;
-            <a href="{{ env('BOOK_APP_BASE_URL') . '/review-feedback/' . $invoice->key }}"
+            <a href="{{ env('APP_URL') . '/review-feedback/' . $invoice->key }}"
                 style="text-decoration: none; font-size: 40px;">😞</a>
         </p>
     </td>

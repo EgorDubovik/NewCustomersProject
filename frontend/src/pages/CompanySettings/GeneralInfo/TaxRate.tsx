@@ -1,6 +1,5 @@
 import { ButtonLoader } from '../../../components/loading/ButtonLoader';
 import axiosClient from '../../../store/axiosClient';
-import Swal from 'sweetalert2';
 import { useState } from 'react';
 import { alertError, alertSuccsess } from '../../../helpers/helper';
 const TaxRate = (props: any) => {

@@ -35,14 +35,14 @@ const CompanyTags = () => {
 					<div className="mt-4">
 						{tags.map((tag, index: number) => (
 							<div className="inline-flex ml-4 mb-2" key={index}>
-								<button className={`btn btn-sm btn-${tag.color} ltr:rounded-r-none rtl:rounded-l-none`}>
+								<button className={`btn btn-sm bg-${tag.color} rounded-r-none border-none text-white shadow-none`}>
                            {deleteStatus === tag.id ? <SmallDangerLoader /> : tag.title}
                         </button>
-								<div className="dropdown">
+								<div className="dropdown border-none">
                            
 									<Dropdown
 										placement={'bottom-start'}
-										btnClassName={`btn btn-sm dropdown-toggle btn-${tag.color} ltr:rounded-l-none rtl:rounded-r-none before:border-[5px] before:border-l-transparent before:border-r-transparent before:border-t-inherit before:border-b-0 before:inline-block before:border-t-white-light h-full`}
+										btnClassName={`btn btn-sm dropdown-toggle bg-${tag.color} rounded-l-none border-0 before:border-[5px] before:border-l-transparent before:border-r-transparent  before:border-b-0 h-full`}
 										button={<span className="sr-only">Toggle dropdown</span>}
 									>
 										<ul className="!min-w-[170px]">

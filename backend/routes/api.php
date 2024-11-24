@@ -147,7 +147,7 @@ Route::prefix('v1')->group(function () {
       });
 
       // Invoices
-      Route::prefix(prefix: 'invoice')->group(function () {
+      Route::prefix('invoice')->group(function () {
          Route::get('/', [InvoiceController::class, 'index']);
          Route::get('/{id}', [InvoiceController::class, 'show']);
          Route::get('/download/{appointment_id}', [InvoiceController::class, 'download']);

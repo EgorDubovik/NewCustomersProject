@@ -5,7 +5,7 @@ import TaxRate from './TaxRate';
 import CompanyLogo from './CompanyLogo';
 import CompanyInfo from './CompanyInfo';
 import useFetchData from '../../../hooks/useFetchData';
-import DepositSettings from './DepositSettings';
+import DepositSettings from './ReviewLink';
 
 const CompanyGeneralInfo = () => {
 	const [companySettings, setCompanySettings] = useState<any>({});
