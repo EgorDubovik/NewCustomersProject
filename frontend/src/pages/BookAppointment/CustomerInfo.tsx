@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { CustomerContext } from './CustomerContext';
 import { useNavigate } from 'react-router-dom';
-import env from '../../store/env';
 import { CustomerContextType, CustomerInfoType } from './@types';
 import { alertError } from '../../helpers/helper';
 

@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react';
-import env from '../../store/env';
 import { useParams } from 'react-router-dom';
 import { CustomerContext } from './CustomerContext';
 import { CustomerContextType } from './@types';
@@ -14,7 +13,6 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { SinglePageErrorLoading, SinglePageLoading } from '../../components/loading/Loadings';
 
 const BookAppointment = () => {
-
 	const dispatch = useDispatch();
 	useEffect(() => {
 		console.log('BookAppointment');
@@ -41,8 +39,7 @@ const BookAppointment = () => {
 				updateKey(paramKey);
 				setServices(data.company.services);
 				setCompanyInfo(data.company);
-				if(data.company.workingTime !== null)
-				   setWorkingTime(JSON.parse(data.company.workingTime));
+				if (data.company.workingTime !== null) setWorkingTime(JSON.parse(data.company.workingTime));
 			})
 			.catch((error) => {
 				console.error('Error:', error);
@@ -51,7 +48,7 @@ const BookAppointment = () => {
 	}, []);
 	return (
 		<div className="App h-full">
-			{loadingStatus === 'loading' && <SinglePageLoading/>}
+			{loadingStatus === 'loading' && <SinglePageLoading />}
 			{loadingStatus === 'error' && <SinglePageErrorLoading />}
 			{loadingStatus === 'notActive' && <NotActive phone={phone} />}
 			{loadingStatus === 'success' && (
