@@ -56,7 +56,7 @@
                             @if(Auth::check())
                             <div class="dropdown d-flex profile-1">
                                 <a href="javascript:void(0)" data-bs-toggle="dropdown" class="nav-link leading-none d-flex">
-                                    <div class="user_circule" style="background: {{ Auth::user()->color; }}"></div>
+                                    <div class="user_circule" style="background: {{ Auth::user()->color }}"></div>
                                     {{-- <img src="{{ URL::asset('assets/images/users/21.jpg')}}" alt="profile-user"
                                          class="avatar  profile-user brround cover-image"> --}}
                                 </a>

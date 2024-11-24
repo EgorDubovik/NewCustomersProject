@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     // <React.StrictMode>
         <Suspense>
             <Provider store={store}>
-                <AuthProvider 
+                <AuthProvider
                     authType = {'cookie'}
                     authName = {'_auth'}
                     cookieSecure = {false}>
