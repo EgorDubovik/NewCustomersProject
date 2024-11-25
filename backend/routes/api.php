@@ -21,7 +21,7 @@ use App\Http\Controllers\Api\StorageItemsController;
 use App\Http\Controllers\Api\Company\CompanyTagController;
 use App\Http\Controllers\Api\Company\CompanySettingsController;
 use App\Http\Controllers\Api\Job\JobController;
-
+   
 /*
 |--------------------------------------------------------------------------
 | API Routes

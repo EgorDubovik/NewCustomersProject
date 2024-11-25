@@ -17,22 +17,9 @@ class ReviewFeedbackController extends Controller
         
         if(!$invoice)
             return response()->json(['error' => 'Invoice not found'], 404);
-        $invoice->company->logo = env('AWS_FILE_ACCESS_URL').$invoice->company->logo;
-        $invoice->appointment->load('customer','services','payments', 'company');
-        foreach($invoice->appointment->payments as $payment){
-            $payment->payment_type = Payment::TYPE[$payment->payment_type - 1] ?? 'undefined';
-        }
-
-        $invoice->pdf_path = env('AWS_FILE_ACCESS_URL').'invoices/'.$invoice->pdf_path;
-        $tax  = 0;
-        $total = 0;
-        foreach($invoice->appointment->services as $service){
-            $total += $service->price;
-            if($service->taxable)
-                $tax += $service->price * ($invoice->company->settings->tax/100);
-        }
-        $invoice->appointment->tax = $tax;
-        $invoice->appointment->total = $total+$tax;
+        
+        $invoice->load('job.customer','company');
+        
         $invoice->review = CustomerReview::where('invoice_id', $invoice->id)->first();
         return response()->json(['invoice'=>$invoice], 200);   
     }
@@ -52,9 +39,9 @@ class ReviewFeedbackController extends Controller
         ],
         [
             'invoice_id' => $invoice->id,
-            'customer_id' => $invoice->customer_id,
+            'customer_id' => $invoice->job->customer->id,
             'company_id' => $invoice->company_id,
-            'tech_id' => $invoice->appointment->techs->first()->id,
+            'tech_id' => $invoice->job->appointments->first()->techs->first()->id,
             'rating' => $request->rating,
             'feedback' => $request->feedback,
         ]);
