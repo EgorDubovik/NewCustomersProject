@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import IconStar from '../../components/Icon/IconStar';
 import axiosClient from '../../store/axiosClient';
 import { SinglePageErrorLoading, SinglePageLoading } from '../../components/loading/Loadings';
-import { formatDate, viewCurrency } from '../../helpers/helper';
+import { alertError, formatDate, viewCurrency } from '../../helpers/helper';
 import IconDownload from '../../components/Icon/IconDownload';
 
 export default function ReviewFeedback(props: any) {
@@ -47,6 +47,7 @@ export default function ReviewFeedback(props: any) {
 				setRating(0);
 			})
 			.catch((error) => {
+				alertError('Something went wrong! Please try again.');
 				console.error('Error:', error);
 			})
 			.finally(() => {

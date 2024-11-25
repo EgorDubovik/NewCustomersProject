@@ -16,7 +16,7 @@ const ServicesList = (props: any) => {
 	const isEditble = props.isEditble;
 	const [loadingRemove, setLoadingRemove] = useState(0);
 	const loadingStatus = props.loadingStatus || false;
-	const { services, onRemoveService, onSaveService, onUpdateService, modal, setModal } = props;
+	const { services, payments, onRemoveService, onSaveService, onUpdateService, modal, setModal } = props;
 	const taxRate = useSelector((state: any) => state.themeConfig.companyInfo.taxRate);
 	const { tax, total } = calculateTaxAndTotal(services, taxRate);
 	const [companyServices, setCompanyServices] = useState([]);
@@ -84,25 +84,35 @@ const ServicesList = (props: any) => {
 			});
 	}, []);
 
+	//Copy services price to clipboard to share with customer
+	const copyServicesPrice = () => {
+		let total = 0;
+		let servicesPrice = services
+			.map((service: any) => {
+				const service_tax = service.taxable ? (service.price * taxRate) / 100 : 0;
+				const subTotal = parseFloat(service.price) + service_tax;
+				total += subTotal;
+				return `${service.title}: ${viewCurrency(service.price)} + ${viewCurrency(service_tax)} (tax) = ${viewCurrency(subTotal)}`;
+			})
+			.join('\n');
+		servicesPrice += `\n\nTotal: ${viewCurrency(total)}`;
 
-   //Copy services price to clipboard to share with customer
-   const copyServicesPrice = () => {
-      let total = 0;
-      let servicesPrice = services.map((service:any) => {
-         const service_tax = service.taxable ? service.price * taxRate / 100 : 0;
-         const subTotal = parseFloat(service.price) + service_tax;
-         total += subTotal;
-         return `${service.title}: ${viewCurrency(service.price)} + ${viewCurrency(service_tax)} (tax) = ${viewCurrency(subTotal)}`;
-      }).join('\n');
-      servicesPrice += `\n\nTotal: ${viewCurrency(total)}`;
-      navigator.clipboard.writeText(servicesPrice)
-      .then(() => {
-         alertSuccsess('Services price copied to clipboard');
-      })
-      .catch((err) => {
-         console.log(err);
-      });
-   }
+		let totalPaid = payments.reduce((acc: any, payment: any) => acc + parseFloat(payment.amount), 0);
+
+		if (totalPaid > 0) {
+			servicesPrice += `\nTotal Paid: ${viewCurrency(totalPaid)}`;
+			servicesPrice += `\n\nBalance: ${viewCurrency(total - totalPaid)}`;
+		}
+
+		navigator.clipboard
+			.writeText(servicesPrice)
+			.then(() => {
+				alertSuccsess('Services price copied to clipboard');
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
 
 	return (
 		<>
@@ -129,7 +139,7 @@ const ServicesList = (props: any) => {
 										{loadingRemove === service.id ? (
 											<SmallDangerLoader />
 										) : (
-											<button onClick={() => handleRemoveService(service.id)} type="button" className='hover:text-danger'>
+											<button onClick={() => handleRemoveService(service.id)} type="button" className="hover:text-danger">
 												<IconTrashLines />
 											</button>
 										)}
@@ -166,7 +176,7 @@ const ServicesList = (props: any) => {
 					</span>
 				</div>
 				<span className="flex cursor-pointer ml-auto" onClick={copyServicesPrice}>
-					<IconCopy className='hover:text-primary'/>
+					<IconCopy className="hover:text-primary" />
 				</span>
 			</div>
 			{/* <div className='flex justify-center mt-4'>
