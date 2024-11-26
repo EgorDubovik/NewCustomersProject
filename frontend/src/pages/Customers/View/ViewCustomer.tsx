@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import IconPencilPaper from '../../../components/Icon/IconPencilPaper';
 import IconMapPin from '../../../components/Icon/IconMapPin';
@@ -14,7 +15,7 @@ import IconTrashLines from '../../../components/Icon/IconTrashLines';
 import axiosClient from '../../../store/axiosClient';
 const ViewCustomer = () => {
 	const { customer, loadingStatus } = useViewCustomer();
-
+	const [limitViewJobs, setLimitViewJobs] = useState(3);
 	const copyPhone = (phone: string) => {
 		navigator.clipboard
 			.writeText(phone)
@@ -37,7 +38,7 @@ const ViewCustomer = () => {
 					alertError('Failed to remove job');
 				});
 		}
-	}
+	};
 
 	return (
 		<>
@@ -95,14 +96,14 @@ const ViewCustomer = () => {
 						<div className="grid grid-flow-row gap-3">
 							<div className="panel p-4">
 								<div className="flex items-center justify-between">
-									<h3 className="font-semibold text-lg dark:text-white-light">Jobs history</h3>
+									<h3 className="font-semibold text-lg dark:text-white-light">Jobs history ({customer.jobs.length})</h3>
 									<Link to={`/appointment/create/${customer.id}`} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 										<IconPlus className="w-4 h-4" />
 									</Link>
 								</div>
 
 								<div className="appointments-list py-4">
-									{customer?.jobs?.map((job: any, index: number) =>
+									{customer?.jobs?.slice(-limitViewJobs).map((job: any, index: number) =>
 										job.appointments.length > 0 ? (
 											<Link to={`/appointment/${job.appointments[job.appointments.length - 1].id}`} key={index}>
 												<div
@@ -151,10 +152,38 @@ const ViewCustomer = () => {
 															Create appointment
 														</Link>
 													</div>
-													<div className="cursor-pointer text-danger flex" onClick={()=>{removeJob(job.id)}}><IconTrashLines className='mr-2'/>Remove job</div>
+													<div
+														className="cursor-pointer text-danger flex"
+														onClick={() => {
+															removeJob(job.id);
+														}}
+													>
+														<IconTrashLines className="mr-2" />
+														Remove job
+													</div>
 												</div>
 											</div>
 										)
+									)}
+									{customer?.jobs?.length > limitViewJobs && (
+										<div className="border-t border-white-light dark:border-white/10">
+											<div
+												onClick={() => {
+													setLimitViewJobs(customer.jobs.length);
+												}}
+												className="cursor-pointer group group flex items-center justify-center p-4 font-semibold hover:text-primary"
+											>
+												View All {customer.jobs.length} Jobs
+												<svg
+													className="h-4 w-4 transition duration-300 group-hover:translate-x-1 ltr:ml-1 rtl:mr-1 rtl:rotate-180 rtl:group-hover:-translate-x-1"
+													viewBox="0 0 24 24"
+													fill="none"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+												</svg>
+											</div>
+										</div>
 									)}
 								</div>
 							</div>
