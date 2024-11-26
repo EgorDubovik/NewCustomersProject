@@ -15,11 +15,10 @@ class ProfileController extends Controller
         $user->rolesArray = $user->roles->pluck('role');
         $companySettings = GeneralInfoSettings::getSettingsForCompany($user->company_id);
 
-
         // get sotreage items count if acrual less then expected
-
         $sideBarNotifications = [
             'storage' => StorageItemsController::getCountOfExpectedStorageItems($user->id),
+            'schedule' => 0 //count(AppointmentController::getActiveAppointments($user->id)),
         ];
         return response()->json(['user' => $user, 'companySettings' => $companySettings, 'sideBarNotifications' => $sideBarNotifications], 200);
     }

@@ -45,6 +45,7 @@ const initialState = {
 
 	sideBarNotifications: {
 		storage: 0,
+		schedule: 0,
 	},
 };
 

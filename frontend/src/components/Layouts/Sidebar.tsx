@@ -88,9 +88,14 @@ const Sidebar = () => {
 									</div>
 								</NavLink>
 								<NavLink to="/schedule" className="group">
-									<div className="flex items-center">
-										<IconMenuCalendar className="group-hover:!text-primary shrink-0" />
-										<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Schedule</span>
+									<div className="flex items-center justify-between w-full">
+										<div className="flex items-center">
+											<IconMenuCalendar className="group-hover:!text-primary shrink-0" />
+											<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Schedule</span>
+										</div>
+										{sideBarNotifications.schedule > 0 && (
+											<div className="flex items-center justify-center w-5 h-5 bg-red-500 text-white text-xs rounded-full">{sideBarNotifications.schedule}</div>
+										)}
 									</div>
 								</NavLink>
 								<NavLink to="/customers" className="group">

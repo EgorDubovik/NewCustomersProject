@@ -24,7 +24,7 @@ class AppointmentController extends Controller
 						$query->where('tech_id', $request->user()->id);
 					});
 				}
-				
+
 			})
 			->get();
 
@@ -261,5 +261,18 @@ class AppointmentController extends Controller
 		if (!$appointment)
 			return response()->json(['error' => 'Appointment not found'], 404);
 		return $appointment;
+	}
+
+	// return active appointments for user
+	public static function getActiveAppointments($user_id)
+	{
+		$appointments = Appointment::where('status', Appointment::ACTIVE)
+			->whereHas('techs', function ($query) use ($user_id) {
+				$query->where('tech_id', $user_id);
+			})
+			->get();
+
+		return $appointments;
+
 	}
 }
