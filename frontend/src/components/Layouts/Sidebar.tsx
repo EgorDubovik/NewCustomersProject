@@ -21,6 +21,7 @@ const Sidebar = () => {
 	const themeConfig = useSelector((state: IRootState) => state.themeConfig);
 	const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
 	const user = useSelector((state: IRootState) => state.themeConfig.user);
+	const sideBarNotifications = useSelector((state: IRootState) => state.themeConfig.sideBarNotifications);
 	const location = useLocation();
 	const dispatch = useDispatch();
 	const toggleMenu = (value: string) => {
@@ -116,12 +117,26 @@ const Sidebar = () => {
 										<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Employees</span>
 									</div>
 								</NavLink>
+
 								<NavLink to="/storage" className="group">
+									<div className="flex items-center justify-between w-full">
+										<div className="flex items-center">
+											<IconMenuForms className="group-hover:!text-primary shrink-0" />
+											<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Storage</span>
+										</div>
+										{/* Storage notification */}
+										{sideBarNotifications.storage > 0 && (
+											<div className="flex items-center justify-center w-5 h-5 bg-red-500 text-white text-xs rounded-full">{sideBarNotifications.storage}</div>
+										)}
+									</div>
+								</NavLink>
+								{/* <NavLink to="/storage" className="group">
 									<div className="flex items-center">
 										<IconMenuForms className="group-hover:!text-primary shrink-0" />
 										<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Storage</span>
+										
 									</div>
-								</NavLink>
+								</NavLink> */}
 
 								{user.isAdmin && (
 									<>

@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\StorageItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class StorageItemsController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'title' => 'required',
             'quantity' => 'required',
@@ -18,29 +21,32 @@ class StorageItemsController extends Controller
 
 
         $storageItem = StorageItems::updateOrCreate(
-        [
-            'title' => $request->title,
-        ],
-        [
-            'title' => $request->title,
-            'quantity' => $request->quantity,
-            'expexted_quantity' => $request->expexted_quantity,
-            'company_id' => Auth::user()->company_id,
-            'user_id' => Auth::user()->id
-        ]);
+            [
+                'title' => $request->title,
+            ],
+            [
+                'title' => $request->title,
+                'quantity' => $request->quantity,
+                'expexted_quantity' => $request->expexted_quantity,
+                'company_id' => Auth::user()->company_id,
+                'user_id' => Auth::user()->id
+            ]
+        );
 
         return response()->json(['storageItem' => $storageItem], 200);
     }
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $storageItems = StorageItems::where('user_id', Auth::user()->id)
             ->orderBy('created_at', 'DESC')
             ->get();
 
-        return response()->json(['storageItems' => $storageItems,'user_id'=>Auth::user()->id], 200);
+        return response()->json(['storageItems' => $storageItems, 'user_id' => Auth::user()->id], 200);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'title' => 'required',
             'quantity' => 'required',
@@ -48,7 +54,7 @@ class StorageItemsController extends Controller
         ]);
 
         $storageItem = StorageItems::find($id);
-        if(!$storageItem)
+        if (!$storageItem)
             return response()->json(['error' => 'Storage item not found'], 404);
 
         $this->authorize('update-storage', $storageItem);
@@ -61,9 +67,10 @@ class StorageItemsController extends Controller
         return response()->json(['storageItem' => $storageItem], 200);
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $storageItem = StorageItems::find($id);
-        if(!$storageItem)
+        if (!$storageItem)
             return response()->json(['error' => 'Storage item not found'], 404);
 
         $this->authorize('update-storage', $storageItem);
@@ -71,5 +78,13 @@ class StorageItemsController extends Controller
         $storageItem->delete();
 
         return response()->json(['message' => 'Storage item deleted'], 200);
+    }
+
+    public static function getCountOfExpectedStorageItems($user_id)
+    {
+        $storageItems = StorageItems::where('user_id', $user_id)
+            ->whereColumn('quantity', '<', 'expexted_quantity')
+            ->count();
+        return $storageItems;
     }
 }
