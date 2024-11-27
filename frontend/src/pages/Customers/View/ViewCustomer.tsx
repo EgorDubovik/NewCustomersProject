@@ -93,7 +93,7 @@ const ViewCustomer = () => {
 								</div>
 							</div>
 						</div>
-						<div className="grid grid-flow-row gap-3">
+						<div className="grid grid-cols-1 gap-3">
 							<div className="panel p-4">
 								<div className="flex items-center justify-between">
 									<h3 className="font-semibold text-lg dark:text-white-light">Jobs history ({customer.jobs.length})</h3>
@@ -112,16 +112,14 @@ const ViewCustomer = () => {
 														borderColor: job.appointments[job.appointments.length - 1].techs.length > 0 ? job.appointments[job.appointments.length - 1].techs[0].color : '#1565c0',
 													}}
 												>
-													<div className="px-4 flex items-center justify-between w-full ">
-														<div>
+													<div className="px-4 flex items-center justify-between">
+														<div className="min-w-0 flex-1">
 															<p className="font-bold dark:text-gray-300">{job?.services[0]?.title}</p>
-															<p className="w-full max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">{job?.services[0]?.description}</p>
+															<p className="whitespace-nowrap overflow-hidden text-ellipsis">{job?.services[0]?.description}</p>
 														</div>
-														{job.remaining_balance > 0 ? (
-															<div className="text-danger text-center text-[12px]">{viewCurrency(job.remaining_balance)}</div>
-														) : (
-															<div className="text-success text-center text-[12px]">{viewCurrency(job.total_paid)}</div>
-														)}
+														<div className={`text-${job.remaining_balance > 0 ? 'danger' : 'success'} text-center text-[12px]`}>
+															{viewCurrency(job.remaining_balance > 0 ? job.remaining_balance : job.total_paid)}
+														</div>
 													</div>
 													<div className="flex items-center justify-between px-4 mt-2">
 														<div className="flex items-center">
