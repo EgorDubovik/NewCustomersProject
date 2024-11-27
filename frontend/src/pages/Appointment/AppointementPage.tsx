@@ -22,7 +22,7 @@ const AppointmentPage = () => {
 	console.log(user.roles);
 	const [deleteStatus, setDeleteStatus] = useState(false);
 	const { appointment, fetchAppointmentData, loadingStatus } = useAppointmentContext();
-   const { id } = useParams();
+	const { id } = useParams();
 	const cancelAppointment = () => {
 		if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
 		if (deleteStatus) return;
@@ -43,93 +43,97 @@ const AppointmentPage = () => {
 			});
 	};
 
-   useEffect(() => {
-      fetchAppointmentData(parseInt(id || '0'));
-   }, [id]);
+	useEffect(() => {
+		fetchAppointmentData(parseInt(id || '0'));
+	}, [id]);
 
 	return (
 		<>
-         {loadingStatus === 'loading' && (
-				<PageCirclePrimaryLoader />
-			)}
-			{loadingStatus === 'error' && <PageLoadError /> }
-			
+			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
+			{loadingStatus === 'error' && <PageLoadError />}
+
 			{loadingStatus === 'success' && (
-            <>
-			<Header />
-			<div className="py-4">
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-					<div className="grid grid-rows-none gap-5">
-						<div className="panel p-4">
-							<CalendarBlock />
-						</div>
-						<div className="panel p-4">
-							<h3 className="font-semibold text-lg dark:text-white-light">All Visits</h3>
-							<div className="text-right mt-2">
-								{appointment?.job.appointments.map((jappointment: any, index: number) => (
-									<div key={index} className="mb-2 last:mb-0">
-										<Link  to={`/appointment/${jappointment.id}`}>
-											<div
-												className={`rounded-md p-2 ${appointment.id === jappointment.id ? 'dark:bg-gray-800 dark:shadow-gray-600 bg-gray-200 shadow-gray-500 shadow-sm text-primary' : 'dark:bg-dark-dark-light bg-gray-100'}   border-l-2`}
-												style={{ borderColor: jappointment.techs?.length > 0 ? jappointment.techs[jappointment.techs.length - 1].color : '#1565C0' }}
-											>
-												<div className="text-sm font-semibold flex justify-between">
-                                       <div>{formatDate(jappointment.start, 'MMM DD, YYYY')}</div>
-													<div>{formatDate(jappointment.start, 'hh:mm A')} - {formatDate(jappointment.end, 'hh:mm A')}</div>
-												</div>
+				<>
+					<Header />
+					<div className="py-4">
+						<div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+							<div className="grid grid-rows-none gap-5">
+								<div className="panel p-4">
+									<CalendarBlock />
+								</div>
+								<div className="panel p-4">
+									<h3 className="font-semibold text-lg dark:text-white-light">All Visits</h3>
+									<div className="text-right mt-2">
+										{appointment?.job.appointments.map((jappointment: any, index: number) => (
+											<div key={index} className="mb-2 last:mb-0">
+												<Link to={`/appointment/${jappointment.id}`}>
+													<div
+														className={`rounded-md p-2 ${
+															appointment.id === jappointment.id
+																? 'dark:bg-gray-800 dark:shadow-gray-600 bg-gray-200 shadow-gray-500 shadow-sm text-primary'
+																: 'dark:bg-dark-dark-light bg-gray-100'
+														}   border-l-2`}
+														style={{ borderColor: jappointment.techs?.length > 0 ? jappointment.techs[jappointment.techs.length - 1].color : '#1565C0' }}
+													>
+														<div className="text-sm font-semibold flex justify-between">
+															<div>{formatDate(jappointment.start, 'MMM DD, YYYY')}</div>
+															<div>
+																{formatDate(jappointment.start, 'hh:mm A')} - {formatDate(jappointment.end, 'hh:mm A')}
+															</div>
+														</div>
+													</div>
+												</Link>
 											</div>
-										</Link>
+										))}
 									</div>
-								))}
+								</div>
+							</div>
+							<div className="md:col-span-3 grid grid-cols-1 xl:grid-cols-2 gap-5">
+								<div className="grid grid-cols-1 gap-5">
+									{/* Customer infor */}
+									<CustomerInfoBlock />
+									{/* Tech for web*/}
+									<div className="panel p-4 hidden md:block">
+										<TechBlock />
+									</div>
+									{/* Images for web*/}
+									<div className="panel p-0 hidden md:block">
+										<Images appointmentId={appointment?.id} />
+									</div>
+								</div>
+
+								<div className="grid grid-flow-row gap-5">
+									{/* Services */}
+									<ServicesBlock />
+
+									{/* Costs */}
+									<Expense />
+
+									{/* Notes */}
+									<NotesBlock />
+
+									{/* Tech for mobile */}
+									<div className="panel p-4 block md:hidden">
+										<TechBlock />
+									</div>
+
+									{/* Images for mobile*/}
+									<div className="panel p-0 block md:hidden">
+										<Images appointmentId={appointment?.id} />
+									</div>
+								</div>
 							</div>
 						</div>
+						{(user.roles.includes(3) || user.roles.includes(1)) && (
+							<div className="text-center mt-6">
+								<div className="text-danger cursor-pointer" onClick={cancelAppointment}>
+									{deleteStatus ? 'Canceling...' : 'Cancel Appointment'}
+								</div>
+							</div>
+						)}
 					</div>
-					<div className="md:col-span-3 grid grid-cols-1 xl:grid-cols-2 gap-5">
-						<div className="grid grid-flow-row gap-5">
-							{/* Customer infor */}
-							<CustomerInfoBlock />
-							{/* Tech for web*/}
-							<div className="panel p-4 hidden md:block">
-								<TechBlock />
-							</div>
-							{/* Images for web*/}
-							<div className="panel p-0 hidden md:block">
-								<Images appointmentId={appointment?.id} />
-							</div>
-						</div>
-
-						<div className="grid grid-flow-row gap-5">
-							{/* Services */}
-							<ServicesBlock />
-
-							{/* Costs */}
-							<Expense />
-
-							{/* Notes */}
-							<NotesBlock />
-
-							{/* Tech for mobile */}
-							<div className="panel p-4 block md:hidden">
-								<TechBlock />
-							</div>
-
-							{/* Images for mobile*/}
-							<div className="panel p-0 block md:hidden">
-								<Images appointmentId={appointment?.id} />
-							</div>
-						</div>
-					</div>
-				</div>
-				{(user.roles.includes(3) || user.roles.includes(1)) && (
-				<div className="text-center mt-6">
-					<div className="text-danger cursor-pointer" onClick={cancelAppointment}>
-						{deleteStatus ? 'Canceling...' : 'Cancel Appointment'}
-					</div>
-				</div>
-				)}
-			</div>
-         </>
-         )}
+				</>
+			)}
 		</>
 	);
 };
