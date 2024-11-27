@@ -102,7 +102,7 @@ const AppointmentPage = () => {
 									</div>
 								</div>
 
-								<div className="grid grid-flow-row gap-5">
+								<div className="grid grid-cols-1 gap-5">
 									{/* Services */}
 									<ServicesBlock />
 
