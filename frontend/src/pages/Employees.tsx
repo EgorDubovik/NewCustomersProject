@@ -92,12 +92,17 @@ const Employees = () => {
 	}, [search, employees]);
 
 	const chooseRole = (role: number) => {
+		if (rolesTitle[role] === 'Admin') {
+			if (dataForm.id == user.id) {
+				alertError('You can not change your Admin role');
+				return;
+			}
+		}
 		if (dataForm.rolesArray.includes(role)) {
 			setDataForm({ ...dataForm, rolesArray: dataForm.rolesArray.filter((r: number) => r !== role) });
 		} else {
 			setDataForm({ ...dataForm, rolesArray: [...dataForm.rolesArray, role] });
 		}
-		console.log(rolesForm);
 	};
 
 	const editEmployee = (employee: any = null) => {
@@ -115,7 +120,8 @@ const Employees = () => {
 					setEmployees(
 						employees.map((employee) => {
 							if (employee.id === dataForm.id) {
-								return dataForm;
+								// return dataForm;
+								return res.data.employee;
 							}
 							return employee;
 						})
