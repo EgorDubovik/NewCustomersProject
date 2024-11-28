@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CompanySettings\GeneralInfoSettings;
+use App\Models\CompanySettings\CompanyTag;
 
 class Company extends Model
 {
@@ -35,8 +36,6 @@ class Company extends Model
         );
     }
 
-
-
     public function services()
     {
         return $this->hasMany(Service::class);
@@ -64,9 +63,14 @@ class Company extends Model
 
     private function getFullAddress()
     {
-        if(!$this->address){
+        if (!$this->address) {
             return '';
         }
         return $this->address->line1 . ' ' . $this->address->line2 . ', ' . $this->address->city . ' ' . $this->address->state . ' ' . $this->address->zip;
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(CompanyTag::class);
     }
 }

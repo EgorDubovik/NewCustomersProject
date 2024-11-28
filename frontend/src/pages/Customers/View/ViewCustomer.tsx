@@ -40,6 +40,8 @@ const ViewCustomer = () => {
 		}
 	};
 
+	const openCompanyTags = () => {};
+
 	return (
 		<>
 			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
@@ -186,7 +188,12 @@ const ViewCustomer = () => {
 								</div>
 							</div>
 							<div className="panel">
-								<h3 className="font-semibold text-lg dark:text-white-light">Tags</h3>
+								<div className="flex items-center justify-between">
+									<h3 className="font-semibold text-lg dark:text-white-light">Tags</h3>
+									<button className="btn btn-primary p-2 rounded-full" onClick={openCompanyTags}>
+										<IconPlus className="w-4 h-4" />
+									</button>
+								</div>
 								<div className="teags-list">
 									{customer?.tags?.map((tag: any, index: number) => (
 										<div key={index} className="tag-item">

@@ -23,6 +23,7 @@ const ServicesList = (props: any) => {
 	const [isEditMode, setIsEditMode] = useState(false);
 	const priceRef = useRef(null);
 	const isTaxble = localStorage.getItem('isTaxable') === 'true' ? true : false;
+	console.log('isTaxble:', isTaxble);
 	const [serviceForm, setServiceForm] = useState<IService>({
 		id: 0,
 		title: '',
@@ -43,8 +44,9 @@ const ServicesList = (props: any) => {
 	};
 	const serviceFormChangeHandler = (e: any) => {
 		if (e.target.name === 'price' && isNaN(e.target.value) && e.target.value !== '-') return;
-		if (e.target.name === 'taxable') setServiceForm({ ...serviceForm, [e.target.name]: e.target.checked });
-		else setServiceForm({ ...serviceForm, [e.target.name]: e.target.value });
+		if (e.target.name === 'taxable') {
+			setServiceForm({ ...serviceForm, [e.target.name]: e.target.checked });
+		} else setServiceForm({ ...serviceForm, [e.target.name]: e.target.value });
 	};
 
 	const handleSaveService = () => {

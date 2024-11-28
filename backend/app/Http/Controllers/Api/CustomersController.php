@@ -31,10 +31,10 @@ class CustomersController extends Controller
       $customer = Customer::where('company_id', $user->company->id)
          ->with([
             'address',
-            'jobs'=>function($query) use ($user){
+            'jobs' => function ($query) use ($user) {
                $query->with('appointments');
-               if(!$user->isRole([Role::ADMIN, Role::DISP])){
-                  $query->whereHas('appointments.techs', function($q) use ($user){
+               if (!$user->isRole([Role::ADMIN, Role::DISP])) {
+                  $query->whereHas('appointments.techs', function ($q) use ($user) {
                      $q->where('tech_id', $user->id);
                   });
                }
@@ -45,11 +45,13 @@ class CustomersController extends Controller
          ])
          ->find($id);
 
+      $comapnyTags = Auth::user()->company->tags ?? [];
+
       if (!$customer) {
          return response()->json(['error' => 'Customer not found'], 404);
       }
 
-      return response()->json($customer, 200);
+      return response()->json(['customer' => $customer, 'companyTags' => $comapnyTags], 200);
    }
 
    public function store(Request $request)

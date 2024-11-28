@@ -20,6 +20,7 @@ class ProfileController extends Controller
             'storage' => StorageItemsController::getCountOfExpectedStorageItems($user->id),
             'schedule' => 0 //count(AppointmentController::getActiveAppointments($user->id)),
         ];
+        // get company tags
         return response()->json(['user' => $user, 'companySettings' => $companySettings, 'sideBarNotifications' => $sideBarNotifications], 200);
     }
 
