@@ -23,6 +23,7 @@ const NotesBlock = () => {
 		const rowCount = (event.target.value.match(/\n/g) || []).length + 1;
 		rowCount > 4 ? (event.target.rows = 4) : (event.target.rows = rowCount);
 	};
+
 	const handleScroll = (event: any) => {
 		event.stopPropagation();
 	};
@@ -72,7 +73,7 @@ const NotesBlock = () => {
 			<h3 className="font-semibold text-lg dark:text-white-light">Notes</h3>
 			<PerfectScrollbar onWheel={handleScroll} className="pb-10 max-h-[260px] scrollbar-container">
 				<ul className="mt-2">
-					{notes?.map((note: any, index: number) => (
+					{notes?.map((note, index: number) => (
 						<li key={index} className="flex justify-between items-center mb-2 border-b dark:border-gray-800 pb-2">
 							<div className="">
 								<div className="creator dark:text-gray-600 text-gray-400">
@@ -94,43 +95,6 @@ const NotesBlock = () => {
 						</li>
 					))}
 				</ul>
-				{/* <div className="table-responsive text-[#515365] dark:text-white-light font-semibold"> */}
-				{/* <table className="whitespace-nowrap">
-                  <tbody className="dark:text-white">
-                     {notes?.length === 0 
-                        && 
-                        <tr><td><div className='text-center dark:text-gray-700 text-gray-400 mt-4'>Create first note...</div></td></tr> }
-                     {
-                        
-                        notes?.map((note:any, index:number) => (
-                           <tr key={index}>
-                              <td>
-                                 <div className='creator dark:text-gray-600 text-gray-400'>
-                                    {note.creator?.name} ({new Date(note.updated_at).toLocaleString('en-US',{month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'})})
-                                 </div>
-                                 <div className='note mt-1 ml-3 dark:text-gray-300 text-gray-500'  dangerouslySetInnerHTML={{ __html: note.text.replace(/\n/g, '<br>') }}>
-                                    
-                                 </div>
-                              </td> 
-                              <td className="p-3 border-b border-[#ebedf2] dark:border-[#191e3a] text-right">
-                                 <div className='text-right'>
-                                    {
-                                       loadingRemoveNote === note.id ? <SmallDangerLoader />
-                                       :
-                                       note.creator.id === userInformation.id &&
-                                       <button onClick={()=>handleRemoveNote(note.id)} type="button" className='ml-4'>
-                                          <IconTrashLines />
-                                       </button>
-                                    }
-                                    
-                                 </div>
-                              </td>
-                           </tr>
-                        ))
-                     }
-                  </tbody>
-               </table> */}
-				{/* </div> */}
 			</PerfectScrollbar>
 			<div className="flex absolute bottom-2 right-2 left-2">
 				<textarea ref={textareaRef} rows={1} value={newNote} onChange={handleChange} placeholder="Type note here..." className="form-textarea ltr:rounded-r-none rtl:rounded-l-none"></textarea>
