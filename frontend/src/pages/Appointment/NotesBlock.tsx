@@ -97,7 +97,22 @@ const NotesBlock = () => {
 				</ul>
 			</PerfectScrollbar>
 			<div className="flex absolute bottom-2 right-2 left-2">
-				<textarea ref={textareaRef} rows={1} value={newNote} onChange={handleChange} placeholder="Type note here..." className="form-textarea ltr:rounded-r-none rtl:rounded-l-none"></textarea>
+				<textarea
+					ref={textareaRef}
+					rows={1}
+					value={newNote}
+					onChange={handleChange}
+					placeholder="Type note here..."
+					className="form-textarea ltr:rounded-r-none rtl:rounded-l-none"
+					onKeyDown={(e) => {
+						if (e.key === 'Enter' && e.ctrlKey) {
+							e.preventDefault();
+							if (newNote.trim()) {
+								handelSaveNote();
+							}
+						}
+					}}
+				/>
 				<button onClick={handelSaveNote} type="button" className="btn btn-secondary ltr:rounded-l-none rtl:rounded-r-none">
 					{loadingSaveNote ? <ButtonLoader /> : 'Save'}
 				</button>
