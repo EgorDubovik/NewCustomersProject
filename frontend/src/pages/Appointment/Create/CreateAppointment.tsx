@@ -11,6 +11,8 @@ import ServicesList from '../components/ServicesList';
 import TechList from '../components/TechList';
 import axiosClient from '../../../store/axiosClient';
 import { ButtonLoader } from '../../../components/loading/ButtonLoader';
+import { PageCirclePrimaryLoader } from '../../../components/loading/PageLoading';
+import { PageLoadError } from '../../../components/loading/Errors';
 
 const CreateAppointment = () => {
 	const navigate = useNavigate();
@@ -35,6 +37,7 @@ const CreateAppointment = () => {
 	const modalRef = useRef<HTMLDivElement | null>(null);
 	const [loadingCreate, setLoadingCreate] = useState(false);
 	const userId = useSelector((state: IRootState) => state.themeConfig.user.id);
+	const [loadingStatus, setLoadingStatus] = useState('loading');
 
 	// Services...
 	const onRemoveService = (id: number) => {
@@ -56,6 +59,7 @@ const CreateAppointment = () => {
 	});
 	// Load customer Info
 	useEffect(() => {
+		setLoadingStatus('loading');
 		axiosClient
 			.get(`customers/${customerId}`)
 			.then((res) => {
@@ -67,11 +71,12 @@ const CreateAppointment = () => {
 					addresses: res.data.customer.address,
 					idAddress: 0,
 				});
+				setLoadingStatus('success');
 			})
 			.catch((err) => {
+				setLoadingStatus('error');
 				console.log(err);
-			})
-			.finally(() => {});
+			});
 	}, []);
 
 	const onTimeFromChanged = (date: any) => {
@@ -166,165 +171,172 @@ const CreateAppointment = () => {
 	}, [openAddresses]);
 	return (
 		<div>
-			<div className="flex items-center justify-center flex-wrap gap-4 my-4 md:my-0 md:justify-start">
-				<h2 className="text-xl">Create appointment</h2>
-			</div>
-			<div className="conteiner w-full md:w-1/3 m-auto">
-				<div className="panel">
-					<div className="mb-5 relative">
-						<div className="border-b border-[#ebedf2] dark:border-[#1b2e4b] dark:bg-gray-800 px-2 rounded-t">
-							<div className="flex items-center justify-between py-3">
-								<h6 className="text-[#515365] font-bold dark:text-white-dark text-[15px]">
-									{customer.name}
-									<span className="block text-white-dark dark:text-white-light font-normal text-xs mt-1">{customer.addresses[customer.idAddress]?.full}</span>
-								</h6>
-								<div className="h-full p-2 cursor-pointer rounded hover:dark:bg-white-dark/10 hover:bg-gray-100" onClick={() => openAddressesModal()}>
-									<IconEdit />
-								</div>
-							</div>
-						</div>
-						<div ref={modalRef} className={'absolute ' + (!openAddresses ? 'hidden' : '') + ' left-0 right-0 top-17 bg-gray-100 dark:bg-gray-800 py-4 rounded-b z-50 shadow-lg'}>
-							{customer.addresses.map((address: any, index: number) => (
-								<div key={index} className="address-list p-4 hover:bg-gray-200  hover:dark:bg-gray-900 cursor-pointer" onClick={() => setNewAddress(index)}>
-									{address.full}
-								</div>
-							))}
-						</div>
+			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
+			{loadingStatus === 'error' && <PageLoadError />}
+			{loadingStatus === 'success' && (
+				<div>
+					<div className="flex items-center justify-center flex-wrap gap-4 my-4 md:my-0 md:justify-start">
+						<h2 className="text-xl">Create appointment</h2>
 					</div>
-					<div className="mt-5">
-						<div className="mb-5 flex justify-center bg-gray-100 dark:bg-white-dark/10 rounded p-2">
-							<div
-								onClick={() => setSelectedTime('timeFrom')}
-								className={
-									'w-1/2 timeFrom flex justify-center items-center cursor-pointer py-3 rounded ' +
-									(selectedTime === 'timeFrom' ? 'dark:bg-black/25 dark:text-white font-bold bg-gray-200' : '')
-								}
-							>
-								<div>From:</div>
-								<div className="ml-10 text-center">
-									<div>{moment(timeFrom).format('MMM DD')}</div>
-									<div>{moment(timeFrom).format('hh:mm A')}</div>
-								</div>
-							</div>
-							<div
-								onClick={() => setSelectedTime('timeTo')}
-								className={
-									'w-1/2 timeFrom flex justify-center items-center cursor-pointer py-3 rounded ' + (selectedTime === 'timeTo' ? 'dark:bg-black/25 dark:text-white font-bold bg-gray-200' : '')
-								}
-							>
-								<div>To:</div>
-								<div className="ml-10 text-center">
-									<div>{moment(timeTo).format('MMM DD')}</div>
-									<div>{moment(timeTo).format('hh:mm A')}</div>
-								</div>
-							</div>
-						</div>
-						<div className="text-[16px] dark:text-white text-right">
-							{selectedTime === 'timeFrom' && (
-								<TimePicker
-									currentDate={timeFrom}
-									options={{
-										itemsHeight: 45,
-										textAlign: 'right',
-										borderColor: '#077afe',
-									}}
-									onDateChange={onTimeFromChanged}
-								/>
-							)}
-							{selectedTime === 'timeTo' && (
-								<TimePicker
-									currentDate={timeTo}
-									options={{
-										itemsHeight: 45,
-										daysNameFormat: 'MMM DD, DDDD',
-										borderColor: '#077afe',
-									}}
-									onDateChange={onTimeToChanged}
-								/>
-							)}
-						</div>
-					</div>
-					<div className="mt-5">
-						<h2>Add services</h2>
-
-						<div className="mt-5">
-							<ServicesList services={services} onRemoveService={onRemoveService} onSaveService={onSaveService} modal={modalService} setModal={setModalService} />
-						</div>
-					</div>
-					<div className="mt-5">
-						<h2>Add Technical</h2>
-						<div className="mt-5">
-							<TechList
-								techsIds={techsIds}
-								onRemoveTech={onRemoveTech}
-								modal={modalTech}
-								setModal={setModalTech}
-								onAddRemovetechFromList={onAddRemovetechFromList}
-								onSaveTeachs={onSaveTeachs}
-							/>
-						</div>
-					</div>
-					<div className="mt-8">
-						<button onClick={createNewAppointment} className="btn btn-primary w-full">
-							{loadingCreate ? (
-								<div>
-									Loading...
-									<ButtonLoader />
-								</div>
-							) : (
-								'Create appointment'
-							)}
-						</button>
-					</div>
-				</div>
-			</div>
-			<Transition appear show={modalAddresses} as={Fragment}>
-				<Dialog as="div" open={modalAddresses} onClose={() => setModalAddresses(false)}>
-					<Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-						<div className="fixed inset-0" />
-					</Transition.Child>
-					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
-						<div className="flex items-start justify-center min-h-screen px-4">
-							<Transition.Child
-								as={Fragment}
-								enter="ease-out duration-300"
-								enterFrom="opacity-0 scale-95"
-								enterTo="opacity-100 scale-100"
-								leave="ease-in duration-200"
-								leaveFrom="opacity-100 scale-100"
-								leaveTo="opacity-0 scale-95"
-							>
-								<Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-lg my-8 text-black dark:text-white-dark">
-									<div className="p-4">
-										<ul className="list-group">
-											{customer.addresses.map((address: any, index: number) => (
-												<li
-													key={index}
-													className={
-														'px-2 py-4  mb-2 flex items-center  ' +
-														(customer.idAddress === index ? 'dark:bg-[#050b14] text-primary' : 'hover:dark:bg-white-dark/10') +
-														' ' +
-														(customer.idAddress === index ? 'bg-gray-100 text-primary' : 'hover:bg-gray-200') +
-														' rounded cursor-pointer'
-													}
-													onClick={() => {
-														setCustomer({ ...customer, ['idAddress']: index });
-														setModalAddresses(false);
-													}}
-												>
-													<div className="flex-grow ml-4 text-sm">
-														<p className="font-semibold">{address.full}</p>
-													</div>
-												</li>
-											))}
-										</ul>
+					<div className="conteiner w-full md:w-1/3 m-auto">
+						<div className="panel">
+							<div className="mb-5 relative">
+								<div className="border-b border-[#ebedf2] dark:border-[#1b2e4b] dark:bg-gray-800 px-2 rounded-t">
+									<div className="flex items-center justify-between py-3">
+										<h6 className="text-[#515365] font-bold dark:text-white-dark text-[15px]">
+											{customer.name}
+											<span className="block text-white-dark dark:text-white-light font-normal text-xs mt-1">{customer.addresses[customer.idAddress]?.full}</span>
+										</h6>
+										<div className="h-full p-2 cursor-pointer rounded hover:dark:bg-white-dark/10 hover:bg-gray-100" onClick={() => openAddressesModal()}>
+											<IconEdit />
+										</div>
 									</div>
-								</Dialog.Panel>
-							</Transition.Child>
+								</div>
+								<div ref={modalRef} className={'absolute ' + (!openAddresses ? 'hidden' : '') + ' left-0 right-0 top-17 bg-gray-100 dark:bg-gray-800 py-4 rounded-b z-50 shadow-lg'}>
+									{customer.addresses.map((address: any, index: number) => (
+										<div key={index} className="address-list p-4 hover:bg-gray-200  hover:dark:bg-gray-900 cursor-pointer" onClick={() => setNewAddress(index)}>
+											{address.full}
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="mt-5">
+								<div className="mb-5 flex justify-center bg-gray-100 dark:bg-white-dark/10 rounded p-2">
+									<div
+										onClick={() => setSelectedTime('timeFrom')}
+										className={
+											'w-1/2 timeFrom flex justify-center items-center cursor-pointer py-3 rounded ' +
+											(selectedTime === 'timeFrom' ? 'dark:bg-black/25 dark:text-white font-bold bg-gray-200' : '')
+										}
+									>
+										<div>From:</div>
+										<div className="ml-10 text-center">
+											<div>{moment(timeFrom).format('MMM DD')}</div>
+											<div>{moment(timeFrom).format('hh:mm A')}</div>
+										</div>
+									</div>
+									<div
+										onClick={() => setSelectedTime('timeTo')}
+										className={
+											'w-1/2 timeFrom flex justify-center items-center cursor-pointer py-3 rounded ' +
+											(selectedTime === 'timeTo' ? 'dark:bg-black/25 dark:text-white font-bold bg-gray-200' : '')
+										}
+									>
+										<div>To:</div>
+										<div className="ml-10 text-center">
+											<div>{moment(timeTo).format('MMM DD')}</div>
+											<div>{moment(timeTo).format('hh:mm A')}</div>
+										</div>
+									</div>
+								</div>
+								<div className="text-[16px] dark:text-white text-right">
+									{selectedTime === 'timeFrom' && (
+										<TimePicker
+											currentDate={timeFrom}
+											options={{
+												itemsHeight: 45,
+												textAlign: 'right',
+												borderColor: '#077afe',
+											}}
+											onDateChange={onTimeFromChanged}
+										/>
+									)}
+									{selectedTime === 'timeTo' && (
+										<TimePicker
+											currentDate={timeTo}
+											options={{
+												itemsHeight: 45,
+												daysNameFormat: 'MMM DD, DDDD',
+												borderColor: '#077afe',
+											}}
+											onDateChange={onTimeToChanged}
+										/>
+									)}
+								</div>
+							</div>
+							<div className="mt-5">
+								<h2>Add services</h2>
+
+								<div className="mt-5">
+									<ServicesList services={services} onRemoveService={onRemoveService} onSaveService={onSaveService} modal={modalService} setModal={setModalService} />
+								</div>
+							</div>
+							<div className="mt-5">
+								<h2>Add Technical</h2>
+								<div className="mt-5">
+									<TechList
+										techsIds={techsIds}
+										onRemoveTech={onRemoveTech}
+										modal={modalTech}
+										setModal={setModalTech}
+										onAddRemovetechFromList={onAddRemovetechFromList}
+										onSaveTeachs={onSaveTeachs}
+									/>
+								</div>
+							</div>
+							<div className="mt-8">
+								<button onClick={createNewAppointment} className="btn btn-primary w-full">
+									{loadingCreate ? (
+										<div>
+											Loading...
+											<ButtonLoader />
+										</div>
+									) : (
+										'Create appointment'
+									)}
+								</button>
+							</div>
 						</div>
 					</div>
-				</Dialog>
-			</Transition>
+					{/* <Transition appear show={modalAddresses} as={Fragment}>
+						<Dialog as="div" open={modalAddresses} onClose={() => setModalAddresses(false)}>
+							<Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+								<div className="fixed inset-0" />
+							</Transition.Child>
+							<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+								<div className="flex items-start justify-center min-h-screen px-4">
+									<Transition.Child
+										as={Fragment}
+										enter="ease-out duration-300"
+										enterFrom="opacity-0 scale-95"
+										enterTo="opacity-100 scale-100"
+										leave="ease-in duration-200"
+										leaveFrom="opacity-100 scale-100"
+										leaveTo="opacity-0 scale-95"
+									>
+										<Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-lg my-8 text-black dark:text-white-dark">
+											<div className="p-4">
+												<ul className="list-group">
+													{customer.addresses.map((address: any, index: number) => (
+														<li
+															key={index}
+															className={
+																'px-2 py-4  mb-2 flex items-center  ' +
+																(customer.idAddress === index ? 'dark:bg-[#050b14] text-primary' : 'hover:dark:bg-white-dark/10') +
+																' ' +
+																(customer.idAddress === index ? 'bg-gray-100 text-primary' : 'hover:bg-gray-200') +
+																' rounded cursor-pointer'
+															}
+															onClick={() => {
+																setCustomer({ ...customer, ['idAddress']: index });
+																setModalAddresses(false);
+															}}
+														>
+															<div className="flex-grow ml-4 text-sm">
+																<p className="font-semibold">{address.full}</p>
+															</div>
+														</li>
+													))}
+												</ul>
+											</div>
+										</Dialog.Panel>
+									</Transition.Child>
+								</div>
+							</div>
+						</Dialog>
+					</Transition> */}
+				</div>
+			)}
 		</div>
 	);
 };
