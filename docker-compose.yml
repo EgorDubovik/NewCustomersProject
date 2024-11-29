@@ -11,9 +11,9 @@ services:
          - ./mysql:/var/lib/mysql
       networks:
          - test-network
-      
+
       ports:
-         - "3306:3306"
+         - '3306:3306'
 
    laravel:
       container_name: laravel
@@ -35,10 +35,10 @@ services:
       volumes:
          - ./backend:/app
       ports:
-         - "8000:8000"
+         - '8000:8000'
       command:
          # sh -c "composer install && php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000 & php artisan queue:work redis"
-          sh -c "php artisan serve --host=0.0.0.0 --port=8000 & php artisan queue:work redis"
+         sh -c "php artisan serve --host=0.0.0.0 --port=8000 & php artisan queue:work redis"
       networks:
          - test-network
       depends_on:
@@ -49,11 +49,11 @@ services:
    redis:
       image: redis:latest
       container_name: redis
-      command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+      command: ['redis-server', '--requirepass', '${REDIS_PASSWORD}']
       environment:
          - REDIS_PASSWORD=${REDIS_PASSWORD}
       ports:
-         - "6379:6379"
+         - '6379:6379'
       networks:
          - test-network
       restart: on-failure
@@ -68,11 +68,11 @@ services:
       networks:
          - test-network
       ports:
-         - "8080:80"
+         - '8080:80'
       depends_on:
          - mysql
    nginx:
-      image: nginx:alpine
+      image: nginx:latest
       container_name: nginx
       volumes:
          - ./nginx.conf:/etc/nginx/nginx.conf
@@ -80,8 +80,8 @@ services:
          - ./certbot/conf:/etc/letsencrypt # config for certbot certificates
          - ./certbot/www:/var/www/certbot # for certbot challenge
       ports:
-         - "80:80"
-         - "443:443"
+         - '80:80'
+         - '443:443'
       depends_on:
          - phpmyadmin
          - laravel

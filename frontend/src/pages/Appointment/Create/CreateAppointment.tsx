@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TimePicker from 'edtimepicker';
 import moment from 'moment';
@@ -32,6 +32,7 @@ const CreateAppointment = () => {
 	const [modalService, setModalService] = useState(false);
 	const [modalAddresses, setModalAddresses] = useState(false);
 	const [openAddresses, setOpenAddresses] = useState(false);
+	const modalRef = useRef<HTMLDivElement | null>(null);
 	const [loadingCreate, setLoadingCreate] = useState(false);
 	const userId = useSelector((state: IRootState) => state.themeConfig.user.id);
 
@@ -141,6 +142,28 @@ const CreateAppointment = () => {
 			});
 	};
 
+	const openAddressesModal = () => {
+		// setModalAddresses(true);
+		setOpenAddresses((prev) => !prev);
+	};
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				modalRef.current &&
+				!modalRef.current.contains(event.target as Node) // Check if click is outside the modal
+			) {
+				setOpenAddresses(false); // Close the modal
+			}
+		};
+
+		if (openAddresses) {
+			document.addEventListener('mousedown', handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [openAddresses]);
 	return (
 		<div>
 			<div className="flex items-center justify-center flex-wrap gap-4 my-4 md:my-0 md:justify-start">
@@ -149,20 +172,20 @@ const CreateAppointment = () => {
 			<div className="conteiner w-full md:w-1/3 m-auto">
 				<div className="panel">
 					<div className="mb-5 relative">
-						<div className="border-b border-[#ebedf2] dark:border-[#1b2e4b] bg-gray-800 px-2 rounded-t">
+						<div className="border-b border-[#ebedf2] dark:border-[#1b2e4b] dark:bg-gray-800 px-2 rounded-t">
 							<div className="flex items-center justify-between py-3">
 								<h6 className="text-[#515365] font-bold dark:text-white-dark text-[15px]">
 									{customer.name}
 									<span className="block text-white-dark dark:text-white-light font-normal text-xs mt-1">{customer.addresses[customer.idAddress]?.full}</span>
 								</h6>
-								<div className="h-full p-2 cursor-pointer rounded hover:dark:bg-white-dark/10 hover:bg-gray-100" onClick={() => setOpenAddresses(!openAddresses)}>
+								<div className="h-full p-2 cursor-pointer rounded hover:dark:bg-white-dark/10 hover:bg-gray-100" onClick={() => openAddressesModal()}>
 									<IconEdit />
 								</div>
 							</div>
 						</div>
-						<div className={'absolute ' + (!openAddresses ? 'hidden' : '') + ' left-0 right-0 top-17 bg-gray-800 py-4 rounded-b z-50'}>
+						<div ref={modalRef} className={'absolute ' + (!openAddresses ? 'hidden' : '') + ' left-0 right-0 top-17 bg-gray-100 dark:bg-gray-800 py-4 rounded-b z-50 shadow-lg'}>
 							{customer.addresses.map((address: any, index: number) => (
-								<div key={index} className="address-list p-4 hover:bg-gray-900 cursor-pointer" onClick={() => setNewAddress(index)}>
+								<div key={index} className="address-list p-4 hover:bg-gray-200  hover:dark:bg-gray-900 cursor-pointer" onClick={() => setNewAddress(index)}>
 									{address.full}
 								</div>
 							))}

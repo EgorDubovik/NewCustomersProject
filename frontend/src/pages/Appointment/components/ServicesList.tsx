@@ -21,7 +21,14 @@ const ServicesList = (props: any) => {
 	const { tax, total } = calculateTaxAndTotal(services, taxRate);
 	const [companyServices, setCompanyServices] = useState([]);
 	const [isEditMode, setIsEditMode] = useState(false);
-	const priceRef = useRef(null);
+	// const priceRef = useRef(null);
+
+	const priceRef = (element: HTMLInputElement | null) => {
+		if (!isEditMode) return;
+		if (element) {
+			element.focus();
+		}
+	};
 	const isTaxble = localStorage.getItem('isTaxable') === 'true' ? true : false;
 	console.log('isTaxble:', isTaxble);
 	const [serviceForm, setServiceForm] = useState<IService>({
@@ -181,14 +188,9 @@ const ServicesList = (props: any) => {
 					<IconCopy className="hover:text-primary" />
 				</span>
 			</div>
-			{/* <div className='flex justify-center mt-4'>
-            <span className='flex cursor-pointer border-b dark:border-gray-800 border-gray-200 py-2' onClick={()=>addNewService()}>
-               <IconPlus className='mr-2'/>
-               Add new Service
-            </span>
-         </div> */}
+
 			<Transition appear show={modal} as={Fragment}>
-				<Dialog as="div" open={modal} onClose={() => setModal(false)} initialFocus={isEditMode ? priceRef : undefined}>
+				<Dialog as="div" open={modal} onClose={() => setModal(false)} initialFocus={undefined}>
 					<Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
 						<div className="fixed inset-0" />
 					</Transition.Child>
