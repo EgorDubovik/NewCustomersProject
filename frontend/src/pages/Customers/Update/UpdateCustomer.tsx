@@ -7,13 +7,33 @@ import { PageCirclePrimaryLoader } from '../../../components/loading/PageLoading
 import { PageLoadError } from '../../../components/loading/Errors';
 import { useUpdateCustomer } from './useUpdateCustomer';
 
-
-
 const UpdateCustomer = () => {
 	const cancelButtonRef = React.useRef(null);
 	const [openParse, setOpenParse] = useState(false);
-	const { customer, loadingStatus, loading, error, phoneError, updateCustomer, handleChangeFomr, addAddress, editAddress, removeAddress, dataAddress, handleChangeAddressData, saveAddress, addressError, parseAddressValue, handleChangeParse, handleParseAddress, addressFormLoading, removeAddressLoading, modal, setModal } = useUpdateCustomer();
-
+	const {
+		customer,
+		loadingStatus,
+		loading,
+		error,
+		phoneError,
+		updateCustomer,
+		handleChangeFomr,
+		addAddress,
+		editAddress,
+		removeAddress,
+		dataAddress,
+		handleChangeAddressData,
+		saveAddress,
+		addressError,
+		parseAddressValue,
+		handleChangeParse,
+		handleParseAddress,
+		addressFormLoading,
+		removeAddressLoading,
+		modal,
+		setModal,
+	} = useUpdateCustomer();
+	console.log('customer', customer);
 	return (
 		<div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
@@ -34,7 +54,7 @@ const UpdateCustomer = () => {
 								</span>
 							</div>
 						)}
-						
+
 						<form className="space-y-6">
 							<div>
 								<label>Customer name</label>
@@ -47,7 +67,7 @@ const UpdateCustomer = () => {
 							</div>
 							<div>
 								<label>Customer Email</label>
-								<input type="email" autoComplete='off' placeholder="Email" name="email" className="form-input w-full" value={customer.email} onChange={handleChangeFomr} />
+								<input type="email" autoComplete="off" placeholder="Email" name="email" className="form-input w-full" value={customer.email} onChange={handleChangeFomr} />
 							</div>
 							<div className="flex items-center justify-between mb-5">
 								<h5 className="font-semibold text-lg dark:text-white-light">Addresses</h5>

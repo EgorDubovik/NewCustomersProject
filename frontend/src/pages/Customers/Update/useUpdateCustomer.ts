@@ -18,8 +18,8 @@ interface Customer {
 	address: Address[];
 }
 export const useUpdateCustomer = () => {
-   const customerId = useParams().id ?? 0;
-	
+	const customerId = useParams().id ?? 0;
+
 	// const [loadingPage, setLoadingPage] = useState(true);
 	const [loadingStatus, setLoadingStatus] = useState('loading');
 	const [modal, setModal] = useState(false);
@@ -52,14 +52,13 @@ export const useUpdateCustomer = () => {
 			.get('/customers/' + customerId)
 			.then((res) => {
 				console.log(res.data);
-				setCustomer(res.data);
+				setCustomer(res.data.customer);
 				setLoadingStatus('success');
 			})
 			.catch((err) => {
 				console.log(err);
 				setLoadingStatus('error');
-			})
-			
+			});
 	}, []);
 
 	const addAddress = () => {
@@ -147,7 +146,7 @@ export const useUpdateCustomer = () => {
 	const handleChangeFomr = (e: any) => {
 		let value = e.target.value;
 		if (e.target.name === 'phone') setPhoneError(false);
-		if(e.target.name === 'email') value = value.toLowerCase();
+		if (e.target.name === 'email') value = value.toLowerCase();
 		setCustomer({ ...customer, [e.target.name]: value });
 	};
 
@@ -158,7 +157,6 @@ export const useUpdateCustomer = () => {
 		const result = parseAddress(parseAddressValue);
 		if (result.addressLine1) {
 			dataAddress.address1 = result.addressLine1;
-			
 		}
 		if (result.addressLine2) dataAddress.address2 = result.addressLine2;
 		if (result.placeName) dataAddress.city = result.placeName;
@@ -187,5 +185,27 @@ export const useUpdateCustomer = () => {
 				setLoading(false);
 			});
 	};
-   return { customer, loadingStatus, modal, setModal, addressFormLoading, removeAddressLoading, loading, error, phoneError, addressError, parseAddressValue, dataAddress, addAddress, editAddress, saveAddress, removeAddress, handleChangeAddressData, handleChangeFomr, handleChangeParse, handleParseAddress, updateCustomer };
-}
+	return {
+		customer,
+		loadingStatus,
+		modal,
+		setModal,
+		addressFormLoading,
+		removeAddressLoading,
+		loading,
+		error,
+		phoneError,
+		addressError,
+		parseAddressValue,
+		dataAddress,
+		addAddress,
+		editAddress,
+		saveAddress,
+		removeAddress,
+		handleChangeAddressData,
+		handleChangeFomr,
+		handleChangeParse,
+		handleParseAddress,
+		updateCustomer,
+	};
+};

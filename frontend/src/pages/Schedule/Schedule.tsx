@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import AppointmentsScheduler from '../../components/plugin/sheduler/AppointmentsScheduler';
@@ -7,6 +7,9 @@ import axiosClient from '../../store/axiosClient';
 import { IRootState } from '../../store';
 import { PageLoadError } from '../../components/loading/Errors';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
+import IconClock from '../../components/Icon/IconClock';
+import IconCreditCard from '../../components/Icon/IconCreditCard';
+import IconMapPin from '../../components/Icon/IconMapPin';
 
 const Schedule = () => {
 	const dispatch = useDispatch();
@@ -85,6 +88,14 @@ const Schedule = () => {
 		<div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
 				<h2 className="text-xl">Schedule</h2>
+				<div className="flex gap-2 md:justify-end justify-around mb-2">
+					<div className="flex-auto md:flex-none ">
+						<Link to="/schedule/map" className="flex items-center ">
+							<IconMapPin className="mr-1" />
+							Map View
+						</Link>
+					</div>
+				</div>
 			</div>
 			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
 			{loadingStatus === 'error' && <PageLoadError />}
