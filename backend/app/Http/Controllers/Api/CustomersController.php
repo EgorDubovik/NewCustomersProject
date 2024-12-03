@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\ReferalLinksCode;
 use App\Models\Role;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class CustomersController extends Controller
 {
@@ -69,7 +70,7 @@ class CustomersController extends Controller
             'company_id' => Auth::user()->company->id,
          ]);
 
-         $customer->address()->create([
+         $address = $customer->address()->create([
             'line1' => $request->address1,
             'line2' => $request->address2,
             'city' => $request->city,
@@ -85,7 +86,19 @@ class CustomersController extends Controller
          DB::commit();
       } catch (\Exception $e) {
          DB::rollBack();
+         $address = null;
          return response()->json(['error' => 'Error creating customer'], 500);
+      }
+
+      // Get lan and lng from address
+      if ($address) {
+         $location = $this->getLatLong($address->full);
+         if($location) {
+            $address->update([
+                'lat' => $location['lat'],
+                'lon' => $location['lng'],
+            ]);
+         }
       }
 
       return response()->json($customer);
@@ -135,6 +148,15 @@ class CustomersController extends Controller
          'zip' => $request->zip,
       ]);
 
+      // Get lan and lng from address
+      $location = $this->getLatLong($address->full);
+      if($location) {
+         $address->update([
+            'lat' => $location['lat'],
+            'lon' => $location['lng'],
+         ]);
+      }
+
       $customer->load('address');
 
       return response()->json(['customer' => $customer], 200);
@@ -159,6 +181,15 @@ class CustomersController extends Controller
          'zip' => $request->zip,
       ]);
 
+      // Get lan and lng from address
+      $location = $this->getLatLong($address->full);
+      if($location) {
+         $address->update([
+            'lat' => $location['lat'],
+            'lon' => $location['lng'],
+         ]);
+      }
+
       $customer->load('address');
 
       return response()->json(['customer' => $customer], 200);
@@ -178,5 +209,19 @@ class CustomersController extends Controller
       $address->delete();
       $customer->load('address');
       return response()->json(['customer' => $customer], 200);
+   }
+
+   private function getLatLong($address) {
+      $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
+         'address' => $address,
+         'key' => env('GOOGLE_MAPS_API_KEY'),
+      ]);
+      if($response->ok() && isset($response['results'][0]['geometry']['location'])) {
+         $location = $response['results'][0]['geometry']['location'];
+         return [
+            'lat' => $location['lat'],
+            'lng' => $location['lng'],
+         ];
+      } else return null;
    }
 }

@@ -15,6 +15,8 @@ class Addresses extends Model
         'city',
         'state',
         'zip',
+        'lat',
+        'lon',
         'customer_id',
     ];
 
