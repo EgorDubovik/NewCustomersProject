@@ -77,7 +77,7 @@ const DefaultFullSpaceLayout = ({ children }: PropsWithChildren) => {
 
 						{/* BEGIN CONTENT AREA */}
 
-						<div className={`${themeConfig.animation} animate__animated`}>{children}</div>
+						<div className={`${themeConfig.animation} flex-1 h-full relative`}>{children}</div>
 
 						{/* END CONTENT AREA */}
 
