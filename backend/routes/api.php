@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Api\MapsController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\BookAppointmentOnlineController;
 use App\Http\Controllers\Api\CustomersController;
@@ -21,7 +22,7 @@ use App\Http\Controllers\Api\StorageItemsController;
 use App\Http\Controllers\Api\Company\CompanyTagController;
 use App\Http\Controllers\Api\Company\CompanySettingsController;
 use App\Http\Controllers\Api\Job\JobController;
-   
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -172,6 +173,10 @@ Route::prefix('v1')->group(function () {
          Route::post('/', [StorageItemsController::class, 'store']);
          Route::put('/{id}', [StorageItemsController::class, 'update']);
          Route::delete('/{id}', [StorageItemsController::class, 'destroy']);
+      });
+
+      Route::prefix('maps')->group(function () {
+         Route::get('/todays', [MapsController::class, 'todays']);
       });
 
    });
