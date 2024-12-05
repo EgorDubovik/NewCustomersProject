@@ -13,6 +13,7 @@ import { useViewCustomer } from './useViewCustomer';
 import IconCopy from '../../../components/Icon/IconCopy';
 import IconTrashLines from '../../../components/Icon/IconTrashLines';
 import axiosClient from '../../../store/axiosClient';
+import MapComponent from './MapComponent';
 const ViewCustomer = () => {
 	const { customer, loadingStatus } = useViewCustomer();
 	const [limitViewJobs, setLimitViewJobs] = useState(3);
@@ -41,7 +42,7 @@ const ViewCustomer = () => {
 	};
 
 	const openCompanyTags = () => {};
-
+	console.log('CUSTOMER:', customer);
 	return (
 		<>
 			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
@@ -59,7 +60,7 @@ const ViewCustomer = () => {
 							<div className="mb-1">
 								<div className="flex flex-col justify-center items-center ">
 									{/* MAP */}
-									<div className="w-full h-[200px] dark:bg-gray-800 bg-gray-200 flex items-center justify-center">Click to view map</div>
+									<MapComponent latitude={customer?.address[0]?.lat} longitude={customer?.address[0]?.lon} />
 
 									<p className="font-semibold text-primary text-lg mt-4">{customer?.name}</p>
 								</div>
