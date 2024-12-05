@@ -8,6 +8,7 @@ import IconSend from '../../components/Icon/IconSend';
 import { useAppointmentContext } from './context/AppointmentContext';
 import IconCopy from '../../components/Icon/IconCopy';
 import { alertError, alertSuccsess, formatDate } from '../../helpers/helper';
+import MapComponent from '../Customers/View/MapComponent';
 
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
@@ -49,7 +50,7 @@ const CustomerInfoBlock = (props: any) => {
 			</div>
 			<div className="mb-1">
 				<div className="flex flex-col justify-center items-center ">
-					<div className="w-full h-[200px] rounded flex justify-center items-center dark:bg-gray-800 bg-gray-200">Click here to view mini map</div>
+					<MapComponent latitude={appointment?.job?.address?.lat} longitude={appointment?.job?.address?.lon} />
 				</div>
 				<div className="px-4 pb-4">
 					<ul className="mt-5 flex flex-col m-auto space-y-4 font-semibold dark:text-white-dark">

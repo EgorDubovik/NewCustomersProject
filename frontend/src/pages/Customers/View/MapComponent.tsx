@@ -11,7 +11,7 @@ const MapComponent = (props: any) => {
 	return (
 		<div className="w-full h-[250px] dark:bg-gray-800 bg-gray-200 flex items-center justify-center">
 			{latitude && longitude ? (
-				<MapContainer center={[latitude, longitude]} zoom={11} scrollWheelZoom={false} style={{ width: '100%', height: '100%' }}>
+				<MapContainer center={[latitude, longitude]} zoom={13} scrollWheelZoom={false} style={{ width: '100%', height: '100%' }}>
 					<TileLayer url={mapTile} />
 					<Marker position={[latitude, longitude]}></Marker>
 				</MapContainer>
