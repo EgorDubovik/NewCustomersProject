@@ -82,6 +82,8 @@ const MapView = () => {
 	}, [appointments]);
 
 	const onMouseOverHandler = (appointment_id: number) => {
+		if (range === 'all') return;
+
 		setSelectedAppointment(appointment_id);
 	};
 
@@ -104,6 +106,10 @@ const MapView = () => {
 									mouseout: () => {
 										onMouseOverHandler(0);
 									},
+									click: () => {
+										if (range === 'todays') return;
+										setSelectedAppointment(appointment.id);
+									},
 								}}
 							></Marker>
 						))}
@@ -121,23 +127,38 @@ const MapView = () => {
 						)}
 						<ul>
 							{!showLoader && appointments.length === 0 && <div className="p-2">No appointments today</div>}
-							{appointments.map((appointment) => (
-								<li className="p-2" key={appointment.id} style={{ opacity: selctedAppointment === appointment.id || selctedAppointment === 0 ? 1 : 0.4 }}>
-									<Link to={`/appointment/${appointment.id}`}>
-										<div className="p-2 dark:bg-gray-700 bg-white shadow-md  rounded-lg border-l-2 " style={{ borderLeftColor: appointment.techs[0]?.color || 'gray' }}>
-											<div className="flex items-center justify-between">
-												<div className="ml-3">
-													<div className="text-sm font-medium dark:text-white">{appointment.job.customer.name}</div>
-													<div className="text-xs font-medium dark:text-gray-400">{appointment.job.services[0].title}</div>
+							{range === 'todays' && (
+								<div>
+									{appointments.map((appointment) => (
+										<li className="p-2" key={appointment.id} style={{ opacity: selctedAppointment === appointment.id || selctedAppointment === 0 ? 1 : 0.4 }}>
+											<Link to={`/appointment/${appointment.id}`}>
+												<div className="p-2 dark:bg-gray-700 bg-white shadow-md  rounded-lg border-l-2 " style={{ borderLeftColor: appointment.techs[0]?.color || 'gray' }}>
+													<div className="flex items-center justify-between">
+														<div className="ml-3">
+															<div className="text-sm font-medium dark:text-white">{appointment.job.customer.name}</div>
+															<div className="text-xs font-medium dark:text-gray-400">{appointment.job.services[0].title}</div>
+														</div>
+														<div className="appointment-time">
+															{formatDate(appointment.start, 'hh A')} - {formatDate(appointment.end, 'hh A')}
+														</div>
+													</div>
 												</div>
-												<div className="appointment-time">
-													{formatDate(appointment.start, 'hh A')} - {formatDate(appointment.end, 'hh A')}
-												</div>
-											</div>
-										</div>
-									</Link>
-								</li>
-							))}
+											</Link>
+										</li>
+									))}
+								</div>
+							)}
+							{range === 'all' && (
+								<div>
+									{selctedAppointment > 0 && (
+										<li className="p-2" key={selctedAppointment}>
+											<Link to={`/appointment/${selctedAppointment}`}> ID {selctedAppointment}</Link>
+										</li>
+									)}
+
+									{selctedAppointment === 0 && <div className="text-sm font-medium w-full pt-2 text-center">Please select an appointment</div>}
+								</div>
+							)}
 						</ul>
 					</PerfectScrollbar>
 					<div className="title p-2 absolute bottom-0 w-full py-2 text-center flex justify-center dark:bg-gray-900 bg-blue-200">
