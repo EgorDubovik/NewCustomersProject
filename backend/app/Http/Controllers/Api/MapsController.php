@@ -24,4 +24,13 @@ class MapsController extends Controller
       return response()->json(['appointments' => $appointments], 200);
 
    }
+
+   public function all(Request $request)
+   {
+      $appointment = Appointment::where('company_id', $request->user()->company_id)
+         ->with(['job.customer', 'job.address', 'techs'])
+         ->orderBy('start')
+         ->get();
+      return response()->json(['appointments' => $appointment], 200);
+   }
 }

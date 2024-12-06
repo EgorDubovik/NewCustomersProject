@@ -7,7 +7,10 @@ import { useEffect, useState } from 'react';
 import axiosClient from '../../store/axiosClient';
 import { alertError, alertSuccsess, formatDate } from '../../helpers/helper';
 import { IAppointment } from '../../types';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
+import { SmallDangerLoader, SmallPrimaryLoader } from '../../components/loading/SmallCirculeLoader';
 
 const createCustomIcon = (color: string) => {
 	return L.divIcon({
@@ -19,6 +22,7 @@ const createCustomIcon = (color: string) => {
 		 border-radius: 50%; 
 		 border: 2px solid white; 
 		 box-shadow: 0 0 5px rgba(0,0,0,0.5);
+		 cursor: pointer;
 	  "></div>`,
 		iconSize: [15, 15],
 		iconAnchor: [10, 10], // Center the icon
@@ -49,7 +53,7 @@ const MapView = () => {
 	const mapZoom = 12;
 	const isDarkMode = useSelector((state: IRootState) => state.themeConfig.isDarkMode);
 	const mapTile = isDarkMode ? 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png' : 'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png';
-
+	const { range } = useParams() || 'todays';
 	const [appointments, setAppointments] = useState<IAppointment[]>([]);
 	const [showLoader, setShowLoader] = useState(true);
 	const [selctedAppointment, setSelectedAppointment] = useState<number>(0);
@@ -57,7 +61,7 @@ const MapView = () => {
 	useEffect(() => {
 		setShowLoader(true);
 		axiosClient
-			.get('/maps/todays')
+			.get(`/maps/${range}`)
 			.then((res) => {
 				console.log(res.data.appointments);
 				setAppointments(res.data.appointments);
@@ -69,7 +73,7 @@ const MapView = () => {
 			.finally(() => {
 				setShowLoader(false);
 			});
-	}, []);
+	}, [range]);
 
 	useEffect(() => {
 		if (appointments.length > 0) {
@@ -83,8 +87,8 @@ const MapView = () => {
 
 	return (
 		<div className="absolute left-0 right-0 h-full">
-			<div className="grid grid-cols-6 h-full">
-				<div className="col-span-5 h-full">
+			<div className="grid md:grid-cols-6 grid-flow-row h-full">
+				<div className="md:col-span-5 h-full">
 					<MapContainer center={position} zoom={mapZoom} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
 						<TileLayer url={mapTile} />
 						{bounds && <FitBounds bounds={bounds} />}
@@ -105,33 +109,46 @@ const MapView = () => {
 						))}
 					</MapContainer>
 				</div>
-				<div className="col-span-1 h-full min-h-0 dark:bg-gray-800 bg-blue-50">
+				<div className="md:col-span-1 h-full min-h-0 dark:bg-gray-800 bg-blue-50 relative overflow-hidden">
 					<div className="title p-2">
 						<h3 className="font-semibold dark:text-white-light">Appointments</h3>
 					</div>
-
-					{showLoader && <div className="p-2">Loading...</div>}
-
-					<ul>
-						{!showLoader && appointments.length === 0 && <div className="p-2">No appointments today</div>}
-						{appointments.map((appointment) => (
-							<li className="p-2" key={appointment.id} style={{ opacity: selctedAppointment === appointment.id || selctedAppointment === 0 ? 1 : 0.4 }}>
-								<Link to={`/appointment/${appointment.id}`}>
-									<div className="p-2 dark:bg-gray-700 bg-white shadow-md  rounded-lg border-l-2 " style={{ borderLeftColor: appointment.techs[0]?.color || 'gray' }}>
-										<div className="flex items-center justify-between">
-											<div className="ml-3">
-												<div className="text-sm font-medium dark:text-white">{appointment.job.customer.name}</div>
-												<div className="text-xs font-medium dark:text-gray-400">{appointment.job.services[0].title}</div>
-											</div>
-											<div className="appointment-time">
-												{formatDate(appointment.start, 'hh A')} - {formatDate(appointment.end, 'hh A')}
+					<PerfectScrollbar className="h-full pb-20">
+						{showLoader && (
+							<div className="p-2 flex justify-center">
+								<SmallPrimaryLoader />
+							</div>
+						)}
+						<ul>
+							{!showLoader && appointments.length === 0 && <div className="p-2">No appointments today</div>}
+							{appointments.map((appointment) => (
+								<li className="p-2" key={appointment.id} style={{ opacity: selctedAppointment === appointment.id || selctedAppointment === 0 ? 1 : 0.4 }}>
+									<Link to={`/appointment/${appointment.id}`}>
+										<div className="p-2 dark:bg-gray-700 bg-white shadow-md  rounded-lg border-l-2 " style={{ borderLeftColor: appointment.techs[0]?.color || 'gray' }}>
+											<div className="flex items-center justify-between">
+												<div className="ml-3">
+													<div className="text-sm font-medium dark:text-white">{appointment.job.customer.name}</div>
+													<div className="text-xs font-medium dark:text-gray-400">{appointment.job.services[0].title}</div>
+												</div>
+												<div className="appointment-time">
+													{formatDate(appointment.start, 'hh A')} - {formatDate(appointment.end, 'hh A')}
+												</div>
 											</div>
 										</div>
-									</div>
-								</Link>
-							</li>
-						))}
-					</ul>
+									</Link>
+								</li>
+							))}
+						</ul>
+					</PerfectScrollbar>
+					<div className="title p-2 absolute bottom-0 w-full py-2 text-center flex justify-center dark:bg-gray-900 bg-blue-200">
+						<Link to="/schedule/maps/todays" className="text-primary text-md mx-2">
+							View for today
+						</Link>
+						|
+						<Link to="/schedule/maps/all" className="text-primary text-md mx-2">
+							View all
+						</Link>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -177,6 +177,7 @@ Route::prefix('v1')->group(function () {
 
       Route::prefix('maps')->group(function () {
          Route::get('/todays', [MapsController::class, 'todays']);
+         Route::get('/all', [MapsController::class, 'all']);
       });
 
    });

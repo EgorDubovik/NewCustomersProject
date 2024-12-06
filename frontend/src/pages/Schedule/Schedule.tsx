@@ -90,7 +90,7 @@ const Schedule = () => {
 				<h2 className="text-xl">Schedule</h2>
 				<div className="flex gap-2 md:justify-end justify-around mb-2">
 					<div className="flex-auto md:flex-none ">
-						<Link to="/schedule/map" className="flex items-center ">
+						<Link to="/schedule/maps/todays" className="flex items-center ">
 							<IconMapPin className="mr-1" />
 							Map View
 						</Link>

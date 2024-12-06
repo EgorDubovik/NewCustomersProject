@@ -56,7 +56,7 @@ const routes = [
 				),
 			},
 			{
-				path: 'schedule/map',
+				path: 'schedule/maps/:range',
 				element: (
 					<DefaultFullSpaceLayout>
 						<MapView />
