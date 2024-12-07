@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import axiosClient from '../../store/axiosClient';
 import { alertError, alertSuccsess, formatDate } from '../../helpers/helper';
 import { IAppointment } from '../../types';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import { SmallDangerLoader, SmallPrimaryLoader } from '../../components/loading/SmallCirculeLoader';
@@ -58,7 +58,9 @@ const MapView = () => {
 	const [showLoader, setShowLoader] = useState(true);
 	const [selctedAppointment, setSelectedAppointment] = useState<number>(0);
 	const [bounds, setBounds] = useState<LatLngBoundsExpression | undefined>(undefined);
+	const navigate = useNavigate();
 	useEffect(() => {
+		// setAppointments([]);
 		setShowLoader(true);
 		axiosClient
 			.get(`/maps/${range}`)
@@ -85,6 +87,11 @@ const MapView = () => {
 		if (range === 'all') return;
 
 		setSelectedAppointment(appointment_id);
+	};
+
+	const changeRange = (range: string) => {
+		setAppointments([]);
+		navigate(`/schedule/maps/${range}`);
 	};
 
 	return (
@@ -162,13 +169,13 @@ const MapView = () => {
 						</ul>
 					</PerfectScrollbar>
 					<div className="title p-2 absolute bottom-0 w-full py-2 text-center flex justify-center dark:bg-gray-900 bg-blue-200">
-						<Link to="/schedule/maps/todays" className="text-primary text-md mx-2">
+						<span onClick={() => changeRange('todays')} className="text-primary text-md mx-2 cursor-pointer">
 							View for today
-						</Link>
+						</span>
 						|
-						<Link to="/schedule/maps/all" className="text-primary text-md mx-2">
+						<span onClick={() => changeRange('all')} className="text-primary text-md mx-2 cursor-pointer">
 							View all
-						</Link>
+						</span>
 					</div>
 				</div>
 			</div>
