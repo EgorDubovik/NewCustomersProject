@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { useEffect, useState } from 'react';
 import axiosClient from '../../store/axiosClient';
-import { alertError, alertSuccsess, formatDate } from '../../helpers/helper';
+import { alertError, alertSuccsess, formatDate, viewCurrency } from '../../helpers/helper';
 import { IAppointment } from '../../types';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -56,11 +56,11 @@ const MapView = () => {
 	const { range } = useParams() || 'todays';
 	const [appointments, setAppointments] = useState<IAppointment[]>([]);
 	const [showLoader, setShowLoader] = useState(true);
-	const [selctedAppointment, setSelectedAppointment] = useState<number>(0);
+	const [selectedAppointmentId, setSelectedAppointmentId] = useState<number>(0);
+	const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | null>(null);
 	const [bounds, setBounds] = useState<LatLngBoundsExpression | undefined>(undefined);
 	const navigate = useNavigate();
 	useEffect(() => {
-		// setAppointments([]);
 		setShowLoader(true);
 		axiosClient
 			.get(`/maps/${range}`)
@@ -86,7 +86,7 @@ const MapView = () => {
 	const onMouseOverHandler = (appointment_id: number) => {
 		if (range === 'all') return;
 
-		setSelectedAppointment(appointment_id);
+		setSelectedAppointmentId(appointment_id);
 	};
 
 	const changeRange = (range: string) => {
@@ -115,7 +115,8 @@ const MapView = () => {
 									},
 									click: () => {
 										if (range === 'todays') return;
-										setSelectedAppointment(appointment.id);
+										// setSelectedAppointmentId(appointment.id);
+										setSelectedAppointment(appointment);
 									},
 								}}
 							></Marker>
@@ -137,7 +138,7 @@ const MapView = () => {
 							{range === 'todays' && (
 								<div>
 									{appointments.map((appointment) => (
-										<li className="p-2" key={appointment.id} style={{ opacity: selctedAppointment === appointment.id || selctedAppointment === 0 ? 1 : 0.4 }}>
+										<li className="p-2" key={appointment.id} style={{ opacity: selectedAppointmentId === appointment.id || selectedAppointmentId === 0 ? 1 : 0.4 }}>
 											<Link to={`/appointment/${appointment.id}`}>
 												<div className="p-2 dark:bg-gray-700 bg-white shadow-md  rounded-lg border-l-2 " style={{ borderLeftColor: appointment.techs[0]?.color || 'gray' }}>
 													<div className="flex items-center justify-between">
@@ -156,14 +157,31 @@ const MapView = () => {
 								</div>
 							)}
 							{range === 'all' && (
-								<div>
-									{selctedAppointment > 0 && (
-										<li className="p-2" key={selctedAppointment}>
-											<Link to={`/appointment/${selctedAppointment}`}> ID {selctedAppointment}</Link>
-										</li>
+								<div className="p-2">
+									{selectedAppointment && (
+										<Link to={`/appointment/${selectedAppointment.id}`}>
+											<div className="p-2 dark:bg-gray-700 bg-white shadow-md  rounded-lg ">
+												<div className="text-sm font-medium dark:text-white">{selectedAppointment.job.customer.name}</div>
+												<div className="text-xs font-medium dark:text-gray-400">{selectedAppointment.job.address.full}</div>
+												<div className="flex justify-between items-center mt-2">
+													<div>
+														<div className="text-sm font-medium dark:text-white mt-2">{selectedAppointment.job.services[0].title}</div>
+														<div className="text-xs font-medium dark:text-gray-400">{selectedAppointment.job.services[0].description}</div>
+													</div>
+													<div className="price">
+														<div className={`text-${selectedAppointment.job.remaining_balance > 0 ? 'danger' : 'success'} text-center text-[12px]`}>
+															{viewCurrency(selectedAppointment.job.remaining_balance > 0 ? selectedAppointment.job.remaining_balance : selectedAppointment.job.total_paid)}
+														</div>
+													</div>
+												</div>
+												<div className="text-xs font-medium dark:text-gray-400 mt-2">
+													Time: {formatDate(selectedAppointment.start, 'hh A')} - {formatDate(selectedAppointment.end, 'hh A')}
+												</div>
+											</div>
+										</Link>
 									)}
 
-									{selctedAppointment === 0 && <div className="text-sm font-medium w-full pt-2 text-center">Please select an appointment</div>}
+									{!selectedAppointment && <div className="text-sm font-medium w-full pt-2 text-center">Please select an appointment</div>}
 								</div>
 							)}
 						</ul>
