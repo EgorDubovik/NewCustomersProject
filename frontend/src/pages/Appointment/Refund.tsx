@@ -5,17 +5,17 @@ import { viewCurrency } from '../../helpers/helper';
 import axiosClient from '../../store/axiosClient';
 import { useAppointmentContext } from './context/AppointmentContext';
 const Refund = () => {
-   const {appointment, updatePayments} = useAppointmentContext();
-   const [modal, setModal] = useState(false);
-   const totalPaid = appointment?.job?.total_paid || 0;
+	const { appointment, updatePayments } = useAppointmentContext();
+	const [modal, setModal] = useState(false);
+	const totalPaid = appointment?.job?.total_paid || 0;
 	const [amountRefund, setAmountRefund] = useState(totalPaid);
 	const [typeOfAmount, setAmount] = useState('full');
 	const [paymentsLoading, setPaymentsLoading] = useState(false);
 	const patmentsType = ['Credit', 'Transfer', 'Check', 'Cash'];
-   
-   useEffect(() => {
-      setAmountRefund(totalPaid);
-   }, [totalPaid]);
+
+	useEffect(() => {
+		setAmountRefund(totalPaid);
+	}, [totalPaid]);
 
 	const changeAmount = (e: any) => {
 		if (isNaN(e.target.value)) return;
@@ -25,26 +25,26 @@ const Refund = () => {
 	};
 	const addRefund = () => {
 		setPaymentsLoading(true);
-      axiosClient.post(`/appointment/payment/refund/${appointment?.job.id}`, {
-         amount: amountRefund,
-         payment_type: patmentsType[selectedPaymentType],
-      })
-      .then((res) => {
-         if(res.status === 200){
-			   updatePayments([...appointment?.job.payments || [], res.data.payment]);
-         }
-         setModal(false);
-      })
-      .catch((err) => {
-         alert('Something went wrong. Please try again later');
-         console.log(err);
-      })
-      .finally(() => {
-         setPaymentsLoading(false);
-      });
-      
+		axiosClient
+			.post(`/appointment/payment/refund/${appointment?.job.id}`, {
+				amount: amountRefund,
+				payment_type: patmentsType[selectedPaymentType],
+			})
+			.then((res) => {
+				if (res.status === 200) {
+					updatePayments([...(appointment?.job.payments || []), res.data.payment]);
+				}
+				setModal(false);
+			})
+			.catch((err) => {
+				alert('Something went wrong. Please try again later');
+				console.log(err);
+			})
+			.finally(() => {
+				setPaymentsLoading(false);
+			});
 	};
-	
+
 	const [selectedPaymentType, setSelectedPaymentType] = useState(0);
 
 	return (
@@ -57,7 +57,7 @@ const Refund = () => {
 					<Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
 						<div className="fixed inset-0" />
 					</Transition.Child>
-					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[1111] overflow-y-auto">
 						<div className="flex items-start justify-center min-h-screen px-4">
 							<Transition.Child
 								as={Fragment}
@@ -71,7 +71,6 @@ const Refund = () => {
 								<Dialog.Panel className="panel border-0 py-1 rounded-lg overflow-hidden w-full max-w-lg my-8 text-black dark:text-white-dark">
 									<div className="py-4 px-2">
 										<div className="title flex justify-between">
-											
 											<span className="text-success">Total Paid: {viewCurrency(totalPaid)}</span>
 										</div>
 										<div className="input-amount text-center text-5xl py-10">

@@ -165,7 +165,7 @@ const Header = () => {
 					<Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
 						<div className="fixed inset-0" />
 					</Transition.Child>
-					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[1111] overflow-y-auto">
 						<div className="flex items-start justify-center min-h-screen px-4">
 							<Transition.Child
 								as={Fragment}
@@ -256,7 +256,7 @@ const Header = () => {
 					<Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
 						<div className="fixed inset-0" />
 					</Transition.Child>
-					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[1111] overflow-y-auto">
 						<div className="flex items-start justify-center min-h-screen px-4">
 							<Transition.Child
 								as={Fragment}
@@ -311,7 +311,7 @@ const Header = () => {
 										</div>
 										<div className="flex mt-10">
 											<label className="flex items-center cursor-pointer">
-												<input type="checkbox" className="form-checkbox" checked={isSendInvoice} onChange={()=>setIsSendInvoice((prev)=>!prev)}/>
+												<input type="checkbox" className="form-checkbox" checked={isSendInvoice} onChange={() => setIsSendInvoice((prev) => !prev)} />
 												<span className=" text-white-dark">Send invoice automatically</span>
 											</label>
 										</div>
