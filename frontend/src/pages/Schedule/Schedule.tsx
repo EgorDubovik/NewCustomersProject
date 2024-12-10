@@ -53,17 +53,18 @@ const Schedule = () => {
 	}, [theme]);
 
 	useEffect(() => {
-		setLoadingStatus('loading');
-		axiosClient
-			.get('/appointment')
-			.then((res) => {
-				refactorAppointments(res.data.appointments);
-				setLoadingStatus('success');
-			})
-			.catch((err) => {
-				setLoadingStatus('error');
-				console.log(err);
-			});
+		setLoadingStatus('success');
+		// setLoadingStatus('loading');
+		// axiosClient
+		// 	.get('/appointment')
+		// 	.then((res) => {
+		// 		refactorAppointments(res.data.appointments);
+		// 		setLoadingStatus('success');
+		// 	})
+		// 	.catch((err) => {
+		// 		setLoadingStatus('error');
+		// 		console.log(err);
+		// 	});
 	}, []);
 
 	useEffect(() => {
@@ -101,7 +102,7 @@ const Schedule = () => {
 			{loadingStatus === 'error' && <PageLoadError />}
 			{loadingStatus === 'success' && (
 				<div className="py-4">
-					<AppointmentsScheduler appointments={appointments} onClickHandler={viewAppointments} viewType={viewType} startTime={'07:00'} endTime={'20:00'} />
+					<AppointmentsScheduler appointments={appointments} onClickHandler={viewAppointments} viewType={viewType} />
 				</div>
 			)}
 		</div>
