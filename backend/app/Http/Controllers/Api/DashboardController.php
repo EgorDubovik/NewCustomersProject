@@ -18,12 +18,12 @@ class DashboardController extends Controller
       $user = $request->user();
       $isAmind = $user->isRole([Role::ADMIN]);
       $field = $isAmind ? 'company_id' : 'tech_id';
-
+      $id = $isAmind ? $user->company_id : $user->id;
 
       return response()->json([
-         'mainStat' => $this->getMainStat($field, $user->id),
-         'daylyForCurrentWeek' => $this->getTotalForEachDayOfCurrWheek($field, $user->id),
-         'lastSevenWeeks' => $this->getLastSevenWeeksStatistics($field, $user->id),
+         'mainStat' => $this->getMainStat($field, $id),
+         'daylyForCurrentWeek' => $this->getTotalForEachDayOfCurrWheek($field, $id),
+         'lastSevenWeeks' => $this->getLastSevenWeeksStatistics($field, $id),
       ], 200);
    }
 
