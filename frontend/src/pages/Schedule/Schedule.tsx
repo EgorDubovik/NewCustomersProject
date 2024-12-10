@@ -15,7 +15,7 @@ const Schedule = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [appointments, setAppointments] = useState<any[]>([]);
-	const [viewType, setViewType] = useState('week');
+	const [viewType, setViewType] = useState<'week' | 'day'>('week');
 	const theme = useSelector((state: IRootState) => state.themeConfig.theme);
 
 	useEffect(() => {
