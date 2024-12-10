@@ -101,26 +101,29 @@ const MapView = () => {
 					<MapContainer center={position} zoom={mapZoom} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
 						<TileLayer url={mapTile} />
 						{bounds && <FitBounds bounds={bounds} />}
-						{appointments.map((appointment) => (
-							<Marker
-								position={[appointment.job.address?.lat || 0, appointment.job.address?.lon || 0]}
-								icon={createCustomIcon(appointment.techs[0]?.color || 'gray')}
-								key={appointment.id}
-								eventHandlers={{
-									mouseover: () => {
-										onMouseOverHandler(appointment.id);
-									},
-									mouseout: () => {
-										onMouseOverHandler(0);
-									},
-									click: () => {
-										if (range === 'todays') return;
-										// setSelectedAppointmentId(appointment.id);
-										setSelectedAppointment(appointment);
-									},
-								}}
-							></Marker>
-						))}
+						{appointments.map(
+							(appointment) =>
+								appointment.job.address?.lat &&
+								appointment.job.address?.lon && (
+									<Marker
+										position={[appointment.job.address.lat, appointment.job.address.lon]}
+										icon={createCustomIcon(appointment.techs[0]?.color || 'gray')}
+										key={appointment.id}
+										eventHandlers={{
+											mouseover: () => {
+												onMouseOverHandler(appointment.id);
+											},
+											mouseout: () => {
+												onMouseOverHandler(0);
+											},
+											click: () => {
+												if (range === 'todays') return;
+												setSelectedAppointment(appointment);
+											},
+										}}
+									></Marker>
+								)
+						)}
 					</MapContainer>
 				</div>
 				<div className="md:col-span-1 h-full min-h-0 dark:bg-gray-800 bg-blue-50 relative overflow-hidden">
