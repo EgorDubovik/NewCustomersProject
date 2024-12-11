@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import moment from 'moment';
 import Grids from './components/Grids';
 import TimesCol from './components/TimesCol';
 import { addDays, addWeeks, parseTimeToDate } from './utils/TimeHelper';
-import { getDaysArray, getTimesArray } from './utils/helper';
+import { getAppointmentForCurentDate, getDaysArray, getTimesArray } from './utils/helper';
 import DaysRow from './components/DaysRow';
 import { use } from 'i18next';
+import { formatDate } from '../../../helpers/helper';
 
 interface AppointmentsSchedulerProps {
 	startTime?: string;
@@ -13,8 +14,8 @@ interface AppointmentsSchedulerProps {
 	blockHeight?: number;
 	isDaysNames?: boolean;
 	viewType?: 'week' | 'day';
-	// isHeader?: boolean;
-
+	isHeader?: boolean;
+	appointments?: any[];
 	// eventDefoultBgColor?: string;
 	// viewType?: 'week' | 'day';
 	// scheduleBgClass?: string;
@@ -29,19 +30,16 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	const endTime = parseTimeToDate(props.endTime || '23:00');
 	const blockHeight = props.blockHeight || 50;
 	const viewType = props.viewType || 'week';
+	const isHeader = props.isHeader !== undefined ? props.isHeader : true;
+	const isDaysNames = props.isDaysNames !== undefined ? props.isDaysNames : true;
+	const today = new Date();
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
 	const timesArray = getTimesArray(startTime, endTime, 'hh A', 1);
 	const daysArray = getDaysArray(selectedDate, viewType);
 
-	const today = new Date();
-	const isDaysNames = props.isDaysNames || true;
-
-	// useSates
-
-	// const isHeader = props.isHeader !== undefined ? props.isHeader : true;
-	// const isDaysNames = props.isDaysNames !== undefined ? props.isDaysNames : true;
+	const appointmentList = useMemo(() => getAppointmentForCurentDate(props.appointments || [], daysArray[0].date, daysArray[daysArray.length - 1].date), [props.appointments, selectedDate]);
 	// const defaultBackgroundColor = props.eventDefoultBgColor || '#1565c0';
 	// const endTimeCopy = endTime.clone().add(1, 'hour');
 	// const totalDuration = moment.duration(endTimeCopy.diff(startTime));
@@ -180,21 +178,22 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	return (
 		<div className="select-none">
 			<div className={'scheduler-container dark:bg-black rounded p-4'}>
-				<div className="scheduler-header flex justify-between">
-					<div className="scheduler-date text-base">Jun 1992</div>
-					<div className="scheduler-nav flex gap-4">
-						<button className="btn btn-sm btn-outline btn-outline-primary" onClick={prevWeekHandle}>
-							{'<'}
-						</button>
-						<button className="btn btn-sm btn-outline btn-outline-primary" onClick={todayHandle}>
-							Today
-						</button>
-						<button className="btn btn-sm btn-outline btn-outline-primary" onClick={nextWeekHandle}>
-							{'>'}
-						</button>
+				{isHeader && (
+					<div className="scheduler-header flex justify-between">
+						<div className="scheduler-date text-base">{formatDate(selectedDate, 'MMMM YYYY')}</div>
+						<div className="scheduler-nav flex gap-4">
+							<button className="btn btn-sm btn-outline btn-outline-primary" onClick={prevWeekHandle}>
+								{'<'}
+							</button>
+							<button className="btn btn-sm btn-outline btn-outline-primary" onClick={todayHandle}>
+								Today
+							</button>
+							<button className="btn btn-sm btn-outline btn-outline-primary" onClick={nextWeekHandle}>
+								{'>'}
+							</button>
+						</div>
 					</div>
-				</div>
-
+				)}
 				<div className="scheduler-body">
 					{isDaysNames && <DaysRow selectedDay={selectedDate} daysArray={daysArray} />}
 					<div className="scheduler-dates flex relative">

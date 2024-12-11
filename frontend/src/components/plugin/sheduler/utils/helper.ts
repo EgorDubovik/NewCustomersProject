@@ -27,6 +27,7 @@ export const getDaysArray = (selectedDay: Date, viewType: string) => {
 			{
 				title: formatDate(selectedDay, 'DDD DD'),
 				isSelect: selectedDay.getFullYear() === today.getFullYear() && selectedDay.getMonth() === today.getMonth() && selectedDay.getDate() === today.getDate(),
+				date: selectedDay,
 			},
 		];
 	}
@@ -36,9 +37,14 @@ export const getDaysArray = (selectedDay: Date, viewType: string) => {
 		daysArray.push({
 			title: day,
 			isSelect: current.getFullYear() === today.getFullYear() && current.getMonth() === today.getMonth() && current.getDate() === today.getDate(),
+			date: current,
 		});
 		current.setDate(current.getDate() + 1);
 	}
 
 	return daysArray;
+};
+
+export const getAppointmentForCurentDate = (appointments: any, firstDate: Date, lastDate: Date) => {
+	console.log(firstDate, lastDate);
 };
