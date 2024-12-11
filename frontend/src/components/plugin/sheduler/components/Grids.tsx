@@ -35,7 +35,7 @@ const Grids = (props: any) => {
 	const appointmentPxHeightRef = useRef(0);
 	const appointmentIndex = useRef(0);
 	const newProcentTop = useRef(0);
-	const deltaProcent = (15 * 100) / totalDuration.asMinutes();
+	// const deltaProcent = (15 * 100) / totalDuration.asMinutes();
 	const deltaPx = useRef(0);
 	const isMoving = useRef(false);
 
@@ -58,7 +58,7 @@ const Grids = (props: any) => {
 		appointmentOffsetInner.current = appointmentOffsetTop.current - dayInnerOffsettop.current;
 		appointmentProcentHeightRef.current = calculateTimePercentage(appointmentList[index].end) - calculateTimePercentage(appointmentList[index].start);
 		startPosition.current = e.clientY;
-		deltaPx.current = (deltaProcent * dayInnerHeight.current) / 100;
+		// deltaPx.current = (deltaProcent * dayInnerHeight.current) / 100;
 		isDragging.current = true;
 	};
 
@@ -102,7 +102,7 @@ const Grids = (props: any) => {
 				<div className="date pt-2 first:border-0 border-l dark:border-gray-600 border-gray-300" key={index}>
 					<div className="day-inner relative h-full" ref={dayInnerRef}>
 						<div className="appointments-list absolute h-full left-0 top-0 right-0" onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}>
-							{appointmentList.map((appointment: any, aindex: number) => {
+							{/* {appointmentList.map((appointment: any, aindex: number) => {
 								if (appointment.start.format('ddd DD') === day) {
 									return (
 										<div
@@ -130,7 +130,7 @@ const Grids = (props: any) => {
 										</div>
 									);
 								}
-							})}
+							})} */}
 						</div>
 						{timesArray.map((time: string, index: number) => (
 							<div key={index} className={'date-time dark:border-gray-600 border-gray-300 border-t'} style={{ height: blockHeight + 'px' }}></div>

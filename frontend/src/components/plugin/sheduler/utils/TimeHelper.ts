@@ -35,6 +35,13 @@ const addHours = (date: Date, hours: number): Date => {
 	return result;
 };
 
+// Function to add days to a Date object
+const addDays = (date: Date, days: number): Date => {
+	const result = new Date(date);
+	result.setTime(result.getTime() + days * 24 * 60 * 60 * 1000);
+	return result;
+};
+
 // Function add weeks to a Date object
 const addWeeks = (date: Date, weeks: number): Date => {
 	const result = new Date(date);
@@ -42,4 +49,4 @@ const addWeeks = (date: Date, weeks: number): Date => {
 	return result;
 };
 
-export { addHours, addWeeks, parseTimeToDate };
+export { addHours, addWeeks, parseTimeToDate, addDays };

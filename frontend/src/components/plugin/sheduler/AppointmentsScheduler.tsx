@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
-import Grids from './Grids';
+import Grids from './components/Grids';
 import TimesCol from './components/TimesCol';
-import { addWeeks, parseTimeToDate } from './utils/TimeHelper';
-import { getTimesArray } from './utils/helper';
+import { addDays, addWeeks, parseTimeToDate } from './utils/TimeHelper';
+import { getDaysArray, getTimesArray } from './utils/helper';
 import DaysRow from './components/DaysRow';
 import { use } from 'i18next';
 
@@ -12,6 +12,7 @@ interface AppointmentsSchedulerProps {
 	endTime?: string;
 	blockHeight?: number;
 	isDaysNames?: boolean;
+	viewType?: 'week' | 'day';
 	// isHeader?: boolean;
 
 	// eventDefoultBgColor?: string;
@@ -27,12 +28,17 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	const startTime = parseTimeToDate(props.startTime || '00:00');
 	const endTime = parseTimeToDate(props.endTime || '23:00');
 	const blockHeight = props.blockHeight || 50;
+	const viewType = props.viewType || 'week';
+
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
 	const timesArray = getTimesArray(startTime, endTime, 'hh A', 1);
+	const daysArray = getDaysArray(selectedDate, viewType);
+
 	const today = new Date();
 	const isDaysNames = props.isDaysNames || true;
 
 	// useSates
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
 	// const isHeader = props.isHeader !== undefined ? props.isHeader : true;
 	// const isDaysNames = props.isDaysNames !== undefined ? props.isDaysNames : true;
@@ -160,14 +166,12 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	}, [selectedDate]);
 
 	const prevWeekHandle = () => {
-		setSelectedDate(addWeeks(selectedDate, -1));
-		// if (viewType === 'week') setCurrentDate(currentDate.clone().subtract(1, 'week'));
-		// if (viewType === 'day') setCurrentDate(currentDate.clone().subtract(1, 'days'));
+		if (viewType === 'week') setSelectedDate(addWeeks(selectedDate, -1));
+		if (viewType === 'day') setSelectedDate(addDays(selectedDate, -1));
 	};
 	const nextWeekHandle = () => {
-		setSelectedDate(addWeeks(selectedDate, 1));
-		// if (viewType === 'week') setCurrentDate(currentDate.clone().add(1, 'week'));
-		// if (viewType === 'day') setCurrentDate(currentDate.clone().add(1, 'days'));
+		if (viewType === 'week') setSelectedDate(addWeeks(selectedDate, 1));
+		if (viewType === 'day') setSelectedDate(addDays(selectedDate, 1));
 	};
 	const todayHandle = () => {
 		setSelectedDate(today);
@@ -192,20 +196,20 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 				</div>
 
 				<div className="scheduler-body">
-					{isDaysNames && <DaysRow selectedDay={selectedDate} />}
+					{isDaysNames && <DaysRow selectedDay={selectedDate} daysArray={daysArray} />}
 					<div className="scheduler-dates flex relative">
 						<TimesCol timesArray={timesArray} blockHeight={blockHeight} />
-						{/* <Grids
+						<Grids
 							blockHeight={blockHeight}
 							startTime={startTime}
 							endTime={endTime}
 							timesArray={timesArray}
 							daysArray={daysArray}
-							appointmentList={appointmentList}
-							setAppointmentForCurentDate={setAppointmentForCurentDate}
-							onAppointmentClick={onAppointmentClick}
-							totalDuration={totalDuration}
-						/> */}
+							// appointmentList={appointmentList}
+							// setAppointmentForCurentDate={setAppointmentForCurentDate}
+							// onAppointmentClick={onAppointmentClick}
+							// totalDuration={totalDuration}
+						/>
 					</div>
 				</div>
 			</div>
