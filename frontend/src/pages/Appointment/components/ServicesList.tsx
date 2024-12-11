@@ -51,7 +51,7 @@ const ServicesList = (props: any) => {
 	};
 
 	const handleSaveService = () => {
-		if (serviceForm.title === '' || !serviceForm.price) return;
+		if (serviceForm.title === '') return;
 		localStorage.setItem('isTaxable', serviceForm.taxable.toString());
 		if (serviceForm.id === 0) {
 			onSaveService(serviceForm);

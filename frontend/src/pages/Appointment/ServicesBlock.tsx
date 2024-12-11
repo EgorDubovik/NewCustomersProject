@@ -41,6 +41,7 @@ const ServicesBlock = () => {
 				});
 		} else {
 			// store
+			console.log('store service:');
 			axiosClient
 				.post(`appointment/service/${appointment?.job_id}`, service)
 				.then((res: any) => {
