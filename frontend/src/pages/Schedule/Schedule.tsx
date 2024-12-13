@@ -26,7 +26,6 @@ const Schedule = () => {
 
 	const refactorAppointments = (appointments: any) => {
 		const getTextColor = (appointment: any) => {
-			console.log('getColors', theme);
 			let bgColor = theme === 'dark' ? '#ffffff29' : '#ccc';
 			bgColor = appointment.status == 0 ? appointment.bg : bgColor;
 			let textColor = appointment.status === 0 ? 'text-white' : theme === 'dark' ? 'text-gray-300' : 'text-gray-500';
@@ -54,17 +53,17 @@ const Schedule = () => {
 
 	useEffect(() => {
 		setLoadingStatus('success');
-		// setLoadingStatus('loading');
-		// axiosClient
-		// 	.get('/appointment')
-		// 	.then((res) => {
-		// 		refactorAppointments(res.data.appointments);
-		// 		setLoadingStatus('success');
-		// 	})
-		// 	.catch((err) => {
-		// 		setLoadingStatus('error');
-		// 		console.log(err);
-		// 	});
+		setLoadingStatus('loading');
+		axiosClient
+			.get('/appointment')
+			.then((res) => {
+				refactorAppointments(res.data.appointments);
+				setLoadingStatus('success');
+			})
+			.catch((err) => {
+				setLoadingStatus('error');
+				console.log(err);
+			});
 	}, []);
 
 	useEffect(() => {

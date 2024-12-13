@@ -21,7 +21,6 @@ interface AppointmentsSchedulerProps {
 	// scheduleBgClass?: string;
 
 	// onClickHandler?: (appointment: any) => void;
-	// appointments?: any[];
 	// currentDate?: any;
 }
 
@@ -38,8 +37,8 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 
 	const timesArray = getTimesArray(startTime, endTime, 'hh A', 1);
 	const daysArray = getDaysArray(selectedDate, viewType);
-
 	const appointmentList = useMemo(() => getAppointmentForCurentDate(props.appointments || [], daysArray[0].date, daysArray[daysArray.length - 1].date), [props.appointments, selectedDate]);
+	console.log(appointmentList);
 	// const defaultBackgroundColor = props.eventDefoultBgColor || '#1565c0';
 	// const endTimeCopy = endTime.clone().add(1, 'hour');
 	// const totalDuration = moment.duration(endTimeCopy.diff(startTime));

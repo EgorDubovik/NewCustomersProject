@@ -37,7 +37,7 @@ export const getDaysArray = (selectedDay: Date, viewType: string) => {
 		daysArray.push({
 			title: day,
 			isSelect: current.getFullYear() === today.getFullYear() && current.getMonth() === today.getMonth() && current.getDate() === today.getDate(),
-			date: current,
+			date: new Date(current.getTime()),
 		});
 		current.setDate(current.getDate() + 1);
 	}
@@ -46,5 +46,41 @@ export const getDaysArray = (selectedDay: Date, viewType: string) => {
 };
 
 export const getAppointmentForCurentDate = (appointments: any, firstDate: Date, lastDate: Date) => {
-	console.log(firstDate, lastDate);
+	let returnAppointments = appointments.filter((appointment: any) => {
+		appointment.start = new Date(appointment.start);
+		appointment.end = new Date(appointment.end);
+		// appointment.bg = appointment.bg || defaultBackgroundColor;
+
+		return (
+			(appointment.start.getTime() >= firstDate.getTime() && appointment.start.getTime() <= lastDate.getTime()) ||
+			(appointment.end.getTime() >= firstDate.getTime() && appointment.end.getTime() <= lastDate.getTime()) ||
+			(appointment.start.getTime() < firstDate.getTime() && appointment.end.getTime() > lastDate.getTime())
+		);
+	});
+	let sortedAppointments = returnAppointments.sort((a: any, b: any) => a.start - b.start);
+	return groupAppointmentsByTime(sortedAppointments);
+};
+
+export const groupAppointmentsByTime = (appointmentsArray: any) => {
+	let groups: any[] = [];
+
+	appointmentsArray.forEach((appointment: any) => {
+		const matchingGroup = groups.find(
+			(group: any) =>
+				(appointment.start.getTime() >= group.start.getTime() && appointment.start.getTime() < group.end.getTime()) ||
+				(appointment.end.getTime() > group.start.getTime() && appointment.end.getTime() <= group.end.getTime())
+		);
+
+		if (matchingGroup) {
+			matchingGroup.appointments.push(appointment);
+		} else {
+			groups.push({
+				start: appointment.start,
+				end: appointment.end,
+				appointments: [appointment],
+			});
+		}
+	});
+
+	return groups;
 };
