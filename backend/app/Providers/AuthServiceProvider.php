@@ -18,6 +18,7 @@ use App\Models\Job\Notes;
 use App\Models\Job\Service as JobService;
 use App\Models\Payment;
 use App\Models\StorageItems;
+use App\Models\AppointmentTechs;
 use App\Policies\JobServicePolicy;
 use App\Policies\CompanyTagPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -124,7 +125,14 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('update-remove-appointment', function (User $user, Appointment $appointment) {
-            return $appointment->company_id == $user->company_id;
+            return $user->company_id == $appointment->company_id
+                && (
+                    // Check if user is assigned to this appointment or admin | disp role
+                    AppointmentTechs::where('appointment_id', $appointment->id)
+                        ->where('tech_id', $user->id)
+                        ->first()
+                    || $user->isRole([Role::ADMIN, Role::DISP])
+                );
         });
 
         //Job Payments
