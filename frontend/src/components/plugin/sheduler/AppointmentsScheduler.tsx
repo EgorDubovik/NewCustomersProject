@@ -3,9 +3,8 @@ import moment from 'moment';
 import Grids from './components/Grids';
 import TimesCol from './components/TimesCol';
 import { addDays, addWeeks, parseTimeToDate } from './utils/TimeHelper';
-import { getAppointmentForCurentDate, getDaysArray, getTimesArray } from './utils/helper';
+import { getAppointmentForCurentDate, getDaysArray, getTimesArray, calculateViewDateTimes, getAppointmentsTiles } from './utils/helper';
 import DaysRow from './components/DaysRow';
-import { use } from 'i18next';
 import { formatDate } from '../../../helpers/helper';
 
 interface AppointmentsSchedulerProps {
@@ -25,20 +24,34 @@ interface AppointmentsSchedulerProps {
 }
 
 const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
-	const startTime = parseTimeToDate(props.startTime || '00:00');
-	const endTime = parseTimeToDate(props.endTime || '23:00');
+	const startTime = useMemo(() => parseTimeToDate(props.startTime || '00:00'), [props.startTime]);
+	const endTime = useMemo(() => parseTimeToDate(props.endTime || '23:00'), [props.endTime]);
+	const viewType = props.viewType || 'week'; // week | day
 	const blockHeight = props.blockHeight || 50;
-	const viewType = props.viewType || 'week';
+
 	const isHeader = props.isHeader !== undefined ? props.isHeader : true;
 	const isDaysNames = props.isDaysNames !== undefined ? props.isDaysNames : true;
 	const today = new Date();
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	// Start view on date Time and end view on date Time
+	const [startViewDateTime, setStartViewDateTime] = useState<Date>(new Date());
+	const [endViewDateTime, setEndViewDateTime] = useState<Date>(new Date());
+
+	useEffect(() => {
+		const result = calculateViewDateTimes(selectedDate, startTime, endTime, viewType);
+		if (result) {
+			setStartViewDateTime(result.start);
+			setEndViewDateTime(result.end);
+		}
+	}, [selectedDate, startTime, endTime, viewType]);
 
 	const timesArray = getTimesArray(startTime, endTime, 'hh A', 1);
 	const daysArray = getDaysArray(selectedDate, viewType);
-	const appointmentList = useMemo(() => getAppointmentForCurentDate(props.appointments || [], daysArray[0].date, daysArray[daysArray.length - 1].date), [props.appointments, selectedDate]);
-	console.log(appointmentList);
+	const appointmentForCurentDate = useMemo(() => getAppointmentForCurentDate(props.appointments || [], startViewDateTime, endViewDateTime), [props.appointments, startViewDateTime, endViewDateTime]);
+	const appointmentTiles = useMemo(() => getAppointmentsTiles(appointmentForCurentDate, startViewDateTime, endViewDateTime), [appointmentForCurentDate]);
+	console.log(appointmentTiles);
+
 	// const defaultBackgroundColor = props.eventDefoultBgColor || '#1565c0';
 	// const endTimeCopy = endTime.clone().add(1, 'hour');
 	// const totalDuration = moment.duration(endTimeCopy.diff(startTime));
@@ -158,10 +171,6 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	// let groupedAppointment = groupAppointmentsByTime(appointmentForCurentDate);
 	// let appointmentList = fetchAppointments(groupedAppointment);
 
-	useEffect(() => {
-		console.log('selected Date has been changed');
-	}, [selectedDate]);
-
 	const prevWeekHandle = () => {
 		if (viewType === 'week') setSelectedDate(addWeeks(selectedDate, -1));
 		if (viewType === 'day') setSelectedDate(addDays(selectedDate, -1));
@@ -203,6 +212,7 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 							endTime={endTime}
 							timesArray={timesArray}
 							daysArray={daysArray}
+							appointmentTiles={appointmentTiles}
 							// appointmentList={appointmentList}
 							// setAppointmentForCurentDate={setAppointmentForCurentDate}
 							// onAppointmentClick={onAppointmentClick}
