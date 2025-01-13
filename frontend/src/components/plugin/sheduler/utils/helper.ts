@@ -109,15 +109,33 @@ export const getAppointmentsTiles = (appointments: any, startDateTime: Date, end
 		});
 
 		let tilesForOneDay: { title: any; id: any; top: number; left: number; width: number; height: number }[] = [];
-
+		const columns: number[] = [];
 		dayAppointments.forEach((appointment: any) => {
 			const { top, height } = calculatePositionAndHeight(startDateTimeClone, endSameDayTime, appointment.start, appointment.end);
+			const start = new Date(appointment.startTime).getTime();
+			const end = new Date(appointment.endTime).getTime();
+
+			// Find an available column
+			let columnIndex = columns.findIndex((colEndTime) => colEndTime <= start);
+			if (columnIndex === -1) {
+				// No available column, create a new one
+				columnIndex = columns.length;
+				columns.push(end);
+			} else {
+				// Update the column's end time
+				columns[columnIndex] = end;
+			}
+
+			// Calculate `left` and `width` based on columns
+			const totalColumns = columns.length;
+			const width = 100 / totalColumns; // Equal width for all columns
+			const left = columnIndex * width;
 			let tile = {
 				title: appointment.title,
 				id: appointment.id,
 				top: top,
-				left: 0,
-				width: 100,
+				left: left,
+				width: width,
 				height: height,
 				bg: appointment.bg || '#1565C0',
 			};
@@ -133,8 +151,8 @@ export const getAppointmentsTiles = (appointments: any, startDateTime: Date, end
 const calculatePositionAndHeight = (startDate: Date, endDate: Date, appointmentStartTime: Date, appointmentEndTime: Date) => {
 	const totalDuration = (endDate.getTime() - startDate.getTime()) / 1000 / 60 + 60;
 	const startOffset = appointmentStartTime.getTime() < startDate.getTime() ? 0 : (appointmentStartTime.getTime() - startDate.getTime()) / 1000 / 60;
-	const endOffset = appointmentEndTime.getTime() > endDate.getTime() ? 0 : (appointmentEndTime.getTime() - startDate.getTime()) / 1000 / 60;
-	const appointmentDuration = totalDuration - endOffset - startOffset;
+	const endOffset = appointmentEndTime.getTime() > endDate.getTime() ? totalDuration : (appointmentEndTime.getTime() - startDate.getTime()) / 1000 / 60;
+	const appointmentDuration = endOffset - startOffset;
 	const topPercentage = (startOffset / totalDuration) * 100;
 	const heightPercentage = (appointmentDuration / totalDuration) * 100;
 
