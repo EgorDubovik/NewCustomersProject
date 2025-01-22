@@ -101,45 +101,46 @@ const CustomerInfo = () => {
 			<div className={loading ? 'blur-sm' : ''}>
 				<h2 className="font-bold">Enter your information</h2>
 				<div className="pt-4">
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6 p-3 px-6 bg-white rounded-lg shadow-lg">
-						<div className="col-span-2">
-							<div className="relative h-11 w-full ">
-								<input
-									name="name"
-									value={customerInfo.name}
-									onChange={onChange}
-									placeholder=""
-									className="peer h-full w-full border-b border-gray-400 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-blue-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
-								/>
-								<label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-blue-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-									You name
-								</label>
-							</div>
+					<div className="grid grid-cols-1 gap-y-6 p-3 px-6 bg-white rounded-lg shadow-lg">
+						<div className="relative h-11 w-full ">
+							<input
+								name="name"
+								value={customerInfo.name}
+								onChange={onChange}
+								placeholder=""
+								className="peer h-full w-full border-b border-gray-400 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-blue-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
+							/>
+							<label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-blue-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+								You name
+							</label>
 						</div>
-						<div className="">
-							<div className="relative h-11 w-full ">
-								<input
-									name="email"
-									onChange={onChange}
-									placeholder=""
-									className="peer h-full w-full border-b border-gray-400 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-blue-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
-								/>
-								<label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-blue-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-									Email
-								</label>
+
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-6">
+							<div className="">
+								<div className="relative h-11 w-full ">
+									<input
+										name="email"
+										onChange={onChange}
+										placeholder=""
+										className="peer h-full w-full border-b border-gray-400 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-blue-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
+									/>
+									<label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-blue-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+										Email
+									</label>
+								</div>
 							</div>
-						</div>
-						<div className="">
-							<div className="relative h-11 w-full ">
-								<input
-									name="phone"
-									onChange={onChange}
-									placeholder=""
-									className="peer h-full w-full border-b border-gray-400 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-blue-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
-								/>
-								<label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-blue-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-									Phone number
-								</label>
+							<div className="">
+								<div className="relative h-11 w-full ">
+									<input
+										name="phone"
+										onChange={onChange}
+										placeholder=""
+										className="peer h-full w-full border-b border-gray-400 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-blue-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
+									/>
+									<label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-blue-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-blue-500 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+										Phone number
+									</label>
+								</div>
 							</div>
 						</div>
 						<div className="">
@@ -168,7 +169,7 @@ const CustomerInfo = () => {
 								</label>
 							</div>
 						</div>
-						<div className="col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-10">
+						<div className="grid grid-cols-3 gap-6">
 							<div className="relative h-11 w-full ">
 								<input
 									name="city"
@@ -202,17 +203,19 @@ const CustomerInfo = () => {
 									Zip code
 								</label>
 							</div>
-						</div>
-						<div className="col-span-2 pt-3 text-right">
-							<button
-								onClick={() => {
-									sendInfo();
-								}}
-								type="button"
-								className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md text-sm px-3 py-1.5 me-2 mb-2"
-							>
-								Create appointment
-							</button>
+							<div className="col-span-3">
+								<div className="pt-3 text-right">
+									<button
+										onClick={() => {
+											sendInfo();
+										}}
+										type="button"
+										className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 font-medium rounded-md text-sm px-5 py-3 me-2 mb-2"
+									>
+										Create appointment
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
