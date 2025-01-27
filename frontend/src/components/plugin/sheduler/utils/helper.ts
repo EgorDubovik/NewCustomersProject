@@ -87,7 +87,9 @@ export const getAppointmentForCurentDate = (appointments: any, firstDate: Date, 
 			(appointment.start.getTime() < firstDate.getTime() && appointment.end.getTime() > lastDate.getTime())
 		);
 	});
+
 	let sortedAppointments = returnAppointments.sort((a: any, b: any) => a.start - b.start);
+
 	return sortedAppointments;
 };
 
@@ -108,40 +110,31 @@ export const getAppointmentsTiles = (appointments: any, startDateTime: Date, end
 			);
 		});
 
-		let tilesForOneDay: { title: any; id: any; top: number; left: number; width: number; height: number }[] = [];
-		const columns: number[] = [];
+		let tilesForOneDay: { title: any; id: any; top: number; left: number | null; width: number | null; height: number }[] = [];
 		dayAppointments.forEach((appointment: any) => {
 			const { top, height } = calculatePositionAndHeight(startDateTimeClone, endSameDayTime, appointment.start, appointment.end);
-			const start = new Date(appointment.startTime).getTime();
-			const end = new Date(appointment.endTime).getTime();
-
-			// Find an available column
-			let columnIndex = columns.findIndex((colEndTime) => colEndTime <= start);
-			if (columnIndex === -1) {
-				// No available column, create a new one
-				columnIndex = columns.length;
-				columns.push(end);
-			} else {
-				// Update the column's end time
-				columns[columnIndex] = end;
-			}
-
-			// Calculate `left` and `width` based on columns
-			const totalColumns = columns.length;
-			const width = 100 / totalColumns; // Equal width for all columns
-			const left = columnIndex * width;
 			let tile = {
 				title: appointment.title,
 				id: appointment.id,
+				start: appointment.start,
+				end: appointment.end,
 				top: top,
-				left: left,
-				width: width,
+				left: null,
+				width: null,
 				height: height,
 				bg: appointment.bg || '#1565C0',
 			};
 
 			tilesForOneDay.push(tile);
 		});
+
+		for (let i = 0; i < tilesForOneDay.length; i++) {
+			setLeftAndWidth(tilesForOneDay[i], tilesForOneDay);
+		}
+
+		for (let i = 0; i < tilesForOneDay.length; i++) {
+			setLeftAndWidth(tilesForOneDay[i], tilesForOneDay);
+		}
 
 		returnArray.push(tilesForOneDay);
 		startDateTimeClone.setDate(startDateTimeClone.getDate() + 1);
@@ -161,26 +154,63 @@ const calculatePositionAndHeight = (startDate: Date, endDate: Date, appointmentS
 		height: heightPercentage,
 	};
 };
-// export const groupAppointmentsByTime = (appointmentsArray: any) => {
-// 	let groups: any[] = [];
+const setLeftAndWidth = (tile: any, tiles: any[]) => {
+	const overlappingTiles = getOverlapingTiles(tile, tiles);
 
-// 	appointmentsArray.forEach((appointment: any) => {
-// 		const matchingGroup = groups.find(
-// 			(group: any) =>
-// 				(appointment.start.getTime() >= group.start.getTime() && appointment.start.getTime() < group.end.getTime()) ||
-// 				(appointment.end.getTime() > group.start.getTime() && appointment.end.getTime() <= group.end.getTime())
-// 		);
+	if (overlappingTiles.length === 0) {
+		tile.left = 0;
+		tile.width = 100;
+		return;
+	}
 
-// 		if (matchingGroup) {
-// 			matchingGroup.appointments.push(appointment);
-// 		} else {
-// 			groups.push({
-// 				start: appointment.start,
-// 				end: appointment.end,
-// 				appointments: [appointment],
-// 			});
-// 		}
-// 	});
+	const availablePosition = findFirstAvalablePlace(overlappingTiles);
 
-// 	return groups;
-// };
+	if (availablePosition) {
+		tile.left = availablePosition.left;
+		tile.width = availablePosition.width;
+	} else {
+		// Если все позиции заняты, перераспределяем всех
+		overlappingTiles.push(tile);
+		const distributedWidth = 100 / overlappingTiles.length;
+
+		overlappingTiles.forEach((tile, index) => {
+			tile.left = index * distributedWidth;
+			tile.width = distributedWidth;
+		});
+	}
+};
+
+const getOverlapingTiles = (currentTile: any, tiles: any[]) => {
+	return tiles.filter((tile) => {
+		// Проверка пересечений по времени
+		if (currentTile === tile) return false;
+		return (
+			currentTile.start.getTime() >= tile.start.getTime() && currentTile.start.getTime() < tile.end.getTime() //||
+			// (currentTile.end.getTime() > tile.start.getTime() && currentTile.end.getTime() <= tile.end.getTime()) ||
+			// (currentTile.start.getTime() < tile.start.getTime() && currentTile.end.getTime() > tile.end.getTime())
+		);
+	});
+};
+
+const findFirstAvalablePlace = (tiles: any[]) => {
+	tiles.sort((a, b) => a.left - b.left);
+	let currentLeft = 0;
+	for (const tile of tiles) {
+		if (tile.left === null) continue;
+		if (tile.left > currentLeft) {
+			return {
+				left: currentLeft,
+				width: tile.left - currentLeft,
+			};
+		}
+		currentLeft = Math.max(currentLeft, tile.left + tile.width);
+	}
+
+	if (currentLeft < 100) {
+		return {
+			left: currentLeft,
+			width: 100 - currentLeft,
+		};
+	}
+	return null;
+};

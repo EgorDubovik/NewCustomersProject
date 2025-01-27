@@ -48,22 +48,45 @@ const Schedule = () => {
 	};
 
 	useEffect(() => {
-		refactorAppointments(appointments);
+		// refactorAppointments(appointments);
 	}, [theme]);
 
 	useEffect(() => {
 		setLoadingStatus('success');
 		setLoadingStatus('loading');
-		axiosClient
-			.get('/appointment')
-			.then((res) => {
-				refactorAppointments(res.data.appointments);
-				setLoadingStatus('success');
-			})
-			.catch((err) => {
-				setLoadingStatus('error');
-				console.log(err);
-			});
+		setAppointments([
+			{
+				title: 'App 1',
+				start: '2025-01-22T10:00:00',
+				end: '2025-01-22T12:00:00',
+			},
+			{
+				title: 'App 1',
+				start: '2025-01-22T10:00:00',
+				end: '2025-01-22T12:00:00',
+			},
+			{
+				title: 'App 1',
+				start: '2025-01-22T09:00:00',
+				end: '2025-01-22T12:00:00',
+			},
+			{
+				title: 'App 1',
+				start: '2025-01-22T08:00:00',
+				end: '2025-01-22T09:00:00',
+			},
+		]);
+		setLoadingStatus('success');
+		// axiosClient
+		// 	.get('/appointment')
+		// 	.then((res) => {
+		// 		refactorAppointments(res.data.appointments);
+		// 		setLoadingStatus('success');
+		// 	})
+		// 	.catch((err) => {
+		// 		setLoadingStatus('error');
+		// 		console.log(err);
+		// 	});
 	}, []);
 
 	useEffect(() => {

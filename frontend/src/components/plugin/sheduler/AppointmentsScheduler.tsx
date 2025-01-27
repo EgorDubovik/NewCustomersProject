@@ -50,7 +50,7 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	const daysArray = getDaysArray(selectedDate, viewType);
 	const appointmentForCurentDate = useMemo(() => getAppointmentForCurentDate(props.appointments || [], startViewDateTime, endViewDateTime), [props.appointments, startViewDateTime, endViewDateTime]);
 	const appointmentTiles = useMemo(() => getAppointmentsTiles(appointmentForCurentDate, startViewDateTime, endViewDateTime), [appointmentForCurentDate]);
-	console.log(appointmentTiles);
+	// console.log(appointmentTiles);
 
 	// const defaultBackgroundColor = props.eventDefoultBgColor || '#1565c0';
 	// const endTimeCopy = endTime.clone().add(1, 'hour');
