@@ -7,15 +7,14 @@ import axiosClient from '../../store/axiosClient';
 import { IRootState } from '../../store';
 import { PageLoadError } from '../../components/loading/Errors';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
-import IconClock from '../../components/Icon/IconClock';
-import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconMapPin from '../../components/Icon/IconMapPin';
+import { IAppointment } from '../../components/plugin/sheduler/types';
 
 const Schedule = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [appointments, setAppointments] = useState<any[]>([]);
-	const [viewType, setViewType] = useState<'week' | 'day'>('week');
+	const [viewType, setViewType] = useState<'week' | 'day'>('day');
 	const theme = useSelector((state: IRootState) => state.themeConfig.theme);
 
 	useEffect(() => {
@@ -57,23 +56,37 @@ const Schedule = () => {
 		setAppointments([
 			{
 				title: 'App 1',
-				start: '2025-01-22T10:00:00',
-				end: '2025-01-22T12:00:00',
+				start: '2025-01-29T10:00:00',
+				end: '2025-01-29T12:00:00',
+				status: 1,
+				bg: '#1565C0',
 			},
 			{
-				title: 'App 1',
-				start: '2025-01-22T10:00:00',
-				end: '2025-01-22T12:00:00',
+				title: 'App 2',
+				start: '2025-01-29T11:00:00',
+				end: '2025-01-29T13:00:00',
+				status: 0,
+				bg: '#1565C0',
 			},
 			{
-				title: 'App 1',
-				start: '2025-01-22T09:00:00',
-				end: '2025-01-22T12:00:00',
+				title: 'App 2',
+				start: '2025-01-29T11:00:00',
+				end: '2025-01-29T14:00:00',
 			},
 			{
-				title: 'App 1',
-				start: '2025-01-22T08:00:00',
-				end: '2025-01-22T09:00:00',
+				title: 'App 2',
+				start: '2025-01-29T13:00:00',
+				end: '2025-01-29T15:00:00',
+			},
+			{
+				title: 'App 2',
+				start: '2025-01-29T08:00:00',
+				end: '2025-01-29T11:00:00',
+			},
+			{
+				title: 'App 2',
+				start: '2025-01-29T08:00:00',
+				end: '2025-01-29T11:00:00',
 			},
 		]);
 		setLoadingStatus('success');
@@ -107,6 +120,18 @@ const Schedule = () => {
 	const viewAppointments = (data: any) => {
 		navigate('/appointment/' + data.id);
 	};
+
+	const onAppointmentClick = (data: any) => {
+		console.log(data);
+	};
+	const setAppointmentBackgroundStyle = (appointment: IAppointment) => {
+		if (appointment.status === 1)
+			return {
+				backgroundColor: theme === 'dark' ? '#5b5b5b' : '#ccc',
+				borderLeft: '3px solid ' + appointment.bg,
+			};
+	};
+
 	return (
 		<div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
@@ -124,7 +149,14 @@ const Schedule = () => {
 			{loadingStatus === 'error' && <PageLoadError />}
 			{loadingStatus === 'success' && (
 				<div className="py-4">
-					<AppointmentsScheduler appointments={appointments} onClickHandler={viewAppointments} viewType={viewType} />
+					<AppointmentsScheduler
+						startTime="07:00"
+						endTime="20:00"
+						viewType={viewType}
+						appointments={appointments}
+						onClickHandler={onAppointmentClick}
+						setAppointmentBackgroundStyle={setAppointmentBackgroundStyle}
+					/>
 				</div>
 			)}
 		</div>

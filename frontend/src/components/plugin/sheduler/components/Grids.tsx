@@ -1,27 +1,31 @@
 import { useRef } from 'react';
-import moment from 'moment';
+import { ITile } from '../types';
 
 const Grids = (props: any) => {
 	const appointmentTiles = props.appointmentTiles || [];
 	const daysArray = props.daysArray || [];
-	const startTime = props.startTime || null;
-	const endTime = props.endTime || null;
+	// const startTime = props.startTime || null;
+	const defaultAppointmentOpacity = props.defaultAppointmentOpacity;
+	const defaultAppointmentBgColor = props.defaultAppointmentBgColor;
+	// const endTime = props.endTime || null;
 	const timesArray = props.timesArray || [];
 	const totalDuration = props.totalDuration || null;
 	const blockHeight = props.blockHeight || 50;
 
 	const onAppointmentClick = props.onAppointmentClick || null;
-	const setAppointmentForCurentDate = props.setAppointmentForCurentDate || null;
+	const setAppointmentBackgroundStyle = props.setAppointmentBackgroundStyle || null;
+
+	// const setAppointmentForCurentDate = props.setAppointmentForCurentDate || null;
 
 	const dayInnerRef = useRef(null);
 	const dayInnerHeight = useRef(0);
 	const dayInnerOffsettop = useRef(0);
 
-	const calculateTimePercentage = (time: any) => {
-		const relativeTime = time.clone().set({ hour: startTime.hour(), minute: startTime.minute() });
-		const elaspseTime = moment.duration(time.diff(relativeTime));
-		return (elaspseTime.asMinutes() / totalDuration.asMinutes()) * 100;
-	};
+	// const calculateTimePercentage = (time: any) => {
+	// 	const relativeTime = time.clone().set({ hour: startTime.hour(), minute: startTime.minute() });
+	// 	const elaspseTime = moment.duration(time.diff(relativeTime));
+	// 	return (elaspseTime.asMinutes() / totalDuration.asMinutes()) * 100;
+	// };
 	const procentToMinutes = (procent: number) => {
 		return Math.round((totalDuration.asMinutes() * procent) / 100);
 	};
@@ -61,17 +65,16 @@ const Grids = (props: any) => {
 	};
 
 	const handleMouseMove = (e: any) => {
-		if (!isDragging.current) return;
-
-		let changedPosition = e.clientY - startPosition.current;
-		let newTopPosition = appointmentOffsetInner.current + changedPosition; // new position of appointment in px from top of dayInner
-		if (newTopPosition >= 0 && appointmentPxHeightRef.current + newTopPosition <= dayInnerHeight.current) {
-			isMoving.current = true;
-			let t = Math.round(newTopPosition / deltaPx.current);
-			newTopPosition = t * deltaPx.current;
-			newProcentTop.current = (newTopPosition / dayInnerHeight.current) * 100;
-			if (appointmentRef.current) appointmentRef.current.style.top = newProcentTop.current + '%';
-		}
+		// if (!isDragging.current) return;
+		// let changedPosition = e.clientY - startPosition.current;
+		// let newTopPosition = appointmentOffsetInner.current + changedPosition; // new position of appointment in px from top of dayInner
+		// if (newTopPosition >= 0 && appointmentPxHeightRef.current + newTopPosition <= dayInnerHeight.current) {
+		// 	isMoving.current = true;
+		// 	let t = Math.round(newTopPosition / deltaPx.current);
+		// 	newTopPosition = t * deltaPx.current;
+		// 	newProcentTop.current = (newTopPosition / dayInnerHeight.current) * 100;
+		// 	if (appointmentRef.current) appointmentRef.current.style.top = newProcentTop.current + '%';
+		// }
 	};
 
 	const handleMouseUp = () => {
@@ -94,33 +97,41 @@ const Grids = (props: any) => {
 		// setAppointmentForCurentDate(appointmentList);
 	};
 
+	const getTileStyle = (tile: ITile) => {
+		let styles = {
+			backgroundColor: tile.appointment.bg ?? defaultAppointmentBgColor,
+			inset: '1px',
+			opacity: tile.appointment.opacity ?? defaultAppointmentOpacity,
+		};
+
+		let extendedStyles = setAppointmentBackgroundStyle ? setAppointmentBackgroundStyle(tile.appointment) : {};
+		styles = { ...styles, ...extendedStyles };
+		return styles;
+	};
+
 	return (
 		<div className={'dates grid  w-full'} style={{ gridTemplateColumns: `repeat(${daysArray.length}, minmax(0, 1fr))` }}>
 			{daysArray.map((day: any, index: number) => (
 				<div className="date pt-2 first:border-0 border-l dark:border-gray-600 border-gray-300" key={index}>
 					<div className="day-inner relative h-full" ref={dayInnerRef}>
-						<div className="appointments-list absolute h-full left-0 top-0 right-0" onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}>
+						<div className="appointments-list overflow-hidden absolute h-full left-0 top-0 right-0" onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}>
 							{appointmentTiles[index] &&
-								appointmentTiles[index].map((tile: any, tindex: number) => {
+								appointmentTiles[index].map((tile: ITile, tindex: number) => {
 									return (
 										<div
-											key={tile.title + '-' + tindex + tile.top}
-											onMouseDown={(e) => {
-												handleMouseDown(e, tindex);
+											key={tile.appointment.title + '-' + tindex + tile.top}
+											onClick={() => {
+												onAppointmentClick(tile);
 											}}
+											// onMouseDown={(e) => {
+											// 	handleMouseDown(e, tindex);
+											// }}
 											className={'appointment text-[.8em]  absolute p-[2px] cursor-pointer'}
 											style={{ height: tile.height + '%', width: tile.width + '%', left: tile.left + '%', top: tile.top + '%' }}
 										>
-											<div className={'appointment-conteiner rounded absolute'} style={{ background: tile.bg, inset: '1px', opacity: tile.opacity ?? 0.8 }}></div>
-											<div className={(tile.addClass ?? '') + ' sticky font-bold'}>
-												<div
-													className="appointment-title px-2 pt-1 hover:underline "
-													onClick={() => {
-														onAppointmentClick(tile);
-													}}
-												>
-													{tile.title}
-												</div>
+											<div className={'appointment-conteiner rounded absolute'} style={getTileStyle(tile)}></div>
+											<div className={'text-white sticky font-bold'}>
+												<div className="appointment-title px-2 pt-1 hover:underline ">{tile.appointment.title}</div>
 												<div className="appointment-time px-2">{/* {tile.start.format('hh:mm A')} - {tile.end.format('hh:mm A')} */}</div>
 											</div>
 										</div>

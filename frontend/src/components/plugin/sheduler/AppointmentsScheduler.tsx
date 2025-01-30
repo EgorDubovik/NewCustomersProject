@@ -6,29 +6,17 @@ import { addDays, addWeeks, parseTimeToDate } from './utils/TimeHelper';
 import { getAppointmentForCurentDate, getDaysArray, getTimesArray, calculateViewDateTimes, getAppointmentsTiles } from './utils/helper';
 import DaysRow from './components/DaysRow';
 import { formatDate } from '../../../helpers/helper';
-
-interface AppointmentsSchedulerProps {
-	startTime?: string;
-	endTime?: string;
-	blockHeight?: number;
-	isDaysNames?: boolean;
-	viewType?: 'week' | 'day';
-	isHeader?: boolean;
-	appointments?: any[];
-	// eventDefoultBgColor?: string;
-	// viewType?: 'week' | 'day';
-	// scheduleBgClass?: string;
-
-	// onClickHandler?: (appointment: any) => void;
-	// currentDate?: any;
-}
+import { AppointmentsSchedulerProps } from './types';
 
 const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	const startTime = useMemo(() => parseTimeToDate(props.startTime || '00:00'), [props.startTime]);
 	const endTime = useMemo(() => parseTimeToDate(props.endTime || '23:00'), [props.endTime]);
+
+	const onClickHandler = useMemo(() => props.onClickHandler || null, [props.onClickHandler]); //props.onClickHandler || null;
+	const setAppointmentBackgroundStyle = useMemo(() => props.setAppointmentBackgroundStyle || null, [props.setAppointmentBackgroundStyle]);
 	const viewType = props.viewType || 'week'; // week | day
 	const blockHeight = props.blockHeight || 50;
-
+	const defaultAppointmentOpacity = props.defaultAppointmentOpacity || 0.8;
 	const isHeader = props.isHeader !== undefined ? props.isHeader : true;
 	const isDaysNames = props.isDaysNames !== undefined ? props.isDaysNames : true;
 	const today = new Date();
@@ -52,7 +40,7 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 	const appointmentTiles = useMemo(() => getAppointmentsTiles(appointmentForCurentDate, startViewDateTime, endViewDateTime), [appointmentForCurentDate]);
 	// console.log(appointmentTiles);
 
-	// const defaultBackgroundColor = props.eventDefoultBgColor || '#1565c0';
+	const defaultAppointmentBgColor = props.defaultAppointmentBgColor || '#1565c0';
 	// const endTimeCopy = endTime.clone().add(1, 'hour');
 	// const totalDuration = moment.duration(endTimeCopy.diff(startTime));
 	// const [daysArray, setDaysArray] = useState<any>([]);
@@ -215,7 +203,10 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 							appointmentTiles={appointmentTiles}
 							// appointmentList={appointmentList}
 							// setAppointmentForCurentDate={setAppointmentForCurentDate}
-							// onAppointmentClick={onAppointmentClick}
+							onAppointmentClick={onClickHandler}
+							defaultAppointmentOpacity={defaultAppointmentOpacity}
+							defaultAppointmentBgColor={defaultAppointmentBgColor}
+							setAppointmentBackgroundStyle={setAppointmentBackgroundStyle}
 							// totalDuration={totalDuration}
 						/>
 					</div>
