@@ -117,8 +117,6 @@ export const getAppointmentsTiles = (appointments: IAppointment[], startDateTime
 		dayAppointments.forEach((appointment: IAppointment) => {
 			const { top, height } = calculatePositionAndHeight(startDateTimeClone, endSameDayTime, appointment.start as Date, appointment.end as Date);
 			let tile: ITile = {
-				// title: appointment.title,
-				// id: appointment.id,
 				start: appointment.start as Date,
 				end: appointment.end as Date,
 				appointment: appointment,
@@ -126,7 +124,6 @@ export const getAppointmentsTiles = (appointments: IAppointment[], startDateTime
 				left: null,
 				width: null,
 				height: height,
-				// bg: appointment.bg || '#1565C0',
 			};
 
 			tilesForOneDay.push(tile);
