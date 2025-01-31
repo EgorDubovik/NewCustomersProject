@@ -144,7 +144,7 @@ const Grids = (props: any) => {
 											<div className={'appointment-conteiner rounded absolute'} style={getTileStyle(tile).backgroundStyles}></div>
 											<div className={'sticky font-bold'} style={getTileStyle(tile).titleStyles}>
 												<div className="appointment-title px-2 pt-1 hover:underline ">{tile.appointment.title}</div>
-												<div className="appointment-time px-2">{/* {tile.start.format('hh:mm A')} - {tile.end.format('hh:mm A')} */}</div>
+												{/* <div className="appointment-time px-2">{{tile.start.format('hh:mm A')} - {form tile.end.format('hh:mm A')}}</div> */}
 											</div>
 										</div>
 									);

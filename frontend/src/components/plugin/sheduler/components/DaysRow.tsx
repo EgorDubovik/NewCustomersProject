@@ -12,7 +12,7 @@ const DaysRow = (props: DaysRowProps) => {
 			<div className="first-item w-10"></div>
 			<div key={daysArray.length} className={'weekdays text-center grid w-full'} style={{ gridTemplateColumns: `repeat(${daysArray.length}, minmax(0, 1fr))` }}>
 				{daysArray.map((day: { title: string; isSelect: boolean }, index: number) => (
-					<div key={index} className={`weekday py-2 ${day.isSelect ? 'bg-blue-900 rounded-t text-white' : ''}`}>
+					<div key={index} className={`weekday py-2 ${day.isSelect ? 'dark:bg-blue-900 bg-blue-300 rounded-t dark:text-white text-black' : ''}`}>
 						{day.title}
 					</div>
 				))}
