@@ -54,7 +54,7 @@ class AppointmentController extends Controller
 		$appointment->title = $appointment->job->customer->name;
 		$appointment->backgroundColor = $appointment->techs->first()->color ?? '#1565c0';
 		$appointment->customer = $appointment->job->customer;
-		$appointment->address = $appointment->job->address->full;
+		$appointment->address = $appointment->job->address->full ?? '';
 		$appointment->techs = $appointment->techs->load('roles');
 		$appointment->notes = $appointment->job->notes()
 			->with(['creator:id,name'])

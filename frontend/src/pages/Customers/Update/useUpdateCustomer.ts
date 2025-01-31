@@ -107,6 +107,7 @@ export const useUpdateCustomer = () => {
 	};
 
 	const removeAddress = (addressId: string) => {
+		if (!confirm('Are you sure?')) return;
 		setRemoveAddressLoading(Number(addressId));
 		axiosClient
 			.delete('/customers/' + customerId + '/address/' + addressId)

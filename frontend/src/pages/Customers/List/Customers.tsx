@@ -7,7 +7,6 @@ import IconLayoutGrid from '../../../components/Icon/IconLayoutGrid';
 import IconSearch from '../../../components/Icon/IconSearch';
 import { Link, useNavigate } from 'react-router-dom';
 import { DataTable } from 'mantine-datatable';
-import moment from 'moment';
 import IconMapPin from '../../../components/Icon/IconMapPin';
 import { SmallPrimaryLoader } from '../../../components/loading/SmallCirculeLoader';
 import { PageCirclePrimaryLoader } from '../../../components/loading/PageLoading';
@@ -26,7 +25,8 @@ const Contacts = () => {
 		dispatch(setPageTitle('Customers'));
 	});
 
-	const { viewType, changeViewType, search, searchHandler, searchLoading, loadingStatus, records, totalRecords, page, setPage, pageSize, setPageSize, sortStatus, setSortStatus, PAGE_SIZES } = useCustomersList();
+	const { viewType, changeViewType, search, searchHandler, searchLoading, loadingStatus, records, totalRecords, page, setPage, pageSize, setPageSize, sortStatus, setSortStatus, PAGE_SIZES } =
+		useCustomersList();
 
 	return (
 		<div>
@@ -68,7 +68,9 @@ const Contacts = () => {
 							<div className="flex items-center justify-center">
 								<div className="text-center">
 									<h2 className="text-xl">No Customers Found</h2>
-									<Link to={"/customers/create"} className="text-primary">Create new customer or search again</Link>
+									<Link to={'/customers/create'} className="text-primary">
+										Create new customer or search again
+									</Link>
 								</div>
 							</div>
 						</div>
@@ -105,7 +107,7 @@ const Contacts = () => {
 												{
 													accessor: 'address',
 													sortable: false,
-													render: ({ address }) => <div className="font-semibold">{address[0].full}</div>,
+													render: ({ address }) => <div className="font-semibold">{address[0]?.full}</div>,
 												},
 												{
 													accessor: 'email',
@@ -115,7 +117,7 @@ const Contacts = () => {
 												{
 													accessor: 'date',
 													sortable: true,
-													render: ({ created_at }) => <div className="font-semibold">{ formatDate(created_at,'MMMM DD YYYY, hh:mm A') }</div>,
+													render: ({ created_at }) => <div className="font-semibold">{formatDate(created_at, 'MMMM DD YYYY, hh:mm A')}</div>,
 												},
 
 												{
@@ -194,7 +196,6 @@ const Contacts = () => {
 											);
 										})}
 									</div>
-									
 								</>
 							)}
 						</>

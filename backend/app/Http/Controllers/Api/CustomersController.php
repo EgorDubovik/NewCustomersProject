@@ -93,10 +93,10 @@ class CustomersController extends Controller
       // Get lan and lng from address
       if ($address) {
          $location = $this->getLatLong($address->full);
-         if($location) {
+         if ($location) {
             $address->update([
-                'lat' => $location['lat'],
-                'lon' => $location['lng'],
+               'lat' => $location['lat'],
+               'lon' => $location['lng'],
             ]);
          }
       }
@@ -150,7 +150,7 @@ class CustomersController extends Controller
 
       // Get lan and lng from address
       $location = $this->getLatLong($address->full);
-      if($location) {
+      if ($location) {
          $address->update([
             'lat' => $location['lat'],
             'lon' => $location['lng'],
@@ -183,7 +183,7 @@ class CustomersController extends Controller
 
       // Get lan and lng from address
       $location = $this->getLatLong($address->full);
-      if($location) {
+      if ($location) {
          $address->update([
             'lat' => $location['lat'],
             'lon' => $location['lng'],
@@ -206,22 +206,26 @@ class CustomersController extends Controller
       if (!$address) {
          return response()->json(['error' => 'Address not found'], 404);
       }
-      $address->delete();
+      $address->update([
+         'active' => false,
+      ]);
       $customer->load('address');
       return response()->json(['customer' => $customer], 200);
    }
 
-   private function getLatLong($address) {
+   private function getLatLong($address)
+   {
       $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
          'address' => $address,
          'key' => env('GOOGLE_MAPS_API_KEY'),
       ]);
-      if($response->ok() && isset($response['results'][0]['geometry']['location'])) {
+      if ($response->ok() && isset($response['results'][0]['geometry']['location'])) {
          $location = $response['results'][0]['geometry']['location'];
          return [
             'lat' => $location['lat'],
             'lng' => $location['lng'],
          ];
-      } else return null;
+      } else
+         return null;
    }
 }

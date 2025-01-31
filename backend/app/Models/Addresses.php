@@ -18,15 +18,18 @@ class Addresses extends Model
         'lat',
         'lon',
         'customer_id',
+        'active',
     ];
 
     protected $appends = ['full'];
 
-    public function getFullAttribute(){
-        return $this->line1." ".$this->line2.", ".$this->city." ".$this->state.", ".$this->zip;
+    public function getFullAttribute()
+    {
+        return $this->line1 . " " . $this->line2 . ", " . $this->city . " " . $this->state . ", " . $this->zip;
     }
 
-    public function customer(){
+    public function customer()
+    {
         return $this->belongsTo(Customer::class);
     }
 
