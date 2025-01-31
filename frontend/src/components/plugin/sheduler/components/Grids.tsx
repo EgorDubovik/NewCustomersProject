@@ -13,7 +13,7 @@ const Grids = (props: any) => {
 	const blockHeight = props.blockHeight || 50;
 
 	const onAppointmentClick = props.onAppointmentClick || null;
-	const setAppointmentBackgroundStyle = props.setAppointmentBackgroundStyle || null;
+	const setAppointmentStyle = props.setAppointmentStyle || null;
 
 	// const setAppointmentForCurentDate = props.setAppointmentForCurentDate || null;
 
@@ -98,15 +98,27 @@ const Grids = (props: any) => {
 	};
 
 	const getTileStyle = (tile: ITile) => {
-		let styles = {
-			backgroundColor: tile.appointment.bg ?? defaultAppointmentBgColor,
+		let backgroundStyles = {
+			backgroundColor: tile.appointment.backgroundColor ?? defaultAppointmentBgColor,
 			inset: '1px',
 			opacity: tile.appointment.opacity ?? defaultAppointmentOpacity,
 		};
 
-		let extendedStyles = setAppointmentBackgroundStyle ? setAppointmentBackgroundStyle(tile.appointment) : {};
-		styles = { ...styles, ...extendedStyles };
-		return styles;
+		let titleStyles = {
+			color: '#fff',
+		};
+
+		let extendedBackgroundStyles = {};
+		let extendedTitleStyle = {};
+
+		if (setAppointmentStyle) {
+			({ extendedBackgroundStyles, extendedTitleStyle } = setAppointmentStyle(tile.appointment));
+		}
+
+		backgroundStyles = { ...backgroundStyles, ...extendedBackgroundStyles };
+		titleStyles = { ...titleStyles, ...extendedTitleStyle };
+
+		return { backgroundStyles, titleStyles };
 	};
 
 	return (
@@ -121,7 +133,7 @@ const Grids = (props: any) => {
 										<div
 											key={tile.appointment.title + '-' + tindex + tile.top}
 											onClick={() => {
-												onAppointmentClick(tile);
+												onAppointmentClick(tile.appointment ?? {});
 											}}
 											// onMouseDown={(e) => {
 											// 	handleMouseDown(e, tindex);
@@ -129,8 +141,8 @@ const Grids = (props: any) => {
 											className={'appointment text-[.8em]  absolute p-[2px] cursor-pointer'}
 											style={{ height: tile.height + '%', width: tile.width + '%', left: tile.left + '%', top: tile.top + '%' }}
 										>
-											<div className={'appointment-conteiner rounded absolute'} style={getTileStyle(tile)}></div>
-											<div className={'text-white sticky font-bold'}>
+											<div className={'appointment-conteiner rounded absolute'} style={getTileStyle(tile).backgroundStyles}></div>
+											<div className={'sticky font-bold'} style={getTileStyle(tile).titleStyles}>
 												<div className="appointment-title px-2 pt-1 hover:underline ">{tile.appointment.title}</div>
 												<div className="appointment-time px-2">{/* {tile.start.format('hh:mm A')} - {tile.end.format('hh:mm A')} */}</div>
 											</div>

@@ -3,7 +3,7 @@ import { Moment, Duration } from 'moment';
 export interface IAppointment {
 	start: string | Date;
 	end: string | Date;
-	bg?: string;
+	backgroundColor?: string;
 	title?: string;
 	id: string | number;
 	addClass?: string;
@@ -21,8 +21,9 @@ export interface AppointmentsSchedulerProps {
 	appointments?: IAppointment[];
 	defaultAppointmentOpacity?: number;
 	defaultAppointmentBgColor?: string;
+	currentDate?: string | Date;
 	onClickHandler?: (appointment: IAppointment) => void;
-	setAppointmentBackgroundStyle?: (appointment: IAppointment) => void;
+	setAppointmentStyle?: (appointment: IAppointment) => void;
 }
 
 export interface ITile {
@@ -45,7 +46,7 @@ export interface GridsProps {
 	blockHeight: number;
 	onAppointmentClick?: (appointment: IAppointment) => void;
 	// setAppointmentForCurentDate: (appointments: IAppointment[]) => void;
-	setAppointmentBackgroundStyle?: (appointment: IAppointment) => void;
+	setAppointmentStyle?: (appointment: IAppointment) => void;
 	defaultAppointmentOpacity?: number;
 	defaultAppointmentBgColor?: string;
 }
