@@ -7,15 +7,15 @@ import axiosClient from '../../store/axiosClient';
 import { IRootState } from '../../store';
 import { PageLoadError } from '../../components/loading/Errors';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
-import IconClock from '../../components/Icon/IconClock';
-import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconMapPin from '../../components/Icon/IconMapPin';
+import { IAppointment } from '../../components/plugin/sheduler/types';
+import { left } from '@popperjs/core';
 
 const Schedule = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [appointments, setAppointments] = useState<any[]>([]);
-	const [viewType, setViewType] = useState<'week' | 'day'>('week');
+	const [viewType, setViewType] = useState<'week' | 'day'>('day');
 	const theme = useSelector((state: IRootState) => state.themeConfig.theme);
 
 	useEffect(() => {
@@ -24,40 +24,42 @@ const Schedule = () => {
 
 	const [loadingStatus, setLoadingStatus] = useState('loading');
 
-	const refactorAppointments = (appointments: any) => {
-		const getTextColor = (appointment: any) => {
-			console.log('getColors', theme);
-			let bgColor = theme === 'dark' ? '#ffffff29' : '#ccc';
-			bgColor = appointment.status == 0 ? appointment.bg : bgColor;
-			let textColor = appointment.status === 0 ? 'text-white' : theme === 'dark' ? 'text-gray-300' : 'text-gray-500';
-			return { bgColor, textColor };
-		};
+	// const refactorAppointments = (appointments: any) => {
+	// 	const getTextColor = (appointment: any) => {
+	// 		let bgColor = theme === 'dark' ? '#ffffff29' : '#ccc';
+	// 		bgColor = appointment.status == 0 ? appointment.bg : bgColor;
+	// 		let textColor = appointment.status === 0 ? 'text-white' : theme === 'dark' ? 'text-gray-300' : 'text-gray-500';
+	// 		return { bgColor, textColor };
+	// 	};
 
-		const appointmentList = appointments.map((appointment: any) => {
-			const { bgColor, textColor } = getTextColor(appointment);
-			return {
-				id: appointment.id,
-				title: appointment.title,
-				start: appointment.start,
-				end: appointment.end,
-				status: appointment.status,
-				bg: bgColor,
-				addClass: textColor,
-			};
-		});
-		setAppointments(appointmentList);
-	};
+	// 	const appointmentList = appointments.map((appointment: any) => {
+	// 		const { bgColor, textColor } = getTextColor(appointment);
+	// 		return {
+	// 			id: appointment.id,
+	// 			title: appointment.title,
+	// 			start: appointment.start,
+	// 			end: appointment.end,
+	// 			status: appointment.status,
+	// 			bg: bgColor,
+	// 			addClass: textColor,
+	// 		};
+	// 	});
+	// 	setAppointments(appointmentList);
+	// };
 
 	useEffect(() => {
-		refactorAppointments(appointments);
+		// refactorAppointments(appointments);
 	}, [theme]);
 
 	useEffect(() => {
+		setLoadingStatus('success');
 		setLoadingStatus('loading');
+
 		axiosClient
 			.get('/appointment')
 			.then((res) => {
-				refactorAppointments(res.data.appointments);
+				console.log(res.data.appointments);
+				setAppointments(res.data.appointments);
 				setLoadingStatus('success');
 			})
 			.catch((err) => {
@@ -81,9 +83,30 @@ const Schedule = () => {
 		};
 	}, []);
 
-	const viewAppointments = (data: any) => {
-		navigate('/appointment/' + data.id);
+	const viewAppointments = (id: number) => {
+		navigate('/appointment/' + id);
 	};
+
+	const onAppointmentClick = (appointment: any) => {
+		viewAppointments(appointment.id);
+	};
+	const setAppointmentStyle = (appointment: IAppointment) => {
+		console.log(appointment);
+		let extendedBackgroundStyles = {};
+		let extendedTitleStyle = {};
+		if (appointment.status === 1) {
+			extendedBackgroundStyles = {
+				backgroundColor: theme === 'dark' ? '#5b5b5b' : '#ccc',
+				borderLeft: '3px solid ' + appointment.backgroundColor,
+			};
+			extendedTitleStyle = {
+				color: theme === 'dark' ? '#ffffff' : '#000000',
+			};
+		}
+
+		return { extendedBackgroundStyles, extendedTitleStyle };
+	};
+
 	return (
 		<div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
@@ -101,7 +124,7 @@ const Schedule = () => {
 			{loadingStatus === 'error' && <PageLoadError />}
 			{loadingStatus === 'success' && (
 				<div className="py-4">
-					<AppointmentsScheduler appointments={appointments} onClickHandler={viewAppointments} viewType={viewType} startTime={'07:00'} endTime={'20:00'} />
+					<AppointmentsScheduler startTime="07:00" endTime="20:00" viewType={viewType} appointments={appointments} onClickHandler={onAppointmentClick} setAppointmentStyle={setAppointmentStyle} />
 				</div>
 			)}
 		</div>

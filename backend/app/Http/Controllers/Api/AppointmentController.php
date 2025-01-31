@@ -35,7 +35,7 @@ class AppointmentController extends Controller
 				'end' => $appointment->end,
 				'title' => $appointment->job->customer->name,
 				'status' => $appointment->status,
-				'bg' => $appointment->techs->first()->color ?? '#1565c0',
+				'backgroundColor' => $appointment->techs->first()->color ?? '#1565c0',
 			];
 		});
 
