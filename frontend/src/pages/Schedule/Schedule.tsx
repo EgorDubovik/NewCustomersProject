@@ -96,7 +96,7 @@ const Schedule = () => {
 		let extendedTitleStyle = {};
 		if (appointment.status === 1) {
 			extendedBackgroundStyles = {
-				backgroundColor: theme === 'dark' ? '#5b5b5b' : '#ccc',
+				backgroundColor: theme === 'dark' ? '#4a4a4ab0' : '#ccc',
 				borderLeft: '3px solid ' + appointment.backgroundColor,
 			};
 			extendedTitleStyle = {
