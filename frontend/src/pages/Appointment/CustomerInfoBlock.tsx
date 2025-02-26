@@ -43,6 +43,7 @@ const CustomerInfoBlock = (props: any) => {
 					<Link to={'/customer/' + appointment?.customer?.id} className="hover:underline text-primary">
 						{appointment?.customer?.name}
 					</Link>
+					<span className="ml-4">{appointment?.job?.id}</span>
 				</h3>
 				<Link to={'/customer/update/' + (appointment?.customer?.id ?? 0) + '?redirectTo=' + window.location.pathname} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 					<IconPencilPaper className="w-4 h-4" />
