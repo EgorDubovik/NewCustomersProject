@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { ITile } from '../types';
+import { Link } from 'react-router-dom';
 
 const Grids = (props: any) => {
 	const appointmentTiles = props.appointmentTiles || [];
@@ -130,11 +131,12 @@ const Grids = (props: any) => {
 							{appointmentTiles[index] &&
 								appointmentTiles[index].map((tile: ITile, tindex: number) => {
 									return (
-										<div
+										<Link
 											key={tile.appointment.title + '-' + tindex + tile.top}
-											onClick={() => {
-												onAppointmentClick(tile.appointment ?? {});
-											}}
+											// onClick={() => {
+											// 	onAppointmentClick(tile.appointment ?? {});
+											// }}
+											to={`/appointment/${tile.appointment.id}`}
 											// onMouseDown={(e) => {
 											// 	handleMouseDown(e, tindex);
 											// }}
@@ -146,7 +148,7 @@ const Grids = (props: any) => {
 												<div className="appointment-title px-2 pt-1 hover:underline ">{tile.appointment.title}</div>
 												{/* <div className="appointment-time px-2">{{tile.start.format('hh:mm A')} - {form tile.end.format('hh:mm A')}}</div> */}
 											</div>
-										</div>
+										</Link>
 									);
 								})}
 						</div>

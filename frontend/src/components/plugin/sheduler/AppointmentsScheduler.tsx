@@ -14,6 +14,8 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 
 	const onClickHandler = useMemo(() => props.onClickHandler || null, [props.onClickHandler]); //props.onClickHandler || null;
 	const setAppointmentStyle = useMemo(() => props.setAppointmentStyle || null, [props.setAppointmentStyle]);
+	const onCurrentDateChange = useMemo(() => props.onCurrentDateChange || null, [props.onCurrentDateChange]);
+
 	const viewType = props.viewType || 'week'; // week | day
 	const blockHeight = props.blockHeight || 50;
 	const defaultAppointmentOpacity = props.defaultAppointmentOpacity || 0.8;
@@ -35,6 +37,7 @@ const AppointmentsScheduler = (props: AppointmentsSchedulerProps) => {
 			setStartViewDateTime(result.start);
 			setEndViewDateTime(result.end);
 		}
+		if (onCurrentDateChange) onCurrentDateChange(selectedDate);
 	}, [selectedDate, startTime, endTime, viewType]);
 
 	const timesArray = getTimesArray(startTime, endTime, 'hh A', 1);

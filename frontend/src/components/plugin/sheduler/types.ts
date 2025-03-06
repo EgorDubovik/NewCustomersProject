@@ -24,6 +24,7 @@ export interface AppointmentsSchedulerProps {
 	currentDate?: string | Date;
 	onClickHandler?: (appointment: IAppointment) => void;
 	setAppointmentStyle?: (appointment: IAppointment) => void;
+	onCurrentDateChange?: (date: Date) => void;
 }
 
 export interface ITile {
