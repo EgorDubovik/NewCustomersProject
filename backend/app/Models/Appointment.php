@@ -13,7 +13,15 @@ class Appointment extends Model
     use HasFactory;
 
     public const ACTIVE = 0;
-    public const DONE = 1;
+    public const ON_MY_WAY = 1;
+    public const DONE = 2;
+
+    public const STATUS = [
+        self::ACTIVE,
+        self::ON_MY_WAY,
+        self::DONE
+    ];
+
 
     protected $fillable = [
         'start',
@@ -23,16 +31,18 @@ class Appointment extends Model
         'job_id',
     ];
 
-    public function company() {
+    public function company()
+    {
         return $this->belongsTo(Company::class);
     }
 
-    public function job() {
+    public function job()
+    {
         return $this->belongsTo(Job::class);
     }
 
     public function techs()
     {
-        return $this->belongsToMany(User::class, AppointmentTechs::class, 'appointment_id','tech_id');
+        return $this->belongsToMany(User::class, AppointmentTechs::class, 'appointment_id', 'tech_id');
     }
 }

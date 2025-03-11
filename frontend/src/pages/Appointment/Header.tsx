@@ -8,8 +8,9 @@ import IconClock from '../../components/Icon/IconClock';
 import { ButtonLoader } from '../../components/loading/ButtonLoader';
 import { useAppointmentContext } from './context/AppointmentContext';
 import { Dialog, Transition } from '@headlessui/react';
-import { viewCurrency, formatDate, manualIsoString, alertInfo } from '../../helpers/helper';
+import { viewCurrency, formatDate, manualIsoString, alertInfo, alertError } from '../../helpers/helper';
 import TimePicker from 'edtimepicker';
+import IconHome from '../../components/Icon/IconHome';
 
 const Header = () => {
 	const { appointment, updateStatus, updatePayments } = useAppointmentContext();
@@ -97,10 +98,11 @@ const Header = () => {
 		axiosClient
 			.put(`appointment/${appointment?.id}/status`)
 			.then((res) => {
-				updateStatus(appointment?.status === 0 ? 1 : 0);
+				updateStatus(res.data.new_status);
 			})
 			.catch((err) => {
 				console.log(err);
+				alertError('Something went wrong, please try again');
 			})
 			.finally(() => {
 				setUpdateAppointmentLoading(false);
@@ -122,7 +124,7 @@ const Header = () => {
 			})
 			.catch((err) => {
 				console.log(err);
-				alert('Error, try again');
+				alertError('Something went wrong, please try again');
 			})
 			.finally(() => {
 				setAppointmentCopyModal(false);
@@ -135,10 +137,20 @@ const Header = () => {
 				<button
 					onClick={handaleFinishOrActivateAppointment}
 					type="button"
-					className={`btn ${appointment?.status === 0 ? 'btn-primary' : 'btn-outline-dark'} h-full text-[13px] px-0 md:px-4 w-full whitespace-nowrap overflow-hidden text-ellipsis`}
+					className={`btn ${appointment?.status !== 2 ? 'btn-primary' : 'btn-outline-dark'} h-full text-[13px] px-0 md:px-4 w-full whitespace-nowrap overflow-hidden text-ellipsis`}
 				>
-					{updateAppointmentLoading ? <ButtonLoader /> : appointment?.status === 0 ? <IconChecks /> : <IconArrowBackward />}
-					<span className="ml-1">{appointment?.status === 0 ? 'Finish Appointment' : 'Back to Active'}</span>
+					{updateAppointmentLoading ? (
+						<ButtonLoader />
+					) : (
+						<>
+							{appointment?.status === 0 && <IconHome />}
+							{appointment?.status === 1 && <IconChecks />}
+							{appointment?.status === 2 && <IconArrowBackward />}
+						</>
+					)}
+					{appointment?.status === 0 && <span className="ml-1">On my way</span>}
+					{appointment?.status === 1 && <span className="ml-1">Finish Appointment</span>}
+					{appointment?.status === 2 && <span className="ml-1">Back to Active</span>}
 				</button>
 			</div>
 

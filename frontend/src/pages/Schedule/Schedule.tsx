@@ -79,7 +79,7 @@ const Schedule = () => {
 		console.log(appointment);
 		let extendedBackgroundStyles = {};
 		let extendedTitleStyle = {};
-		if (appointment.status === 1) {
+		if (appointment.status === 2) {
 			extendedBackgroundStyles = {
 				backgroundColor: theme === 'dark' ? '#4a4a4ab0' : '#ccc',
 				borderLeft: '3px solid ' + appointment.backgroundColor,

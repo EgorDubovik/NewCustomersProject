@@ -195,11 +195,22 @@ class AppointmentController extends Controller
 
 		$this->authorize('update-remove-appointment', $appointment);
 
+		// Geting current status
+		$currentStatus = $appointment->status;
+
+		// New status geting next from array
+		$index = array_search($currentStatus, Appointment::STATUS, true);
+		if ($index === false) {
+			throw new InvalidArgumentException("Invalid status provided");
+		}
+
+		$nextIndex = ($index + 1) % count(Appointment::STATUS);
+
 		$appointment->update([
-			'status' => !$appointment->status,
+			'status' => Appointment::STATUS[$nextIndex],
 		]);
 
-		return response()->json(['message' => 'Appointment status updated'], 200);
+		return response()->json(['message' => 'Appointment status updated', 'new_status' => Appointment::STATUS[$nextIndex]], 200);
 	}
 
 	// Appointment Techs

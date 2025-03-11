@@ -60,7 +60,7 @@ const CalendarBlock = () => {
 		let extendedBackgroundStyles = {};
 		let extendedTitleStyle = {};
 		console.log(appointment);
-		if (appointment.status === 1) {
+		if (appointment.status === 2) {
 			extendedBackgroundStyles = {
 				backgroundColor: theme === 'dark' ? '#5b5b5b' : '#ccc',
 				borderLeft: '3px solid ' + appointment.backgroundColor,
