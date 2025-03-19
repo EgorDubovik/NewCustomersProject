@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->date('date');
             $table->integer('company_id');
-            $table->decimal('total', 10, 2);
+            $table->integer('user_id');
+            $table->integer('total');
             $table->timestamps();
         });
     }

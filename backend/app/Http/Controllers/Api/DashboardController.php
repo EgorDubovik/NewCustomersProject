@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DailyPaymentsSum;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Illuminate\Support\Facades\DB;
@@ -20,11 +21,44 @@ class DashboardController extends Controller
       $field = $isAmind ? 'company_id' : 'tech_id';
       $id = $isAmind ? $user->company_id : $user->id;
 
+
+
+
+
+
       return response()->json([
          'mainStat' => $this->getMainStat($field, $id),
          'daylyForCurrentWeek' => $this->getTotalForEachDayOfCurrWheek($field, $id),
          'lastSevenWeeks' => $this->getLastSevenWeeksStatistics($field, $id),
+         'days' => $this->dailyPaymentsSum($field, $id),
       ], 200);
+   }
+
+   private function dailyPaymentsSum($field, $id)
+   {
+      $today = Carbon::today();
+      $startOfWeek = $today->copy()->startOfWeek(); // Get Monday of this week
+      $endOfWeek = $today->copy()->endOfWeek(); // Get Sunday of this week
+      $days = [];
+
+      while ($startOfWeek <= $endOfWeek) {
+         $days[] = $startOfWeek->toDateString();
+         $startOfWeek->addDay(); // Move to the next day
+      }
+
+      // foreach ($days as $day) {
+      //    $dailyPaymentTotal = DailyPaymentsSum::where('date', $day)
+      //       ->where($field, $id)
+      //       ->get();
+
+      //    if ($dailyPaymentTotal->isNotEmpty()) {
+      //       $days[$day] = $dailyPaymentTotal->first()->total;
+      //    } else {
+      //       $days[$day] = 0;
+      //    }
+      // }
+
+      return $days;
    }
 
    private function getMainStat($field, $id)
