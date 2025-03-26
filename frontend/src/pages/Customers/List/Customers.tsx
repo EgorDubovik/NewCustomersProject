@@ -107,7 +107,7 @@ const Contacts = () => {
 												{
 													accessor: 'address',
 													sortable: false,
-													render: ({ address }) => <div className="font-semibold">{address[0]?.full}</div>,
+													render: ({ address }) => <div className="font-semibold">{address[0]?.full || 'No address'}</div>,
 												},
 												{
 													accessor: 'email',
@@ -189,7 +189,7 @@ const Contacts = () => {
 														</div>
 														<div className="user-address mt-3 ml-1 flex overflow-hidden">
 															<IconMapPin />
-															<div className="ml-2">{customer.address[0].full}</div>
+															<div className="ml-2">{customer.address[0]?.full || 'No address'}</div>
 														</div>
 													</div>
 												</div>

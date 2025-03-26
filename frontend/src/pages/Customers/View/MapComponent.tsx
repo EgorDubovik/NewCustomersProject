@@ -16,7 +16,7 @@ const MapComponent = (props: any) => {
 					<Marker position={[latitude, longitude]}></Marker>
 				</MapContainer>
 			) : (
-				'No Location'
+				'No Location found'
 			)}
 		</div>
 	);

@@ -51,7 +51,8 @@ const CustomerInfoBlock = (props: any) => {
 			</div>
 			<div className="mb-1">
 				<div className="flex flex-col justify-center items-center ">
-					<MapComponent latitude={appointment?.job?.address?.lat} longitude={appointment?.job?.address?.lon} />
+					{/* <MapComponent latitude={appointment?.job?.address?.lat} longitude={appointment?.job?.address?.lon} /> */}
+					<div className="w-full h-[250px] dark:bg-gray-800 bg-gray-200 flex items-center justify-center">No Location found</div>
 				</div>
 				<div className="px-4 pb-4">
 					<ul className="mt-5 flex flex-col m-auto space-y-4 font-semibold dark:text-white-dark">

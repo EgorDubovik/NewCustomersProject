@@ -60,8 +60,8 @@ const ViewCustomer = () => {
 							<div className="mb-1">
 								<div className="flex flex-col justify-center items-center ">
 									{/* MAP */}
-									<MapComponent latitude={customer?.address[0]?.lat} longitude={customer?.address[0]?.lon} />
-
+									{/* <MapComponent latitude={customer?.address[0]?.lat} longitude={customer?.address[0]?.lon} /> */}
+									<div className="w-full h-[250px] dark:bg-gray-800 bg-gray-200 flex items-center justify-center">No Location found</div>
 									<p className="font-semibold text-primary text-lg mt-4">{customer?.name}</p>
 								</div>
 								<div className="px-4 pb-4">
