@@ -36,11 +36,16 @@ use App\Http\Controllers\Api\Job\JobController;
 
 
 Route::prefix('v1')->group(function () {
+   Route::get('/healthcheck', function () {
+      return response()->json([
+         'status' => 'success',
+         'message' => 'Server is running'
+      ]);
+   });
    Route::post('/signin', [AuthController::class, 'login']);
    Route::post('/signup', [AuthController::class, 'register']);
 
    Route::group(['middleware' => ['auth:sanctum']], function () {
-
 
       // Profile
       Route::get('user', [ProfileController::class, 'show']);
