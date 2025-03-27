@@ -124,6 +124,12 @@ const CustomerInfoBlock = (props: any) => {
 									</div>
 								))}
 							</div>
+							<div className="mt-2 text-right">
+								{/* Add new tag */}
+								<span className="text-primary cursor-pointer" onClick={() => navigate('/company-tags')}>
+									+ Add Tag
+								</span>
+							</div>
 							{/* <div className="text-left">Invoices ({appointment?.job?.invoices.length || 0})</div>
 							<div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
 								{appointment?.job?.invoices.map((invoice) => (
