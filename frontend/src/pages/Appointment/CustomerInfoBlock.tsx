@@ -117,7 +117,14 @@ const CustomerInfoBlock = (props: any) => {
 						</li>
 						<div className="border-t border-[#ebedf2] dark:border-[#191e3a] mt-4"></div>
 						<div className="mt-2">
-							<div className="text-left">Invoices ({appointment?.job?.invoices.length || 0})</div>
+							<div className="">
+								{appointment?.job?.tags.map((tag) => (
+									<div key={tag.id} className="inline-flex ml-4 mb-2">
+										<button className={`btn btn-sm bg-${tag.color} border-none text-white shadow-none`}>{tag.title}</button>
+									</div>
+								))}
+							</div>
+							{/* <div className="text-left">Invoices ({appointment?.job?.invoices.length || 0})</div>
 							<div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
 								{appointment?.job?.invoices.map((invoice) => (
 									<div key={invoice.id} className="w-full hover:dark:bg-white-dark/10 hover:bg-gray-200 bg-gray-100 hover:text-primary dark:bg-white-dark/5 p-2 rounded">
@@ -127,7 +134,7 @@ const CustomerInfoBlock = (props: any) => {
 										</Link>
 									</div>
 								))}
-							</div>
+							</div> */}
 						</div>
 					</ul>
 				</div>

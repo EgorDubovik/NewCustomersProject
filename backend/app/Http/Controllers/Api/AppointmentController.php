@@ -74,6 +74,7 @@ class AppointmentController extends Controller
 		$appointment->expenses = $appointment->job->expenses;
 		$appointment->job->load([
 			'invoices',
+			'tags',
 			'appointments' => function ($query) {
 				$query->orderBy('start', 'desc');
 			},

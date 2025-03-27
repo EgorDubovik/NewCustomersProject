@@ -1,5 +1,3 @@
-import { Interface } from "readline";
-
 export interface TechItemProps {
 	key: number;
 	className: string;
@@ -75,7 +73,7 @@ export interface INote {
 	};
 }
 
-export interface IJob{
+export interface IJob {
 	id: number;
 	payments: IPayment[];
 	remaining_balance: number;
@@ -87,17 +85,18 @@ export interface IJob{
 	customer: any;
 	address: any;
 	invoices: IInvoice[];
+	tags: ITag[];
 }
 
 export interface IAppointment {
-	id : number;
+	id: number;
 	job_id: number;
-	status : number;
-	start : string;
-	end : string;
-	notes : INote[];
-	customer : any;
-	address : any;
+	status: number;
+	start: string;
+	end: string;
+	notes: INote[];
+	customer: any;
+	address: any;
 	techs: ITech[];
 	images: any[];
 	expenses: IExpense[];
@@ -125,4 +124,9 @@ export interface ICustomerRecord {
 	email: string;
 	address: any;
 	created_at: string;
+}
+export interface ITag {
+	id: number;
+	title: string;
+	color: string;
 }

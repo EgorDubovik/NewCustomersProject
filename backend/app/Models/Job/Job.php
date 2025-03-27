@@ -12,6 +12,7 @@ use App\Models\CompanySettings\GeneralInfoSettings;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Job\Image;
 use App\Models\Invoice;
+use App\Models\CompanySettings\CompanyTag;
 
 class Job extends Model
 {
@@ -23,7 +24,7 @@ class Job extends Model
         'address_id',
     ];
 
-    protected $appends = ['total_paid','remaining_balance','total_tax','total_amount'];
+    protected $appends = ['total_paid', 'remaining_balance', 'total_tax', 'total_amount'];
 
     public function customer()
     {
@@ -35,11 +36,13 @@ class Job extends Model
         return $this->belongsTo(Addresses::class);
     }
 
-    public function notes(){
+    public function notes()
+    {
         return $this->hasMany(Notes::class);
     }
 
-    public function expenses(){
+    public function expenses()
+    {
         return $this->hasMany(Expense::class);
     }
 
@@ -48,7 +51,8 @@ class Job extends Model
         return $this->hasMany(Service::class);
     }
 
-    public function images(){
+    public function images()
+    {
         return $this->hasMany(Image::class);
     }
 
@@ -65,6 +69,11 @@ class Job extends Model
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(CompanyTag::class, 'job_tag', 'job_id', 'tag_id');
     }
 
     public function totalPaid()
@@ -96,9 +105,9 @@ class Job extends Model
     public function totalTax()
     {
         $tax = 0;
-        foreach($this->services as $service){
-            if($service->taxable)
-                $tax += $service->price * GeneralInfoSettings::getSettingByKey($this->company_id,'taxRate')/100;
+        foreach ($this->services as $service) {
+            if ($service->taxable)
+                $tax += $service->price * GeneralInfoSettings::getSettingByKey($this->company_id, 'taxRate') / 100;
         }
         return $tax;
     }
@@ -106,17 +115,17 @@ class Job extends Model
     public function totalAmount()
     {
         $total = 0;
-        foreach($this->services as $service){
+        foreach ($this->services as $service) {
             $total += $service->price;
         }
-        return $total+$this->totalTax();
+        return $total + $this->totalTax();
     }
 
     public function remainingBalance()
     {
         $remaining = $this->totalAmount() - $this->totalPaid();
-        if($remaining < 0)
+        if ($remaining < 0)
             return 0;
-        return round($remaining,2);
+        return round($remaining, 2);
     }
 }
