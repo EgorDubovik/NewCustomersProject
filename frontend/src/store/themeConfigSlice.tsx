@@ -62,6 +62,9 @@ const themeConfigSlice = createSlice({
 		setCompanySettings(state, { payload }) {
 			state.companyInfo = payload;
 		},
+		setCompanyTags(state, { payload }) {
+			state.companyInfo.companyTags = payload;
+		},
 		toggleTheme(state, { payload }) {
 			payload = payload || state.theme; // light | dark | system
 			localStorage.setItem('theme', payload);
@@ -138,6 +141,7 @@ export const {
 	setPageTitle,
 	setUserInformation,
 	setCompanySettings,
+	setCompanyTags,
 	setSideBarNotifications,
 } = themeConfigSlice.actions;
 

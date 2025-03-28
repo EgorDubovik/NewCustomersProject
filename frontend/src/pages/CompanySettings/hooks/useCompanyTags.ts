@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axiosClient from '../../../store/axiosClient';
+import { useDispatch } from 'react-redux';
+import { setCompanyTags } from '../../../store/themeConfigSlice';
 interface ITag {
 	id: number;
 	title: string;
@@ -14,6 +16,8 @@ export const useCompanyTags = () => {
 	const [storeStatus, setStoreStatus] = useState<boolean>(false);
 	const [deleteStatus, setDeleteStatus] = useState<number>(0);
 	const [selectedColor, setSelectedColor] = useState(DefaultColor);
+	const dispatch = useDispatch();
+
 	const [tag, setTag] = useState<ITag>({
 		id: 0,
 		title: '',
@@ -62,9 +66,11 @@ export const useCompanyTags = () => {
 		axiosClient
 			.post('company/settings/tags', data)
 			.then((res) => {
-				setTags([...tags, res.data]);
+				let newTags = [...tags, res.data];
+				setTags(newTags);
 				setNewTagTitle('');
 				setTag({ ...tag, ['title']: '' });
+				dispatch(setCompanyTags(newTags));
 			})
 			.catch((err) => {
 				alert('Something went wrong. Please try again later');
@@ -103,9 +109,10 @@ export const useCompanyTags = () => {
 		axiosClient
 			.delete(`company/settings/tags/${tagId}`)
 			.then((res) => {
-				console.log(res);
 				if (res.status === 200) {
-					setTags(tags.filter((tag) => tag.id !== tagId));
+					let newTags = tags.filter((tag: ITag) => tag.id !== tagId);
+					setTags(newTags);
+					dispatch(setCompanyTags(newTags));
 				}
 			})
 			.catch((err) => {

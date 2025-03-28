@@ -19,7 +19,7 @@ import axiosClient from '../../store/axiosClient';
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
 	const { appointment, updateTags } = useAppointmentContext();
-
+	const companyInfo = useSelector((state: IRootState) => state.themeConfig.companyInfo);
 	const companyTags = useSelector((state: IRootState) => state.themeConfig.companyInfo.companyTags);
 	const [modal, setModal] = useState(false);
 	const [selectedTags, setSelectedTags] = useState<ITag[] | null>(appointment?.job?.tags || null);
@@ -150,17 +150,15 @@ const CustomerInfoBlock = (props: any) => {
 							)}
 						</li>
 						<div className="border-t border-[#ebedf2] dark:border-[#191e3a] mt-4"></div>
-						<div className="mt-2">
-							<div className="">
-								{appointment?.job?.tags.map((tag) => (
-									<div key={tag.id} className="inline-flex ml-4 mb-2">
-										<button className={`btn btn-sm border-none text-white shadow-none`} style={{ backgroundColor: tag.color }}>
-											{tag.title}
-										</button>
-									</div>
+						<div className="mt-2 flex justify-between">
+							<div className="flex flex-wrap gap-2">
+								{appointment?.job?.tags.map((tag: ITag, index: number) => (
+									<button key={index} className={`btn btn-sm border-none text-white shadow-none`} style={{ backgroundColor: tag.color }}>
+										{tag.title}
+									</button>
 								))}
 							</div>
-							<div className="mt-2 text-right">
+							<div className="mt-2 text-right min-w-fit">
 								{/* Add new tag */}
 								<span className="text-primary cursor-pointer" onClick={() => setModal(true)}>
 									+ Add Tag
@@ -236,6 +234,14 @@ const CustomerInfoBlock = (props: any) => {
 														</span>
 													))}
 												</div>
+												{companyTags.length === 0 && (
+													<div className="text-center">
+														<p className="text-[13px] text-gray-500 dark:text-gray-400">No tags available</p>
+														<Link to="/company-settings/tags" className="text-primary">
+															Please add new tags
+														</Link>
+													</div>
+												)}
 											</div>
 										</div>
 										<div className="flex justify-end items-center mt-10">
