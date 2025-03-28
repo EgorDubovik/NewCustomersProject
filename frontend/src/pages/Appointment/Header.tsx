@@ -34,7 +34,7 @@ const Header = () => {
 	const [timeToIsSelected, setTimeToIsSelected] = useState<boolean>(false);
 	const [isFinishCurerentAppointment, setIsFinishCurerentAppointment] = useState<boolean>(true);
 	const [isSendInvoice, setIsSendInvoice] = useState<boolean>(true);
-
+	const [createCopyLoading, setCreateCopyLoading] = useState<boolean>(false);
 	useEffect(() => {
 		setAmountPay(remaining);
 	}, [remaining]);
@@ -116,6 +116,7 @@ const Header = () => {
 			isFinishCurerentAppointment,
 			appointmentId: appointment?.id,
 		};
+		setCreateCopyLoading(true);
 		axiosClient
 			.post(`appointment/copy/${appointment?.id}`, data)
 			.then((res) => {
@@ -127,6 +128,7 @@ const Header = () => {
 				alertError('Something went wrong, please try again');
 			})
 			.finally(() => {
+				setCreateCopyLoading(false);
 				setAppointmentCopyModal(false);
 			});
 	};
@@ -253,6 +255,7 @@ const Header = () => {
 											<div className="mt-4">
 												<button type="button" onClick={onCreateCopy} className="btn btn-primary w-full">
 													Create new appointment
+													{createCopyLoading && <ButtonLoader />}
 												</button>
 											</div>
 										</div>
