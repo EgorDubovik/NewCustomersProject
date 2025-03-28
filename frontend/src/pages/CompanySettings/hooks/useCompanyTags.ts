@@ -44,6 +44,7 @@ export const useCompanyTags = () => {
 	const handelEditTag = (tagId: number) => {
 		const tag = tags.find((tag) => tag.id === tagId);
 		setTag(tag ? tag : { id: 0, title: '', color: DefaultColor, company_id: 0 });
+		setSelectedColor(tag ? tag.color : DefaultColor);
 	};
 
 	const handleColorSelected = (color: string) => {
