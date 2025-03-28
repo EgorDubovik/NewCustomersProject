@@ -86,8 +86,6 @@ class AppointmentController extends Controller
 		return response()->json(['appointment' => $appointment], 200);
 	}
 
-
-
 	public function store(Request $request)
 	{
 		$validate = $request->validate([

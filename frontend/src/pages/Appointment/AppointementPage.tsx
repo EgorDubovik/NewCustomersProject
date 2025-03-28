@@ -15,6 +15,7 @@ import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import { PageLoadError } from '../../components/loading/Errors';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../store';
+import TimeLine from './TimeLine';
 
 const AppointmentPage = () => {
 	const navigate = useNavigate();
@@ -59,33 +60,10 @@ const AppointmentPage = () => {
 						<div className="grid grid-cols-1 md:grid-cols-4 gap-5">
 							<div className="grid grid-rows-none gap-5">
 								<div className="panel p-4">
-									<CalendarBlock />
+									<TimeLine />
 								</div>
-								<div className="panel p-4">
-									<h3 className="font-semibold text-lg dark:text-white-light">All Visits</h3>
-									<div className="text-right mt-2">
-										{appointment?.job.appointments.map((jappointment: any, index: number) => (
-											<div key={index} className="mb-2 last:mb-0">
-												<Link to={`/appointment/${jappointment.id}`}>
-													<div
-														className={`rounded-md p-2 ${
-															appointment.id === jappointment.id
-																? 'dark:bg-gray-800 dark:shadow-gray-600 bg-gray-200 shadow-gray-500 shadow-sm text-primary'
-																: 'dark:bg-dark-dark-light bg-gray-100'
-														}   border-l-2`}
-														style={{ borderColor: jappointment.techs?.length > 0 ? jappointment.techs[jappointment.techs.length - 1].color : '#1565C0' }}
-													>
-														<div className="text-sm font-semibold flex justify-between">
-															<div>{formatDate(jappointment.start, 'MMM DD, YYYY')}</div>
-															<div>
-																{formatDate(jappointment.start, 'hh:mm A')} - {formatDate(jappointment.end, 'hh:mm A')}
-															</div>
-														</div>
-													</div>
-												</Link>
-											</div>
-										))}
-									</div>
+								<div className="panel p-4 hidden md:block">
+									<h3 className="font-semibold text-lg dark:text-white-light">Something new in future</h3>
 								</div>
 							</div>
 							<div className="md:col-span-3 grid grid-cols-1 xl:grid-cols-2 gap-5">
