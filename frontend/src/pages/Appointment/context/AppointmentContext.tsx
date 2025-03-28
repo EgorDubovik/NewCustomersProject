@@ -72,7 +72,24 @@ const AppointmentProvider = ({ children, appointmentData }: { children: ReactNod
 
 	const updateTime = (start: string, end: string) => {
 		if (appointment) {
-			setAppointment({ ...appointment, start: start, end: end });
+			// Update the top-level appointment times
+			const updatedAppointment = {
+				...appointment,
+				start: start,
+				end: end,
+				job: {
+					...appointment.job,
+					appointments: appointment.job.appointments.map(
+						(jobAppointment: IAppointment) =>
+							jobAppointment.id === appointment.id
+								? { ...jobAppointment, start: start, end: end } // Update matching job appointment
+								: jobAppointment // Keep others unchanged
+					),
+				},
+			};
+
+			// Set the updated appointment in context
+			setAppointment(updatedAppointment);
 		}
 	};
 	const updateImages = (images: any[]) => {

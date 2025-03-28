@@ -11,7 +11,6 @@ import { formatDate } from '../../helpers/helper';
 const TimeLine = () => {
 	const [modal, setModal] = useState(false);
 	const { appointment, updateTime } = useAppointmentContext();
-	console.log('appointment', appointment);
 	const [showMore, setShowMore] = useState(false);
 	const [selectedTime, setSelectedTime] = useState('timeFrom');
 	const [timeFrom, setTimeFrom] = useState(new Date(appointment?.start || new Date()));
