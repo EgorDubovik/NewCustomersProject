@@ -41,6 +41,7 @@ const initialState = {
 	companyInfo: {
 		taxRate: 0.0825,
 		reviewLink: '',
+		companyTags: [],
 	},
 
 	sideBarNotifications: {

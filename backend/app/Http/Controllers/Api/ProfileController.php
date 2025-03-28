@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CompanySettings\GeneralInfoSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\CompanySettings\CompanyTag;
 
 class ProfileController extends Controller
 {
@@ -14,14 +15,19 @@ class ProfileController extends Controller
         $user = $request->user();
         $user->rolesArray = $user->roles->pluck('role');
         $companySettings = GeneralInfoSettings::getSettingsForCompany($user->company_id);
-
+        // get company tags
+        $companySettings['companyTags'] = CompanyTag::where('company_id', $user->company_id)->get();
         // get sotreage items count if acrual less then expected
         $sideBarNotifications = [
             'storage' => StorageItemsController::getCountOfExpectedStorageItems($user->id),
             'schedule' => 0 //count(AppointmentController::getActiveAppointments($user->id)),
         ];
         // get company tags
-        return response()->json(['user' => $user, 'companySettings' => $companySettings, 'sideBarNotifications' => $sideBarNotifications], 200);
+        return response()->json([
+            'user' => $user,
+            'companySettings' => $companySettings,
+            'sideBarNotifications' => $sideBarNotifications,
+        ], 200);
     }
 
     public function updatePassword(Request $request)

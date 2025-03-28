@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import IconMapPin from '../../components/Icon/IconMapPin';
@@ -9,10 +9,17 @@ import { useAppointmentContext } from './context/AppointmentContext';
 import IconCopy from '../../components/Icon/IconCopy';
 import { alertError, alertSuccsess, formatDate } from '../../helpers/helper';
 import MapComponent from '../Customers/View/MapComponent';
+import { useSelector } from 'react-redux';
+import { IRootState } from '../../store';
+import { Transition, Dialog } from '@headlessui/react';
+import ButtonLoader from '../../components/loading/ButtonLoader';
 
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
 	const { appointment } = useAppointmentContext();
+
+	const companyTags = useSelector((state: IRootState) => state.themeConfig.companyInfo.companyTags);
+	const [modal, setModal] = useState(false);
 
 	const copyPhone = (phone: string) => {
 		navigator.clipboard
@@ -126,7 +133,7 @@ const CustomerInfoBlock = (props: any) => {
 							</div>
 							<div className="mt-2 text-right">
 								{/* Add new tag */}
-								<span className="text-primary cursor-pointer" onClick={() => navigate('/company-tags')}>
+								<span className="text-primary cursor-pointer" onClick={() => setModal(true)}>
 									+ Add Tag
 								</span>
 							</div>
@@ -145,6 +152,43 @@ const CustomerInfoBlock = (props: any) => {
 					</ul>
 				</div>
 			</div>
+			<Transition appear show={modal} as={Fragment}>
+				<Dialog as="div" open={modal} onClose={() => setModal(false)}>
+					<Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+						<div className="fixed inset-0" />
+					</Transition.Child>
+					<div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[1111] overflow-y-auto">
+						<div className="flex items-start justify-center min-h-screen px-4">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 scale-95"
+								enterTo="opacity-100 scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 scale-100"
+								leaveTo="opacity-0 scale-95"
+							>
+								<Dialog.Panel className="panel border-0 py-1 rounded-lg overflow-hidden w-full max-w-lg my-8 text-black dark:text-white-dark">
+									<div className="py-4 px-2">
+										<div className="title flex justify-between">
+											<span className="text-dark dark:text-white-light">Choose Tags</span>
+										</div>
+										<div className="mt-4">
+											{companyTags.map((tag: any) => (
+												<div key={tag.id} className="inline-flex ml-4 mb-2">
+													<button className={`btn btn-sm bg-${tag.color} text-white shadow-none`} style={{ backgroundColor: tag.color }}>
+														{tag.title}
+													</button>
+												</div>
+											))}
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition>
 		</div>
 	);
 };
