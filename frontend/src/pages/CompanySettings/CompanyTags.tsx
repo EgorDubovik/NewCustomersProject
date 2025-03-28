@@ -18,7 +18,7 @@ const CompanyTags = () => {
 			{loadingStatus === 'success' && (
 				<div className="panel md:w-1/2 w-full m-auto">
 					<h3 className="font-semibold text-lg dark:text-white-light">Create or remove company tags</h3>
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-2 mt-4">
 						<input type="text" value={tag.title} onChange={(e) => setTag({ ...tag, ['title']: e.target.value })} className="form-input w-3/4" placeholder="Enter tag title" />
 						<div id="color" className={`w-1/4 h-10 relative`}>
 							<div
@@ -39,10 +39,11 @@ const CompanyTags = () => {
 							{/* {storeStatus ? <ButtonLoader /> : 'Add'} */}
 						</button>
 					</div>
-					<div className="mt-4">
+					<p className="text-[13px] mt-4 text-gray-500 dark:text-gray-400">If you need same color as another tag, please just click on the tag</p>
+					<div className="inline-flex flex-wrap gap-3 mt-4">
 						{tags.map((tag, index: number) => (
-							<div className="inline-flex ml-4 mb-2" key={index}>
-								<button className={`btn btn-sm rounded-r-none border-none text-white shadow-none`} style={{ backgroundColor: tag.color }}>
+							<div className="inline-flex" key={index}>
+								<button className={`btn btn-sm rounded-r-none border-none text-white shadow-none`} style={{ backgroundColor: tag.color }} onClick={() => handleColorSelected(tag.color)}>
 									{deleteStatus === tag.id ? <SmallDangerLoader /> : tag.title}
 								</button>
 								<div className="dropdown border-none">

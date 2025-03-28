@@ -108,6 +108,8 @@ Route::prefix('v1')->group(function () {
          // Job notes
          Route::post('notes/{jobId}', [JobNotesController::class, 'store']);
          Route::delete('notes/{noteId}', [JobNotesController::class, 'delete']);
+         // Job tags
+         Route::post('tags/{job_id}', [JobController::class, 'assignTags']);
       });
 
       Route::prefix('appointment')->group(function () {
@@ -150,6 +152,8 @@ Route::prefix('v1')->group(function () {
          Route::delete('expense/{expense_id}', [ExpenseController::class, 'delete']);
 
          Route::post('/copy/{appointment_id}', [AppointmentController::class, 'copy']);
+
+
       });
 
       // Invoices

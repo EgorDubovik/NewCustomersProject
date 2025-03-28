@@ -109,6 +109,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('delete-job', function (User $user, Job $job) {
             return $user->company_id === $job->company_id && $user->isRole([Role::ADMIN, Role::DISP]);
         });
+        Gate::define('assign-tags', function (User $user, Job $job) {
+            return $user->company_id === $job->company_id && $user->isRole([Role::ADMIN, Role::DISP]);
+        });
 
         // Appointment
         Gate::define('make-appointment', function (User $user, $customer_id, $address_id) {

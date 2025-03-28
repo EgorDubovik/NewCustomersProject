@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { IPayment, ITech, INote, IAppointment } from '../../../types';
+import { IPayment, ITech, INote, IAppointment, ITag } from '../../../types';
 import axiosClient from '../../../store/axiosClient';
 import moment from 'moment';
 import { calculateRemaining, calculateTaxAndTotal, calculateTotalPaid } from '../../../helpers/helper';
@@ -16,6 +16,7 @@ interface AppointmentContextType {
 	updateImages: (images: any[]) => void;
 	updateTechs: (techs: ITech[]) => void;
 	fetchAppointmentData: (id: number) => void;
+	updateTags: (tags: ITag[]) => void;
 	loadingStatus: string;
 }
 
@@ -103,6 +104,12 @@ const AppointmentProvider = ({ children, appointmentData }: { children: ReactNod
 		}
 	};
 
+	const updateTags = (tags: ITag[]) => {
+		if (appointment) {
+			setAppointment({ ...appointment, job: { ...appointment.job, tags: tags } });
+		}
+	};
+
 	const fetchAppointmentData = (id: number) => {
 		setLoadingStatus('loading');
 		console.log('fetching appointment');
@@ -133,6 +140,7 @@ const AppointmentProvider = ({ children, appointmentData }: { children: ReactNod
 		updateTechs,
 		fetchAppointmentData,
 		loadingStatus,
+		updateTags,
 	};
 
 	return <AppointmentContext.Provider value={value}>{children}</AppointmentContext.Provider>;

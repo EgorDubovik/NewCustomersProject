@@ -13,14 +13,16 @@ import { useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { Transition, Dialog } from '@headlessui/react';
 import ButtonLoader from '../../components/loading/ButtonLoader';
+import { ITag } from '../../types';
+import axiosClient from '../../store/axiosClient';
 
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
-	const { appointment } = useAppointmentContext();
+	const { appointment, updateTags } = useAppointmentContext();
 
 	const companyTags = useSelector((state: IRootState) => state.themeConfig.companyInfo.companyTags);
 	const [modal, setModal] = useState(false);
-
+	const [selectedTags, setSelectedTags] = useState<ITag[] | null>(appointment?.job?.tags || null);
 	const copyPhone = (phone: string) => {
 		navigator.clipboard
 			.writeText(phone)
@@ -40,6 +42,31 @@ const CustomerInfoBlock = (props: any) => {
 			})
 			.catch((err) => {
 				alertError('Failed to copy address');
+			});
+	};
+
+	const addOrRemoveTag = (tag: ITag) => {
+		if (selectedTags?.includes(tag)) {
+			setSelectedTags(selectedTags?.filter((t) => t.id !== tag.id));
+		} else {
+			setSelectedTags([...(selectedTags || []), tag]);
+		}
+	};
+
+	const saveTags = () => {
+		axiosClient
+			.post('job/tags/' + appointment?.job?.id, { tags: selectedTags?.map((t) => t.id) })
+			.then((res) => {
+				if (res.status === 200) {
+					alertSuccsess('Tags saved successfully');
+					updateTags(selectedTags || []);
+				}
+			})
+			.catch((err) => {
+				alertError('Failed to save tags');
+			})
+			.finally(() => {
+				setModal(false);
 			});
 	};
 
@@ -127,7 +154,9 @@ const CustomerInfoBlock = (props: any) => {
 							<div className="">
 								{appointment?.job?.tags.map((tag) => (
 									<div key={tag.id} className="inline-flex ml-4 mb-2">
-										<button className={`btn btn-sm bg-${tag.color} border-none text-white shadow-none`}>{tag.title}</button>
+										<button className={`btn btn-sm border-none text-white shadow-none`} style={{ backgroundColor: tag.color }}>
+											{tag.title}
+										</button>
 									</div>
 								))}
 							</div>
@@ -170,17 +199,52 @@ const CustomerInfoBlock = (props: any) => {
 							>
 								<Dialog.Panel className="panel border-0 py-1 rounded-lg overflow-hidden w-full max-w-lg my-8 text-black dark:text-white-dark">
 									<div className="py-4 px-2">
-										<div className="title flex justify-between">
-											<span className="text-dark dark:text-white-light">Choose Tags</span>
-										</div>
-										<div className="mt-4">
-											{companyTags.map((tag: any) => (
-												<div key={tag.id} className="inline-flex ml-4 mb-2">
-													<button className={`btn btn-sm bg-${tag.color} text-white shadow-none`} style={{ backgroundColor: tag.color }}>
-														{tag.title}
-													</button>
+										<div className="py-4">
+											<div className="title flex justify-between">
+												<span className="text-dark dark:text-white-light">Assign Tags</span>
+												<p className="text-[13px] text-gray-500 dark:text-gray-400">Click on tag to remove it</p>
+											</div>
+											<div className="mt-4">
+												<div className="inline-flex flex-wrap gap-3">
+													{selectedTags?.map((tag: any, index: number) => (
+														<span
+															className="py-1 px-4 text-[13px] rounded-md border cursor-pointer text-black dark:text-white"
+															style={{ backgroundColor: tag.color, borderColor: tag.color }}
+															key={index}
+															onClick={() => addOrRemoveTag(tag)}
+														>
+															{tag.title}
+														</span>
+													))}
 												</div>
-											))}
+											</div>
+										</div>
+										<div className="border-t border-[#ebedf2] dark:border-[#191e3a] py-4">
+											<div className="title flex justify-between">
+												<span className="text-dark dark:text-white-light">Choose Tags</span>
+											</div>
+											<div className="mt-4">
+												<div className="inline-flex flex-wrap gap-3">
+													{companyTags.map((tag: any) => (
+														<span
+															className="py-1 px-4 text-[13px] rounded-md border cursor-pointer text-black dark:text-white"
+															style={{ backgroundColor: tag.color, borderColor: tag.color }}
+															key={tag.id}
+															onClick={() => addOrRemoveTag(tag)}
+														>
+															{tag.title}
+														</span>
+													))}
+												</div>
+											</div>
+										</div>
+										<div className="flex justify-end items-center mt-10">
+											<button type="button" onClick={() => setModal(false)} className="btn btn-outline-danger">
+												Discard
+											</button>
+											<button onClick={saveTags} type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4">
+												Save
+											</button>
 										</div>
 									</div>
 								</Dialog.Panel>
