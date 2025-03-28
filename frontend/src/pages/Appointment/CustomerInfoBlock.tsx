@@ -19,7 +19,6 @@ import axiosClient from '../../store/axiosClient';
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
 	const { appointment, updateTags } = useAppointmentContext();
-	const companyInfo = useSelector((state: IRootState) => state.themeConfig.companyInfo);
 	const companyTags = useSelector((state: IRootState) => state.themeConfig.companyInfo.companyTags);
 	const [modal, setModal] = useState(false);
 	const [selectedTags, setSelectedTags] = useState<ITag[] | null>(appointment?.job?.tags || null);

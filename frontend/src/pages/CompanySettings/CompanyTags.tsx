@@ -20,12 +20,14 @@ const CompanyTags = () => {
 					<h3 className="font-semibold text-lg dark:text-white-light">Create or remove company tags</h3>
 					<div className="flex items-center gap-2 mt-4">
 						<input type="text" value={tag.title} onChange={(e) => setTag({ ...tag, ['title']: e.target.value })} className="form-input w-3/4" placeholder="Enter tag title" />
-						<div id="color" className={`w-1/4 h-10 relative`}>
+						<div id="color" className={`w-1/4 h-10 relative `}>
 							<div
-								className="absolute cursor-pointer rounded-md top-0 left-0 w-full h-full z-10"
+								className="absolute flex items-center justify-center text-white cursor-pointer rounded-md top-0 left-0 w-full h-full z-10"
 								style={{ backgroundColor: selectedColor }}
 								onClick={() => setShowColorPicker(!showColorPicker)}
-							></div>
+							>
+								Choose color
+							</div>
 							{showColorPicker && (
 								<div className="absolute top-12 left-0 w-full h-full z-20">
 									<div className="fixed top-0 left-0 right-0 bottom-0" onClick={() => setShowColorPicker(false)}></div>
