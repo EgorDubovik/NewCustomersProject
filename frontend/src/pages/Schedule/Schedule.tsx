@@ -9,6 +9,7 @@ import { PageLoadError } from '../../components/loading/Errors';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import IconMapPin from '../../components/Icon/IconMapPin';
 import { IAppointment } from '../../components/plugin/sheduler/types';
+import IconChecks from '../../components/Icon/IconChecks';
 
 const Schedule = () => {
 	const dispatch = useDispatch();
@@ -97,8 +98,12 @@ const Schedule = () => {
 			<div className="flex items-center justify-between flex-wrap gap-4">
 				<h2 className="text-xl">Schedule</h2>
 				<div className="flex gap-2 md:justify-end justify-around mb-2">
-					<div className="flex-auto md:flex-none ">
-						<Link to="/schedule/maps/todays" className="flex items-center ">
+					<div className="flex justify-end items-center gap-x-4">
+						<Link to="/schedule/active/appointments" className="flex items-center border-b border-gray-300 dark:border-gray-700 py-2 rounded">
+							<IconChecks className="mr-1" />
+							View active appointments
+						</Link>
+						<Link to="/schedule/maps/todays" className="flex items-center border-b border-gray-300 dark:border-gray-700 py-2 rounded">
 							<IconMapPin className="mr-1" />
 							Map View
 						</Link>
