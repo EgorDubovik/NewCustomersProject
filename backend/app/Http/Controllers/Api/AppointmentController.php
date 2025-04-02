@@ -42,6 +42,28 @@ class AppointmentController extends Controller
 		return response()->json(['appointments' => $returnAppointments], 200);
 	}
 
+	public function active(Request $request)
+	{
+		$appointments = Appointment::with(['job.customer', 'techs'])
+			->where('company_id', $request->user()->company_id)
+			->where(function ($query) use ($request) {
+				if (!$request->user()->isRole([Role::ADMIN, Role::DISP])) {
+					$query->whereHas('techs', function ($query) use ($request) {
+						$query->where('tech_id', $request->user()->id);
+					});
+				}
+
+			})
+			->where(function ($query) {
+				$query->where('status', Appointment::ACTIVE)
+					->orWhere('status', Appointment::ON_MY_WAY);
+			})
+			->get();
+
+
+		return response()->json(['appointments' => $appointments], 200);
+	}
+
 	public function view(Request $request, $id)
 	{
 		$appointment = Appointment::find($id);

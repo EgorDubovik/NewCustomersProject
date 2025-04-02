@@ -116,7 +116,8 @@ Route::prefix('v1')->group(function () {
 
          // All appointments for calendar
          Route::get('/', [AppointmentController::class, 'index']);
-
+         // get all Active appointments
+         Route::get('/active', [AppointmentController::class, 'active']);
          // Base appointment API
          Route::get('/{id}', [AppointmentController::class, 'view']);
          Route::post('/', [AppointmentController::class, 'store']);

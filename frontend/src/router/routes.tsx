@@ -30,6 +30,7 @@ const Storage = lazy(() => import('../pages/Storage/index'));
 const CompanyGeneralInfo = lazy(() => import('../pages/CompanySettings/GeneralInfo/CompanyGeneralInfo'));
 const CompanyServices = lazy(() => import('../pages/CompanySettings/CompanyServices'));
 const CompanyTags = lazy(() => import('../pages/CompanySettings/CompanyTags'));
+const ActiveAppointments = lazy(() => import('../pages/Schedule/ActiveAppointments'));
 
 const routes = [
 	// dashboard
@@ -61,6 +62,14 @@ const routes = [
 					<DefaultFullSpaceLayout>
 						<MapView />
 					</DefaultFullSpaceLayout>
+				),
+			},
+			{
+				path: 'schedule/active/appointments',
+				element: (
+					<DefaultLayout>
+						<ActiveAppointments />
+					</DefaultLayout>
 				),
 			},
 			{
