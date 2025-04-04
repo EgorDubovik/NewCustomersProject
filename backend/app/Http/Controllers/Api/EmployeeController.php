@@ -33,15 +33,28 @@ class EmployeeController extends Controller
             'phone' => 'required',
             'rolesArray' => 'required',
             'pass1' => 'required',
+            'pass2' => 'required',
             'color' => 'required',
+        ], [
+            'name.required' => 'Name is required',
+            'email.required' => 'Email is required',
+            'phone.required' => 'Phone is required',
+            'rolesArray.required' => 'Roles are required',
+            'pass1.required' => 'Password is required',
+            'pass2.required' => 'Password confirmation is required',
+            'color.required' => 'Color is required',
         ]);
+
+        if ($request->pass1 !== $request->pass2) {
+            return response()->json(['error' => 'Passwords do not match'], 400);
+        }
 
         $company = $request->user()->company;
 
         $employee = $company->techs()->create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => password_hash($request->password, PASSWORD_BCRYPT),
+            'password' => password_hash($request->pass1, PASSWORD_BCRYPT),
             'phone' => $request->phone,
             'company_id' => Auth::user()->company_id,
             'color' => $request->color,
