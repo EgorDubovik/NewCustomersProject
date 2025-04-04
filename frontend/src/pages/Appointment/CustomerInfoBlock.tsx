@@ -15,6 +15,7 @@ import { Transition, Dialog } from '@headlessui/react';
 import ButtonLoader from '../../components/loading/ButtonLoader';
 import { ITag } from '../../types';
 import axiosClient from '../../store/axiosClient';
+import IconLoader from '../../components/Icon/IconLoader';
 
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
@@ -53,7 +54,10 @@ const CustomerInfoBlock = (props: any) => {
 		}
 	};
 
+	const [loadingSaveTag, setLoadingSaveTag] = useState(false);
 	const saveTags = () => {
+		if (loadingSaveTag) return;
+		setLoadingSaveTag(true);
 		axiosClient
 			.post('job/tags/' + appointment?.job?.id, { tags: selectedTags?.map((t) => t.id) })
 			.then((res) => {
@@ -67,6 +71,7 @@ const CustomerInfoBlock = (props: any) => {
 			})
 			.finally(() => {
 				setModal(false);
+				setLoadingSaveTag(false);
 			});
 	};
 
@@ -242,6 +247,7 @@ const CustomerInfoBlock = (props: any) => {
 											</button>
 											<button onClick={saveTags} type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4">
 												Save
+												{loadingSaveTag && <IconLoader className="animate-spin ml-2" />}
 											</button>
 										</div>
 									</div>
