@@ -86,7 +86,9 @@ export const useCompanyTags = () => {
 			.put(`company/settings/tags/${tag.id}`, tag)
 			.then((res) => {
 				if (res.status === 200) {
-					setTags(tags.map((t) => (t.id === tag.id ? tag : t)));
+					let newTags = tags.map((t) => (t.id === tag.id ? tag : t));
+					setTags(newTags);
+					dispatch(setCompanyTags(newTags));
 				}
 			})
 			.catch((err) => {
