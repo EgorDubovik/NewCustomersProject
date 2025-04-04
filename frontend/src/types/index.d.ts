@@ -130,3 +130,15 @@ export interface ITag {
 	title: string;
 	color: string;
 }
+export interface ICustomer {
+	id: number;
+	name?: string;
+	phone: string;
+	email?: string;
+	addresses?: IAddress[];
+	created_at?: string;
+}
+export interface IAddress {
+	id: number;
+	full: string;
+}

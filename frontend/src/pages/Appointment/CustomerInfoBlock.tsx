@@ -167,17 +167,6 @@ const CustomerInfoBlock = (props: any) => {
 									</span>
 								</div>
 							)}
-							{/* <div className="text-left">Invoices ({appointment?.job?.invoices.length || 0})</div>
-							<div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
-								{appointment?.job?.invoices.map((invoice) => (
-									<div key={invoice.id} className="w-full hover:dark:bg-white-dark/10 hover:bg-gray-200 bg-gray-100 hover:text-primary dark:bg-white-dark/5 p-2 rounded">
-										<Link to={'/invoice/' + invoice.id} className="">
-											#{invoice.id}
-											<span className="ml-1"> at {formatDate(invoice.created_at, 'MMM DD YYYY')}</span>
-										</Link>
-									</div>
-								))}
-							</div> */}
 						</div>
 					</ul>
 				</div>
