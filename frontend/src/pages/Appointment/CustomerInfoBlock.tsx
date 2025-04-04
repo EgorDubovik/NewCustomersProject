@@ -20,6 +20,7 @@ const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
 	const { appointment, updateTags } = useAppointmentContext();
 	const companyTags = useSelector((state: IRootState) => state.themeConfig.companyInfo.companyTags);
+	const user = useSelector((state: IRootState) => state.themeConfig.user);
 	const [modal, setModal] = useState(false);
 	const [selectedTags, setSelectedTags] = useState<ITag[] | null>(appointment?.job?.tags || null);
 	const copyPhone = (phone: string) => {
@@ -157,12 +158,15 @@ const CustomerInfoBlock = (props: any) => {
 									</button>
 								))}
 							</div>
-							<div className="mt-2 text-right min-w-fit">
-								{/* Add new tag */}
-								<span className="text-primary cursor-pointer" onClick={() => setModal(true)}>
-									+ Add Tag
-								</span>
-							</div>
+
+							{(user.roles.includes(1) || user.roles.includes(3)) && (
+								<div className="mt-2 text-right min-w-fit">
+									{/* Add new tag */}
+									<span className="text-primary cursor-pointer" onClick={() => setModal(true)}>
+										+ Add Tag
+									</span>
+								</div>
+							)}
 							{/* <div className="text-left">Invoices ({appointment?.job?.invoices.length || 0})</div>
 							<div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
 								{appointment?.job?.invoices.map((invoice) => (
