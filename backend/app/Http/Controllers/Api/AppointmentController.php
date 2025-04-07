@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendTechNotifOnAttachAppointment;
 use App\Mail\DeleteAppointment;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Job\Job;
 use App\Models\Role;
+use Illuminate\Support\Facades\Log;
+
 
 class AppointmentController extends Controller
 {
@@ -152,6 +155,9 @@ class AppointmentController extends Controller
 					]);
 				}
 			}
+			//send notification to techs
+			$techEmails = $appointment->techs->pluck('email')->toArray();
+			SendTechNotifOnAttachAppointment::dispatch($appointment, $techEmails);
 			DB::commit();
 		} catch (\Exception $e) {
 			DB::rollBack();
@@ -253,6 +259,7 @@ class AppointmentController extends Controller
 		$appointment->techs()->detach();
 		foreach ($request->techs as $tech_id) {
 			$this->authorize('add-tech-to-appointment', [$appointment, $tech_id]);
+
 			$appointment->techs()->attach($tech_id);
 		}
 
