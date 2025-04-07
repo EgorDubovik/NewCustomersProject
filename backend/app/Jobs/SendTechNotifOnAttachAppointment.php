@@ -32,6 +32,6 @@ class SendTechNotifOnAttachAppointment implements ShouldQueue
     public function handle(): void
     {
         if (count($this->techEmails) > 0)
-            Mail::to($this->techEmails[0])->send(new onTechAttachAppointment($this->appointment));
+            Mail::to($this->techEmails)->send(new onTechAttachAppointment($this->appointment));
     }
 }
