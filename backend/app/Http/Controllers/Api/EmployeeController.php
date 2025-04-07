@@ -29,7 +29,7 @@ class EmployeeController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'phone' => 'required',
             'rolesArray' => 'required',
             'pass1' => 'required',
