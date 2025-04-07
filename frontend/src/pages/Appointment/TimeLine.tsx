@@ -51,7 +51,12 @@ const TimeLine = () => {
 	return (
 		<>
 			<div className="flex items-center justify-between pb-0 md:pb-4">
-				<h3 className="font-semibold text-lg dark:text-white-light">Time</h3>
+				<div className="flex items-center">
+					<h3 className="font-semibold text-lg dark:text-white-light">Time</h3>
+					<span className="ml-4">
+						Job id: <span className="font-bold text-primary">{appointment?.job?.id}</span>
+					</span>
+				</div>
 				<button className="btn btn-primary p-2 rounded-full" onClick={() => setModal(true)}>
 					<IconPencilPaper className="w-4 h-4" />
 				</button>

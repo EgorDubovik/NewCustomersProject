@@ -78,12 +78,16 @@ const CustomerInfoBlock = (props: any) => {
 	return (
 		<div className="panel p-0 pb-4">
 			<div className="flex items-center justify-between p-4">
-				<h3 className="font-semibold text-lg dark:text-white-light">
-					<Link to={'/customer/' + appointment?.customer?.id} className="hover:underline text-primary">
-						{appointment?.customer?.name}
-					</Link>
-					<span className="ml-4">{appointment?.job?.id}</span>
-				</h3>
+				<div className="flex items-center">
+					<h3 className="font-semibold text-lg dark:text-white-light">
+						<Link to={'/customer/' + appointment?.customer?.id} className="hover:underline text-primary">
+							{appointment?.customer?.name}
+						</Link>
+					</h3>
+					<span className="ml-4">
+						Job history: <span className="font-bold text-primary">{appointment?.job?.appointments?.length}</span>
+					</span>
+				</div>
 				<Link to={'/customer/update/' + (appointment?.customer?.id ?? 0) + '?redirectTo=' + window.location.pathname} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 					<IconPencilPaper className="w-4 h-4" />
 				</Link>
