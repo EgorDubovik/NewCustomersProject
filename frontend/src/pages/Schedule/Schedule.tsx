@@ -10,6 +10,7 @@ import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import IconMapPin from '../../components/Icon/IconMapPin';
 import { IAppointment } from '../../components/plugin/sheduler/types';
 import IconChecks from '../../components/Icon/IconChecks';
+import { getAppointmentColor } from '../../helpers/helper';
 
 const Schedule = () => {
 	const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const Schedule = () => {
 		axiosClient
 			.get('/appointment')
 			.then((res) => {
-				console.log(res.data.appointments);
+				//console.log('Schedule:', res.data.appointments);
 				setAppointments(res.data.appointments);
 				setLoadingStatus('success');
 			})
@@ -76,10 +77,13 @@ const Schedule = () => {
 		setSearchParams(searchParams);
 	};
 
-	const setAppointmentStyle = (appointment: IAppointment) => {
+	const setAppointmentStyle = (appointment: any) => {
 		console.log(appointment);
 		let extendedBackgroundStyles = {};
 		let extendedTitleStyle = {};
+		console.log(appointment);
+		const appointmentColor = getAppointmentColor(appointment);
+		appointment.backgroundColor = appointmentColor;
 		if (appointment.status === 2) {
 			extendedBackgroundStyles = {
 				backgroundColor: theme === 'dark' ? '#4a4a4ab0' : '#ccc',

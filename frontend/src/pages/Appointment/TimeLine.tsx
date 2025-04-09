@@ -4,7 +4,7 @@ import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import { useAppointmentContext } from './context/AppointmentContext';
 import TimePicker from 'edtimepicker';
 import axiosClient from '../../store/axiosClient';
-import { alertError, manualIsoString } from '../../helpers/helper';
+import { alertError, getAppointmentColor, manualIsoString } from '../../helpers/helper';
 import { ButtonLoader } from '../../components/loading/ButtonLoader';
 import { Link } from 'react-router-dom';
 import { formatDate } from '../../helpers/helper';
@@ -81,8 +81,8 @@ const TimeLine = () => {
 									}`}
 									style={
 										{
-											'--before-border-color': jappointment.techs?.length > 0 ? jappointment.techs[jappointment.techs.length - 1].color : '#1565C0',
-											'--after-border-color': jappointment.techs?.length > 0 ? jappointment.techs[jappointment.techs.length - 1].color : '#1565C0',
+											'--before-border-color': getAppointmentColor(jappointment),
+											'--after-border-color': getAppointmentColor(jappointment),
 										} as React.CSSProperties
 									}
 								></div>

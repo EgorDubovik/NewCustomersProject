@@ -4,7 +4,7 @@ import IconPencilPaper from '../../../components/Icon/IconPencilPaper';
 import IconMapPin from '../../../components/Icon/IconMapPin';
 import IconPhone from '../../../components/Icon/IconPhone';
 import IconMail from '../../../components/Icon/IconMail';
-import { alertError, alertSuccsess, formatDate, viewCurrency } from '../../../helpers/helper';
+import { alertError, alertSuccsess, formatDate, getAppointmentColor, viewCurrency } from '../../../helpers/helper';
 import IconPlus from '../../../components/Icon/IconPlus';
 import { PageCirclePrimaryLoader } from '../../../components/loading/PageLoading';
 import { PageLoadError } from '../../../components/loading/Errors';
@@ -112,7 +112,7 @@ const ViewCustomer = () => {
 												<div
 													className="p-2 shadow bg-[#f4f4f4] dark:bg-white-dark/20 rounded border-l-2 mb-3"
 													style={{
-														borderColor: job.appointments[job.appointments.length - 1].techs.length > 0 ? job.appointments[job.appointments.length - 1].techs[0].color : '#1565c0',
+														borderColor: getAppointmentColor(job.appointments[job.appointments.length - 1]),
 													}}
 												>
 													<div className="px-4 flex items-center justify-between">

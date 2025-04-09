@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
+import { IAppointment } from '../types';
 export const viewCurrency = (amount: number | undefined) => {
 	if (typeof amount === 'string') amount = parseFloat(amount);
 
@@ -18,9 +19,9 @@ export const calculateTotalPaid = (payments: any) => {
 	}, 0);
 };
 
-export const calculateTaxAndTotal = (services: any, taxRate:number) => {
+export const calculateTaxAndTotal = (services: any, taxRate: number) => {
 	taxRate = taxRate / 100;
-	let tax = 0;	
+	let tax = 0;
 	let total = 0;
 	services.forEach((service: any) => {
 		const price = parseFloat(service.price);
@@ -68,7 +69,7 @@ export const showMessage = (msg = '', type = 'success') => {
 };
 
 export const formatDate = (date: Date | string | undefined, format: string) => {
-	if(date === undefined || !date) return '';
+	if (date === undefined || !date) return '';
 	if (typeof date === 'string') date = new Date(date);
 	if (!(date instanceof Date)) {
 		throw new Error('Invalid date object');
@@ -109,7 +110,7 @@ export const formatDate = (date: Date | string | undefined, format: string) => {
 	return format.replace(/YYYY|YY|MMMM|MMM|MM|M|DDDD|DDD|DD|D|HH|H|hh|h|mm|m|A|ss/g, (match) => replacements[match as keyof typeof replacements].toString());
 };
 
-export const alertSuccsess =(text:string) =>{
+export const alertSuccsess = (text: string) => {
 	const toast = Swal.mixin({
 		toast: true,
 		position: 'top',
@@ -121,9 +122,9 @@ export const alertSuccsess =(text:string) =>{
 		title: text,
 		padding: '10px 20px',
 	});
-}
+};
 
-export const alertError =(text:string) =>{
+export const alertError = (text: string) => {
 	const toast = Swal.mixin({
 		toast: true,
 		position: 'top',
@@ -135,9 +136,9 @@ export const alertError =(text:string) =>{
 		title: text,
 		padding: '10px 20px',
 	});
-}
+};
 
-export const alertInfo =(text:string) =>{
+export const alertInfo = (text: string) => {
 	const toast = Swal.mixin({
 		toast: true,
 		position: 'top',
@@ -149,4 +150,62 @@ export const alertInfo =(text:string) =>{
 		title: text,
 		padding: '10px 20px',
 	});
-}
+};
+
+export const hexToRgb = (hex: string) => {
+	let cleanHex = hex.replace('#', '');
+	if (cleanHex.length === 3) {
+		cleanHex = cleanHex
+			.split('')
+			.map((c) => c + c)
+			.join('');
+	}
+	const bigint = parseInt(cleanHex, 16);
+	const r = (bigint >> 16) & 255;
+	const g = (bigint >> 8) & 255;
+	const b = bigint & 255;
+
+	return { r, g, b };
+};
+
+export const rgbToHex = ({ r, g, b }: { r: number; g: number; b: number }) => {
+	return (
+		'#' +
+		[r, g, b]
+			.map((x) => {
+				const hex = x.toString(16);
+				return hex.length === 1 ? '0' + hex : hex;
+			})
+			.join('')
+	);
+};
+
+export const mixHexColors = (hexColors: string[]) => {
+	const total = hexColors.length;
+	const rgbValues = hexColors.map(hexToRgb);
+
+	const average = rgbValues.reduce(
+		(acc, { r, g, b }) => {
+			acc.r += r;
+			acc.g += g;
+			acc.b += b;
+			return acc;
+		},
+		{ r: 0, g: 0, b: 0 }
+	);
+
+	average.r = Math.round(average.r / total);
+	average.g = Math.round(average.g / total);
+	average.b = Math.round(average.b / total);
+
+	return rgbToHex(average);
+};
+
+export const getAppointmentColor = (appointment: IAppointment) => {
+	if (appointment.techs.length === 0) {
+		return '#1565c0';
+	}
+	const colors = appointment.techs.map((tech) => tech.color);
+
+	return mixHexColors(colors);
+};
