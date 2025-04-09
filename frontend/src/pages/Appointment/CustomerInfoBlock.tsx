@@ -85,7 +85,7 @@ const CustomerInfoBlock = (props: any) => {
 						</Link>
 					</h3>
 					<span className="ml-4">
-						Job history: <span className="font-bold text-primary">{appointment?.job?.appointments?.length}</span>
+						Jobs history: <span className="font-bold text-primary">{appointment?.job?.appointments?.length}</span>
 					</span>
 				</div>
 				<Link to={'/customer/update/' + (appointment?.customer?.id ?? 0) + '?redirectTo=' + window.location.pathname} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">

@@ -22,7 +22,7 @@ class AuthController extends Controller
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            $success['token'] =  $user->createToken('API token')->plainTextToken;
+            $success['token'] = $user->createToken('API token', ['*'], now()->addMonth())->plainTextToken;
             return response()->json(['success' => $success], 200);
         }
 
@@ -73,7 +73,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Something went wrong'], 500);
         }
 
-        $success['token'] =  $user->createToken('API token')->plainTextToken;
+        $success['token'] = $user->createToken('API token', ['*'], now()->addMonth())->plainTextToken;
         return response()->json(['success' => $success], 200);
     }
 }
