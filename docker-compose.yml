@@ -71,6 +71,23 @@ services:
          - '8080:80'
       depends_on:
          - mysql
+   nodejs:
+      container_name: nodejs
+      build:
+         context: ./nodejs
+      # image: node:latest
+      environment:
+         - OPENAI_API_KEY=${OPENAI_API_KEY}
+      volumes:
+         - ./nodejs:/app
+         - /app/node_modules
+      working_dir: /app
+      command: npm run dev
+      ports:
+         - '3000:3000'
+      networks:
+         - test-network
+
    nginx:
       image: nginx:latest
       container_name: nginx

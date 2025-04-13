@@ -11,6 +11,7 @@ import IconMapPin from '../../components/Icon/IconMapPin';
 import { IAppointment } from '../../components/plugin/sheduler/types';
 import IconChecks from '../../components/Icon/IconChecks';
 import { getAppointmentColor } from '../../helpers/helper';
+import IconMenu from '../../components/Icon/IconMenu';
 
 const Schedule = () => {
 	const dispatch = useDispatch();
@@ -20,7 +21,8 @@ const Schedule = () => {
 	const theme = useSelector((state: IRootState) => state.themeConfig.theme);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [currentDate, setCurrentDate] = useState<Date>(new Date());
-
+	const [openScheduleMenu, setOpenScheduleMenu] = useState(false);
+	const [activeAppointments, setActiveAppointments] = useState(0);
 	useEffect(() => {
 		dispatch(setPageTitle('Schedule'));
 	});
@@ -36,6 +38,7 @@ const Schedule = () => {
 			.then((res) => {
 				//console.log('Schedule:', res.data.appointments);
 				setAppointments(res.data.appointments);
+				setActiveAppointments(res.data.appointments.filter((app: IAppointment) => app.status !== 2).length);
 				setLoadingStatus('success');
 			})
 			.catch((err) => {
@@ -98,10 +101,47 @@ const Schedule = () => {
 	};
 
 	return (
-		<div>
+		<div className="relative">
+			<div
+				className={`${openScheduleMenu ? 'block' : 'hidden'} absolute -top-6 -left-6 w-[${
+					openScheduleMenu ? '250px' : '0'
+				}] h-full dark:bg-black bg-white z-90 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] `}
+			>
+				<div className="pt-16">
+					<ul className="relative font-semibold space-y-0.5 px-4 pt-4 overflow-y-auto">
+						<li className="menu nav-item">
+							<a href="/schedule/active/appointments" className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+								<div className="flex items-center justify-between w-full">
+									<div className="flex items-center">
+										<IconChecks className="mr-1" />
+										Active Appointments
+									</div>
+									<div className="w-5 h-5 bg-red-500 ml-4 text-white rounded-full flex items-center justify-center">{activeAppointments}</div>
+								</div>
+							</a>
+						</li>
+						<li className="menu nav-item">
+							<a href="/schedule/maps/todays" className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+								<div className="flex items-center justify-between w-full">
+									<div className="flex items-center">
+										<IconMapPin className="mr-1" />
+										Map View
+									</div>
+									{/* <div className="w-5 h-5 bg-red-500 ml-4 text-white rounded-full flex items-center justify-center">2</div> */}
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
-				<h2 className="text-xl">Schedule</h2>
-				<div className="flex gap-2 md:justify-end justify-around mb-2">
+				<div className="flex items-center z-100 cursor-pointer" onClick={() => setOpenScheduleMenu(!openScheduleMenu)}>
+					<div className="">
+						<IconMenu className="mr-2" />
+					</div>
+					<h2 className="text-xl">Schedule</h2>
+				</div>
+				{/* <div className="flex gap-2 md:justify-end justify-around mb-2">
 					<div className="flex justify-end items-center gap-x-4">
 						<Link to="/schedule/active/appointments" className="flex items-center border-b border-gray-300 dark:border-gray-700 py-2 rounded">
 							<IconChecks className="mr-1" />
@@ -112,7 +152,7 @@ const Schedule = () => {
 							Map View
 						</Link>
 					</div>
-				</div>
+				</div> */}
 			</div>
 			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
 			{loadingStatus === 'error' && <PageLoadError />}

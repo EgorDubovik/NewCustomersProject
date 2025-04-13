@@ -5,3 +5,5 @@ mysql
 backups
 certbot
 backup.sh
+nodejs/node_modules
+
