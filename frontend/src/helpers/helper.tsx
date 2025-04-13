@@ -209,3 +209,34 @@ export const getAppointmentColor = (appointment: IAppointment) => {
 
 	return mixHexColors(colors);
 };
+
+export const resizeImage = (file: File, maxWidth: number) => {
+	return new Promise((resolve, reject) => {
+		const img = new Image();
+		const reader = new FileReader();
+
+		reader.onload = (e) => {
+			img.src = e.target?.result as string;
+		};
+
+		img.onload = () => {
+			const canvas = document.createElement('canvas');
+			const scaleFactor = maxWidth / img.width;
+			const width = img.width > maxWidth ? maxWidth : img.width;
+			const height = img.width > maxWidth ? img.height * scaleFactor : img.height;
+
+			canvas.width = width;
+			canvas.height = height;
+
+			const ctx = canvas.getContext('2d');
+			if (ctx) {
+				ctx.drawImage(img, 0, 0, width, height);
+			}
+			const base64 = canvas.toDataURL('image/jpeg', 0.9); // you can change type and quality
+			resolve(base64);
+		};
+
+		reader.onerror = (error) => reject(error);
+		reader.readAsDataURL(file);
+	});
+};

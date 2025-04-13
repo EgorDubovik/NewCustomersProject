@@ -1,0 +1,1 @@
+import{r as e,b as o,a}from"./index-7ad70a7e.js";const s=()=>(e.useEffect(()=>{o.get("/appointment/active").then(t=>{console.log(t.data)}).catch(t=>{console.log(t)})},[]),a("div",{children:"Active Appointments"}));export{s as default};

@@ -1,11 +1,117 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ButtonLoader } from '../../../components/loading/ButtonLoader';
 import { Link } from 'react-router-dom';
 import { useCreateCustomer } from './useCreateCustomer';
-
+import IconAI from '../../../components/Icon/IconAI';
+import { alertError, resizeImage } from '../../../helpers/helper';
+import IconChecks from '../../../components/Icon/IconChecks';
+import IconImageUpload from '../../../components/Icon/IconImageUpload';
+import axios from 'axios';
 const CreateCustomer = () => {
-	const { error, phoneError, addressError, parseAddressValue, handleChangeForm, handleParseAddress, handleChangeParse, dataForm, searchSuggestionsByAddress,searchSuggestionsByPhone, suggestionResult, storeCustomer, loading } = useCreateCustomer();
+	const {
+		error,
+		phoneError,
+		addressError,
+		parseAddressValue,
+		handleChangeForm,
+		handleParseAddress,
+		handleChangeParse,
+		dataForm,
+		setDataForm,
+		searchSuggestionsByAddress,
+		searchSuggestionsByPhone,
+		suggestionResult,
+		storeCustomer,
+		loading,
+	} = useCreateCustomer();
 	const [openParse, setOpenParse] = useState(false);
+	const [openAIParse, setOpenAIParse] = useState(false);
+	const [AIForm, setAIForm] = useState('');
+	const [AIloadingStatus, setAIloadingStatus] = useState('none');
+	const [arrayReturnInputs, setArrayReturnInputs] = useState<string[]>([]);
+
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		const resizedBase64 = await resizeImage(file, 500);
+
+		requestHandle('/upload', resizedBase64 as string);
+	};
+
+	const requestHandle = (url: string, message: string) => {
+		setAIloadingStatus('loading');
+		fetch(import.meta.env.VITE_AI_URL + url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				message: message,
+			}),
+		})
+			.then(async (res) => {
+				if (!res.ok) {
+					const errorText = await res.text();
+					const statusText = res.statusText;
+
+					throw new Error('Network response was not ok');
+				}
+				return res.json();
+			})
+			.then((data) => {
+				const newDataForm = {
+					name: '',
+					phone: '',
+					email: '',
+					address1: '',
+					address2: '',
+					city: '',
+					state: '',
+					zip: '',
+				};
+				if (data) {
+					newDataForm.name = data.name;
+					newDataForm.phone = data.phone;
+					newDataForm.address1 = data.address.street1;
+					newDataForm.address2 = data.address.street2;
+					newDataForm.city = data.address.city;
+					newDataForm.state = data.address.state;
+					newDataForm.zip = data.address.zip_code;
+				}
+
+				const nonEmptyKeys = Object.entries(newDataForm)
+					.filter(([_, value]) => value !== '')
+					.map(([key]) => key);
+				setArrayReturnInputs(nonEmptyKeys);
+
+				setDataForm({ ...dataForm, ...newDataForm });
+
+				setAIloadingStatus('success');
+			})
+			.catch((err) => {
+				console.log(err);
+				setAIloadingStatus('error');
+			})
+			.finally(() => {
+				window.setTimeout(() => {
+					setAIloadingStatus('none');
+					setArrayReturnInputs([]);
+				}, 3000);
+			});
+	};
+
+	const handleAIParse = () => {
+		setArrayReturnInputs([]);
+		if (AIForm.length < 10) {
+			return;
+		}
+
+		setAIloadingStatus('loading');
+		requestHandle('/', AIForm);
+	};
 	return (
 		<div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
@@ -24,20 +130,86 @@ const CreateCustomer = () => {
 						</div>
 					)}
 					<form className="space-y-6">
-						<div>
-							<label>Customer name</label>
-							<input type="text" placeholder="Name" name="name" className="form-input w-full" value={dataForm.name} onChange={handleChangeForm} />
+						<div className="">
+							<div className="cursor-pointer h-8" onClick={() => setOpenAIParse(!openAIParse)}>
+								{AIloadingStatus === 'none' && (
+									<label className="flex items-center text-primary cursor-pointer">
+										<IconAI className="text-primary" />
+										<span className="ml-2">{openAIParse ? 'Enter information' : 'Open AI parser'}</span>
+									</label>
+								)}
+								{AIloadingStatus === 'loading' && (
+									<label className="flex items-center text-primary">
+										<ButtonLoader />
+										<span className="ml-2 font-bold bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 text-transparent bg-clip-text bg-300% animate-gradient">
+											AI generating answer...
+										</span>
+									</label>
+								)}
+								{AIloadingStatus === 'success' && (
+									<label className="flex items-center text-success">
+										<IconChecks />
+										<span className="ml-2">AI generated answer</span>
+									</label>
+								)}
+								{AIloadingStatus === 'error' && (
+									<label className="flex items-center text-danger">
+										<span className="ml-2">AI failed to generate answer</span>
+									</label>
+								)}
+							</div>
+							{openAIParse && (
+								<div className="flex items-center justify-between gap-x-2">
+									<textarea
+										name="AI_parse"
+										className="form-input w-full"
+										placeholder="Please paste information here"
+										rows={2}
+										value={AIForm}
+										onChange={(e) => setAIForm(e.target.value)}
+										onBlur={handleAIParse}
+									/>
+									<div
+										onClick={() => fileInputRef.current?.click()}
+										className="flex flex-col items-center cursor-pointer border border-gray-300 dark:border-gray-800 rounded justify-center h-full p-2 bg-gradient-to-r from-orange-700 via-blue-500 to-green-400 text-transparent bg-clip-text"
+									>
+										<input ref={fileInputRef} onChange={handleFileChange} type="file" className="hidden" style={{ display: 'none' }} />
+										<IconImageUpload className="text-primary " />
+										<span className="text-[14px]">Upload</span>
+									</div>
+								</div>
+							)}
 						</div>
-						<div className={`${phoneError && 'has-error'}`}>
+						<div className={`${arrayReturnInputs.includes('name') && 'has-success '}`}>
+							<label>Customer name</label>
+							<input type="text" placeholder="Name" name="name" className="transition-colors duration-500 form-input w-full" value={dataForm.name} onChange={handleChangeForm} />
+						</div>
+						<div className={`${phoneError && 'has-error'} ${arrayReturnInputs.includes('phone') && 'has-success'}`}>
 							<label>Customer number</label>
-							<input type="text" placeholder="Phone" name="phone" className="form-input w-full" value={dataForm.phone} onChange={handleChangeForm} onBlur={searchSuggestionsByPhone} />
+							<input
+								type="text"
+								placeholder="Phone"
+								name="phone"
+								className="transition-colors duration-500 form-input w-full"
+								value={dataForm.phone}
+								onChange={handleChangeForm}
+								onBlur={searchSuggestionsByPhone}
+							/>
 							{phoneError && <span className="text-danger text-[11px]">Phone number must be 10 digits</span>}
 						</div>
 						<div>
 							<label>Customer Email</label>
-							<input type="email" autoComplete="off" placeholder="Email" name="email" className="form-input w-full" value={dataForm.email} onChange={handleChangeForm} />
+							<input
+								type="email"
+								autoComplete="off"
+								placeholder="Email"
+								name="email"
+								className="transition-colors duration-500 form-input w-full"
+								value={dataForm.email}
+								onChange={handleChangeForm}
+							/>
 						</div>
-						<div className={`${addressError && 'has-error'}`}>
+						<div className={`${addressError && 'has-error'} ${arrayReturnInputs.includes('address1') && 'has-success'}`}>
 							<div className="flex justify-between">
 								<label htmlFor="gridAddress1">Address </label>
 								<span className="text-primary ml-2 cursor-pointer" onClick={() => setOpenParse(!openParse)}>
@@ -48,7 +220,7 @@ const CreateCustomer = () => {
 								<div className="mb-5">
 									<textarea
 										name="parseAddress"
-										className="form-input w-full"
+										className="form-input w-full "
 										placeholder="Parsed address"
 										rows={2}
 										value={parseAddressValue}
@@ -62,7 +234,7 @@ const CreateCustomer = () => {
 								type="text"
 								placeholder="1234 Main St"
 								name="address1"
-								className="form-input"
+								className="form-input transition-colors duration-500"
 								value={dataForm.address1}
 								onChange={handleChangeForm}
 								onBlur={searchSuggestionsByAddress}
@@ -70,22 +242,38 @@ const CreateCustomer = () => {
 							{addressError && <span className="text-danger text-[11px]">Address must be at least 5 characters</span>}
 						</div>
 
-						<div>
+						<div className={`${arrayReturnInputs.includes('address2') && 'has-success'}`}>
 							<label htmlFor="gridAddress2">Address2</label>
-							<input id="gridAddress2" type="text" placeholder="Apartment, studio, or floor" name="address2" className="form-input" value={dataForm.address2} onChange={handleChangeForm} />
+							<input
+								id="gridAddress2"
+								type="text"
+								placeholder="Apartment, studio, or floor"
+								name="address2"
+								className="transition-colors duration-500 form-input"
+								value={dataForm.address2}
+								onChange={handleChangeForm}
+							/>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-							<div className="md:col-span-2">
+							<div className={`md:col-span-2 ${arrayReturnInputs.includes('city') && 'has-success'}`}>
 								<label htmlFor="gridCity">City</label>
-								<input id="gridCity" type="text" placeholder="Enter City" name="city" className="form-input" value={dataForm.city} onChange={handleChangeForm} />
+								<input id="gridCity" type="text" placeholder="Enter City" name="city" className="transition-colors duration-500 form-input" value={dataForm.city} onChange={handleChangeForm} />
 							</div>
-							<div>
+							<div className={`${arrayReturnInputs.includes('state') && 'has-success'}`}>
 								<label htmlFor="gridState">State</label>
-								<input id="gridState" type="text" placeholder="Enter State" name="state" className="form-input" value={dataForm.state} onChange={handleChangeForm} />
+								<input
+									id="gridState"
+									type="text"
+									placeholder="Enter State"
+									name="state"
+									className="transition-colors duration-500 form-input"
+									value={dataForm.state}
+									onChange={handleChangeForm}
+								/>
 							</div>
-							<div>
+							<div className={`${arrayReturnInputs.includes('zip') && 'has-success'}`}>
 								<label htmlFor="gridZip">Zip</label>
-								<input id="gridZip" type="text" placeholder="Enter Zip" name="zip" className="form-input" value={dataForm.zip} onChange={handleChangeForm} />
+								<input id="gridZip" type="text" placeholder="Enter Zip" name="zip" className="transition-colors duration-500 form-input" value={dataForm.zip} onChange={handleChangeForm} />
 							</div>
 						</div>
 						{suggestionResult.length > 0 && (

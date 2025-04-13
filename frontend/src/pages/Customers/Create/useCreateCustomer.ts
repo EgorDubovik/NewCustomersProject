@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { parseAddress } from 'vladdress';
 
 export const useCreateCustomer = () => {
-   const [dataForm, setDataForm] = useState({
+	const [dataForm, setDataForm] = useState({
 		name: '',
 		phone: '',
 		email: '',
@@ -85,7 +85,7 @@ export const useCreateCustomer = () => {
 
 	const [suggestionResult, setSuggestionResult] = useState([]);
 	const searchSuggestions = (search: string) => {
-		if(search.length < 5) return;
+		if (search.length < 5) return;
 		axiosClient.get('/customers', { params: { search } }).then((res) => {
 			if (res.data.data.length > 0) {
 				setSuggestionResult(res.data.data);
@@ -99,5 +99,20 @@ export const useCreateCustomer = () => {
 		searchSuggestions(dataForm.address1);
 	};
 
-   return { error, phoneError, addressError, parseAddressValue, suggestionResult, storeCustomer, handleChangeForm, handleChangeParse, handleParseAddress, searchSuggestionsByPhone, searchSuggestionsByAddress, dataForm, loading };
-}
+	return {
+		error,
+		phoneError,
+		addressError,
+		parseAddressValue,
+		suggestionResult,
+		storeCustomer,
+		handleChangeForm,
+		handleChangeParse,
+		handleParseAddress,
+		searchSuggestionsByPhone,
+		searchSuggestionsByAddress,
+		dataForm,
+		setDataForm,
+		loading,
+	};
+};
