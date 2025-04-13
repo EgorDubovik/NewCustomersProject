@@ -1,47 +1,51 @@
 import OpenAI from 'openai';
 import express from 'express';
+import { generateResponse, generateResponseFromImage } from './utils.js';
 
 const app = express();
 const client = new OpenAI();
 
-async function generateResponse(message) {
-	const prompt = `
-      "${message}"
-      Please extract name, phone (if present), and address and return JSON in format 
-      {
-         "name": "",
-         "phone": "",
-         "address": {
-            "street1": "",
-            "city": "",
-            "state": "",
-            "zip_code": ""
-         }
-      }
-      and define state as 2 letters and zip_code if not present.
-      `;
+app.use(function (req, res, next) {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+	res.setHeader('Access-Control-Allow-Credentials', true);
+	next();
+});
 
-	const chatCompletion = await client.chat.completions.create({
-		model: 'gpt-3.5-turbo',
-		messages: [
-			{
-				role: 'user',
-				content: prompt,
-			},
-		],
-		response_format: { type: 'json_object' },
-	});
-
-	const responseText = chatCompletion.choices[0].message.content;
-	console.log(responseText);
-
-	return responseText;
-}
+app.use(express.json({ limit: '10mb' }));
 
 app.post('/', async (req, res) => {
-	const response = await generateResponse('Hi!  Yes, my name is Brandii and my address is 5211 Spanish oaks Frisco, TX 75034');
+	if (!req.body) {
+		return res.status(400).json({ error: 'Missing message' });
+	}
+	const { message } = req.body;
+	if (!message) {
+		return res.status(400).json({ error: 'Missing message' });
+	}
+	if (message.length < 10) {
+		return res.status(400).json({ error: 'Message must be at least 10 characters' });
+	}
+
+	const response = await generateResponse(message, client);
 	res.send(response);
-	// res.send('Hello World test');
+});
+app.get('/', (req, res) => {
+	res.send('Hello World test');
+});
+
+app.post('/upload', async (req, res) => {
+	if (!req.body) {
+		return res.status(400).json({ error: 'Missing message' });
+	}
+	const { message } = req.body;
+	if (!message || !message.startsWith('data:image/')) {
+		return res.status(400).json({ error: 'Missing message' });
+	}
+
+	const response = await generateResponseFromImage(message, client);
+
+	res.send(response);
 });
 
 app.listen(3000, () => {
