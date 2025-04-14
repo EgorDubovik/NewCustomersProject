@@ -103,9 +103,9 @@ const Schedule = () => {
 	return (
 		<div className="relative">
 			<div
-				className={`${openScheduleMenu ? 'block' : 'hidden'} absolute -top-6 -left-6 w-[${
-					openScheduleMenu ? '250px' : '0'
-				}] h-full dark:bg-black bg-white z-90 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] `}
+				className={` ${
+					openScheduleMenu ? 'opacity-100' : 'opacity-0'
+				} transition-opacity duration-300 absolute -top-6 -left-6 w-[250px]  h-full dark:bg-black bg-white z-90 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] `}
 			>
 				<div className="pt-16">
 					<ul className="relative font-semibold space-y-0.5 px-4 pt-4 overflow-y-auto">
@@ -127,7 +127,6 @@ const Schedule = () => {
 										<IconMapPin className="mr-1" />
 										Map View
 									</div>
-									{/* <div className="w-5 h-5 bg-red-500 ml-4 text-white rounded-full flex items-center justify-center">2</div> */}
 								</div>
 							</a>
 						</li>
