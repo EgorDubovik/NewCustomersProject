@@ -116,7 +116,7 @@ const Schedule = () => {
 										<IconChecks className="mr-1" />
 										Active Appointments
 									</div>
-									<div className="w-5 h-5 bg-red-500 ml-4 text-white rounded-full flex items-center justify-center">{activeAppointments}</div>
+									<div className="w-5 h-5 bg-red-500 ml-4 p-2 text-white rounded-full flex items-center justify-center">{activeAppointments}</div>
 								</div>
 							</a>
 						</li>
