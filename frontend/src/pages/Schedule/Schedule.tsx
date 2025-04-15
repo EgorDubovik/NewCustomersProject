@@ -105,7 +105,7 @@ const Schedule = () => {
 			<div
 				className={` ${
 					openScheduleMenu ? 'opacity-100' : 'opacity-0'
-				} transition-opacity duration-300 absolute -top-6 -left-6 w-[250px]  h-full dark:bg-black bg-white z-90 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] `}
+				} transition-opacity duration-300 absolute -top-6 -left-6 w-[250px]  h-full dark:bg-black bg-white z-10 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] `}
 			>
 				<div className="pt-16">
 					<ul className="relative font-semibold space-y-0.5 px-4 pt-4 overflow-y-auto">
@@ -134,7 +134,7 @@ const Schedule = () => {
 				</div>
 			</div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
-				<div className="flex items-center z-100 cursor-pointer" onClick={() => setOpenScheduleMenu(!openScheduleMenu)}>
+				<div className="flex items-center z-20 cursor-pointer" onClick={() => setOpenScheduleMenu(!openScheduleMenu)}>
 					<div className="">
 						<IconMenu className="mr-2" />
 					</div>

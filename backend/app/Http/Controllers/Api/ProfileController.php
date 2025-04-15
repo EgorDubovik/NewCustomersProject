@@ -22,11 +22,15 @@ class ProfileController extends Controller
             'storage' => StorageItemsController::getCountOfExpectedStorageItems($user->id),
             'schedule' => 0 //count(AppointmentController::getActiveAppointments($user->id)),
         ];
-        // get company tags
+
+        // get app version to compare on frontend
+        $app_version = config('version.app_version');
+
         return response()->json([
             'user' => $user,
             'companySettings' => $companySettings,
             'sideBarNotifications' => $sideBarNotifications,
+            'app_version' => $app_version,
         ], 200);
     }
 

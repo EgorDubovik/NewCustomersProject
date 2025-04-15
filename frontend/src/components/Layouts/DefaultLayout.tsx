@@ -14,11 +14,13 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
 	const dispatch = useDispatch();
 
 	const [showLoader, setShowLoader] = useState(true);
-
+	const [showUpdateWarning, setShowUpdateWarning] = useState(false);
 	function loadHeadData() {
 		axiosClient.get('/user').then((res) => {
 			if (res.status == 200) {
 				console.log('main data:', res.data);
+				console.log('app version:', import.meta.env.VITE_APP_VERSION);
+				if (res.data.app_version && import.meta.env.VITE_APP_VERSION !== res.data.app_version) setShowUpdateWarning(true);
 				const user = {
 					id: res.data.user.id,
 					name: res.data.user.name,
@@ -71,6 +73,17 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
 					{/* END SIDEBAR */}
 
 					<div className="main-content flex flex-col min-h-screen">
+						{showUpdateWarning && (
+							<div className="fixed top-0 left-0 right-0 h-16 bg-orange-800/70 z-50 text-center text-white text-lg">
+								Current Version: {import.meta.env.VITE_APP_VERSION} is out of date<br></br>
+								Please{' '}
+								<a className="underline" href="#" onClick={() => window.location.reload()}>
+									reload the page
+								</a>{' '}
+								to update
+							</div>
+						)}
+
 						{/* BEGIN TOP NAVBAR */}
 						<Header />
 						{/* END TOP NAVBAR */}

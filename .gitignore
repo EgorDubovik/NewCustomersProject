@@ -6,4 +6,4 @@ backups
 certbot
 backup.sh
 nodejs/node_modules
-
+build-and-update.sh
