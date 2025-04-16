@@ -104,7 +104,7 @@ const Schedule = () => {
 		<div className="relative">
 			<div
 				className={` ${
-					openScheduleMenu ? 'opacity-100' : 'opacity-0'
+					openScheduleMenu ? 'block' : 'hidden'
 				} transition-opacity duration-300 absolute -top-6 -left-6 w-[250px]  h-full dark:bg-black bg-white z-10 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] `}
 			>
 				<div className="pt-16">
