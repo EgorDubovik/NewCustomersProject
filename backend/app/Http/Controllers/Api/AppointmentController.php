@@ -79,8 +79,10 @@ class AppointmentController extends Controller
 		$this->authorize('view-appointment', $appointment);
 
 		$appointment->title = $appointment->job->customer->name;
-		$appointment->backgroundColor = $appointment->techs->first()->color ?? '#1565c0';
+		// $appointment->backgroundColor = $appointment->techs->first()->color ?? '#1565c0';
 		$appointment->customer = $appointment->job->customer;
+		$appointment->customer->loadCount('jobs');
+
 		$appointment->address = $appointment->job->address->full ?? '';
 		$appointment->techs = $appointment->techs->load('roles');
 		$appointment->notes = $appointment->job->notes()

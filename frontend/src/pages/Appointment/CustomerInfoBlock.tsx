@@ -20,6 +20,7 @@ import IconLoader from '../../components/Icon/IconLoader';
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
 	const { appointment, updateTags } = useAppointmentContext();
+	console.log('Customer:', appointment?.customer);
 	const companyTags = useSelector((state: IRootState) => state.themeConfig.companyInfo.companyTags);
 	const user = useSelector((state: IRootState) => state.themeConfig.user);
 	const [modal, setModal] = useState(false);
@@ -85,7 +86,7 @@ const CustomerInfoBlock = (props: any) => {
 						</Link>
 					</h3>
 					<span className="ml-4">
-						Jobs history: <span className="font-bold text-primary">{appointment?.job?.appointments?.length}</span>
+						Jobs history: <span className="font-bold text-primary">{appointment?.customer?.jobs_count}</span>
 					</span>
 				</div>
 				<Link to={'/customer/update/' + (appointment?.customer?.id ?? 0) + '?redirectTo=' + window.location.pathname} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">

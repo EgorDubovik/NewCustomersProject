@@ -81,16 +81,20 @@ const Schedule = () => {
 	};
 
 	const setAppointmentStyle = (appointment: any) => {
-		console.log(appointment);
 		let extendedBackgroundStyles = {};
 		let extendedTitleStyle = {};
-		console.log(appointment);
+		console.log('app title:', appointment.title);
+
 		const appointmentColor = getAppointmentColor(appointment);
-		appointment.backgroundColor = appointmentColor;
+
+		extendedBackgroundStyles = {
+			backgroundColor: appointmentColor,
+		};
 		if (appointment.status === 2) {
+			console.log('app status:', appointment.status);
 			extendedBackgroundStyles = {
 				backgroundColor: theme === 'dark' ? '#4a4a4ab0' : '#ccc',
-				borderLeft: '3px solid ' + appointment.backgroundColor,
+				borderLeft: '3px solid ' + appointmentColor,
 			};
 			extendedTitleStyle = {
 				color: theme === 'dark' ? '#ffffff' : '#000000',
