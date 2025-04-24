@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\StorageItemsController;
 use App\Http\Controllers\Api\Company\CompanyTagController;
 use App\Http\Controllers\Api\Company\CompanySettingsController;
 use App\Http\Controllers\Api\Job\JobController;
+use App\Http\Controllers\Landing\LandingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -203,4 +204,11 @@ Route::prefix('v1')->group(function () {
       Route::get('/{key}', [ReviewFeedbackController::class, 'view']);
       Route::post('/{key}', [ReviewFeedbackController::class, 'store']);
    });
+
+
+   // Landing page store stat
+   Route::post('landing', [LandingController::class, 'store']);
+
 });
+
+
