@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\InvoiceMail;
-use Illuminate\Support\Facades\Log;
 
 class InvoiceService
 {
@@ -36,10 +33,9 @@ class InvoiceService
 
          $invoice->pdf_path = $this->createPDF($invoice); // Create PDF
          $invoice->save();
-         
+
          // Send email
          SendCustomerInvoice::dispatch($invoice);
-         // Mail::to($invoice->email)->send(new InvoiceMail($invoice));
 
          DB::commit();
       } catch (\Exception $e) {
@@ -50,10 +46,10 @@ class InvoiceService
 
    protected function createPDF(Invoice $invoice)
    {
-      $pdf = PDF::loadView('invoice.PDF',['invoice' => $invoice]);
+      $pdf = PDF::loadView('invoice.PDF', ['invoice' => $invoice]);
       $content = $pdf->download()->getOriginalContent();
-      $file_path = 'invoices/'.(env('APP_DEBUG') ? 'debug/' : "prod/").'Invoice_'.date('m-d-Y').'-'.time().Str::random(50).'.pdf';
+      $file_path = 'invoices/' . (env('APP_DEBUG') ? 'debug/' : "prod/") . 'Invoice_' . date('m-d-Y') . '-' . time() . Str::random(50) . '.pdf';
       Storage::disk('s3')->put($file_path, $content);
-      return env('AWS_FILE_ACCESS_URL').$file_path;
+      return config('filesystems.file_access_url') . $file_path;
    }
 }

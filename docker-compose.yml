@@ -78,9 +78,11 @@ services:
       # image: node:latest
       environment:
          - OPENAI_API_KEY=${OPENAI_API_KEY}
+         - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
       volumes:
          - ./nodejs:/app
          - /app/node_modules
+         - /app/src/generated
       working_dir: /app
       command: npm run dev
       ports:
