@@ -95,6 +95,7 @@ const Header = () => {
 	};
 
 	const handaleFinishOrActivateAppointment = () => {
+		if (updateAppointmentLoading) return;
 		setUpdateAppointmentLoading(true);
 		axiosClient
 			.put(`appointment/${appointment?.id}/status`)
@@ -111,6 +112,7 @@ const Header = () => {
 	};
 
 	const onCreateCopy = () => {
+		if (createCopyLoading) return;
 		const data = {
 			timeFrom: manualIsoString(timeFrom),
 			timeTo: manualIsoString(timeTo),
