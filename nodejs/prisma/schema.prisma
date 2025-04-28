@@ -6,19 +6,31 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model PersonalAccessToken {
-  id              Int      @id @default(autoincrement())
-  token           String
-  tokenable_id    Int
-  tokenable_type  String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  id             BigInt   @id @default(autoincrement())
+  tokenable_type String
+  tokenable_id   BigInt
+  name           String
+  token          String
+  abilities      String?    // abilities могут быть NULL
+  last_used_at   DateTime?   // может быть NULL
+  expires_at     DateTime?   // может быть NULL
+  created_at     DateTime?   @default(now())
+  updated_at     DateTime?   @updatedAt
+
+  @@map("personal_access_tokens") // чтобы Prisma знала правильное имя таблицы
+}
+
+model User {
+  id             BigInt   @id @default(autoincrement())
+  name           String
+
+  @@map("users") // чтобы Prisma знала правильное имя таблицы
 }

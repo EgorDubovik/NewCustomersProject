@@ -1,6 +1,7 @@
 import express from 'express';
 import crypto from 'crypto';
 import prisma from '../lib/prisma.js';
+import { bigIntToString } from '../utils/utils.js';
 
 const router = express.Router();
 
@@ -12,15 +13,21 @@ router.post('/login', async (req, res) => {
 	const token = bearerToken.split(' ')[1];
 	const [id, rawToken] = token.split('|');
 
-	const hashFromDB = 'a36b8c085a87c2d4c04abe052c8ae13f35af6334e16b6a98494a24d57f05296c';
+	try {
+		const userToken = await prisma.PersonalAccessToken.findUnique({ where: { id: Number(id) } });
 
-	const hashToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+		const hashToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+		const isMatch = hashToken === userToken?.token;
 
-	const isMatch = hashToken === hashFromDB;
+		if (!isMatch) return res.status(401).json({ error: 'Unauthorized' });
 
-	if (!isMatch) return res.status(401).json({ error: 'Unauthorized' });
+		const user = await prisma.User.findUnique({ where: { id: userToken.tokenable_id.toString() } });
 
-	return res.status(200).json({ id, rawToken });
+		return res.status(200).json({ message: 'Authorized', user: bigIntToString(user) });
+	} catch (error) {
+		console.log(error);
+		return res.status(401).json({ error: 'Unauthorized' });
+	}
 });
 
 export default router;

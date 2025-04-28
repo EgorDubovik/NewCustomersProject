@@ -86,3 +86,12 @@ export const generateResponseFromImage = async (image, client) => {
 
 	return parsed;
 };
+
+export const bigIntToString = (obj) => {
+	if (Array.isArray(obj)) {
+		return obj.map(bigIntToString); // Рекурсивно применяем к массивам
+	} else if (obj !== null && typeof obj === 'object') {
+		return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, typeof value === 'bigint' ? value.toString() : bigIntToString(value)]));
+	}
+	return obj; // Возвращаем другие значения без изменений
+};

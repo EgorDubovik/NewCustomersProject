@@ -66,6 +66,7 @@ const Header = () => {
 	};
 
 	const addPayment = () => {
+		if (paymentsLoading) return;
 		setPaymentsLoading(true);
 		if (amountPay > 0) {
 			axiosClient
