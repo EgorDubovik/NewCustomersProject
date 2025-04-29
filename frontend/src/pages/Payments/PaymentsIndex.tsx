@@ -16,6 +16,7 @@ import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 import { useDispatch } from 'react-redux';
 import { ButtonLoader } from '../../components/loading/ButtonLoader';
+import { graphConfig } from './config/graphConfig';
 
 const PaymentsIndex = () => {
 	const [loadingStatus, setLoadingStatus] = useState<string>('success');
@@ -36,224 +37,124 @@ const PaymentsIndex = () => {
 	const user = useSelector((state: IRootState) => state.themeConfig.user);
 	const dispatch = useDispatch();
 
+	// New static date
+	const [groupPaymentsByType, setGroupPaymentsByType] = useState<any[]>([]);
+
 	useEffect(() => {
 		dispatch(setPageTitle('Payments'));
 	}, []);
+
 	const [series, setSeries] = useState<any[]>([]);
-	const [options, setOptions] = useState<any>({
-		chart: {
-			height: 325,
-			type: 'area',
-			fontFamily: 'Nunito, sans-serif',
-			zoom: {
-				enabled: false,
-			},
-			toolbar: {
-				show: false,
-			},
-		},
+	const [options, setOptions] = useState<any>(graphConfig(isDark));
 
-		dataLabels: {
-			enabled: false,
-		},
-		stroke: {
-			show: true,
-			curve: 'smooth',
-			width: 2,
-			lineCap: 'square',
-		},
-		dropShadow: {
-			enabled: true,
-			opacity: 0.2,
-			blur: 10,
-			left: -7,
-			top: 22,
-		},
-		colors: [],
-		labels: [],
-		xaxis: {
-			axisBorder: {
-				show: false,
-			},
-			axisTicks: {
-				show: false,
-			},
-			crosshairs: {
-				show: true,
-			},
-			labels: {
-				offsetY: 5,
-				style: {
-					fontSize: '12px',
-					cssClass: 'apexcharts-xaxis-title',
-				},
-			},
-		},
-		yaxis: {
-			tickAmount: 7,
-			labels: {
-				formatter: (value: number) => {
-					//if (value >= 1000) return '$' + (Math.round((value / 10)) / 100) + 'k';
-					return viewCurrency(value);
-				},
-				offsetX: -10,
-				offsetY: 0,
-				style: {
-					fontSize: '12px',
-					cssClass: 'apexcharts-yaxis-title',
-				},
-			},
-		},
-		grid: {
-			borderColor: isDark ? '#191E3A' : '#E0E6ED',
-			strokeDashArray: 5,
-			xaxis: {
-				lines: {
-					show: true,
-				},
-			},
-			yaxis: {
-				lines: {
-					show: false,
-				},
-			},
-			padding: {
-				top: 0,
-				right: 0,
-				bottom: 0,
-				left: 0,
-			},
-		},
-		legend: {
-			show: false,
-		},
-		tooltip: {
-			marker: {
-				show: true,
-			},
-			x: {
-				show: false,
-			},
-		},
-		fill: {
-			type: 'gradient',
-			gradient: {
-				shadeIntensity: 1,
-				inverseColors: !1,
-				opacityFrom: isDark ? 0.19 : 0.28,
-				opacityTo: 0.05,
-				stops: isDark ? [100, 100] : [45, 100],
-			},
-		},
-	});
+	// useEffect(() => {
+	// 	ParseDate(payments);
+	// 	getTechsColors();
+	// }, [selectedTechs]);
 
-	useEffect(() => {
-		ParseDate(payments);
-		getTechsColors();
-	}, [selectedTechs]);
+	// const getTechsColors = () => {
+	// 	const colors: any = [];
+	// 	selectedTechs.forEach((techId) => {
+	// 		const tech = techs.find((tech) => tech.id === techId);
+	// 		if (tech) {
+	// 			colors.push(tech.color);
+	// 		}
+	// 	});
 
-	const getTechsColors = () => {
-		const colors: any = [];
-		selectedTechs.forEach((techId) => {
-			const tech = techs.find((tech) => tech.id === techId);
-			if (tech) {
-				colors.push(tech.color);
-			}
-		});
+	// 	setOptions((prevOptions: any) => ({ ...prevOptions, colors: colors }));
+	// };
+	// const ParseDate = (date: any) => {
+	// 	console.log('ParseDate', date);
+	// 	const labels: string[] = [];
+	// 	const chartData: any = {};
+	// 	const paymentsForTable: any[] = [];
+	// 	let totalPerPeriod = 0;
+	// 	let creditTransaction = 0;
+	// 	let transferTransaction = 0;
+	// 	let cashTransaction = 0;
+	// 	let checkTransaction = 0;
+	// 	date.forEach((element: any) => {
+	// 		let dataOneDayByTech: any = {};
+	// 		labels.push(moment(element.date).format('DD MMM'));
+	// 		element.payments.forEach((payment: any) => {
+	// 			if (selectedTechs.includes(payment.tech_id)) {
+	// 				totalPerPeriod += payment.amount;
+	// 				paymentsForTable.push(payment);
+	// 				if (payment.type_text.toLowerCase() === 'credit') {
+	// 					creditTransaction += payment.amount;
+	// 				}
+	// 				if (payment.type_text.toLowerCase() === 'transfer') {
+	// 					transferTransaction += payment.amount;
+	// 				}
+	// 				if (payment.type_text.toLowerCase() === 'cash') {
+	// 					cashTransaction += payment.amount;
+	// 				}
+	// 				if (payment.type_text.toLowerCase() === 'check') {
+	// 					checkTransaction += payment.amount;
+	// 				}
+	// 				if (dataOneDayByTech[payment.tech_id]) {
+	// 					dataOneDayByTech[payment.tech_id] += payment.amount;
+	// 				} else {
+	// 					dataOneDayByTech[payment.tech_id] = payment.amount;
+	// 				}
+	// 			}
+	// 		});
 
-		setOptions((prevOptions: any) => ({ ...prevOptions, colors: colors }));
-	};
-	const ParseDate = (date: any) => {
-		console.log('ParseDate', date);
-		const labels: string[] = [];
-		const chartData: any = {};
-		const paymentsForTable: any[] = [];
-		let totalPerPeriod = 0;
-		let creditTransaction = 0;
-		let transferTransaction = 0;
-		let cashTransaction = 0;
-		let checkTransaction = 0;
-		date.forEach((element: any) => {
-			let dataOneDayByTech: any = {};
-			labels.push(moment(element.date).format('DD MMM'));
-			element.payments.forEach((payment: any) => {
-				if (selectedTechs.includes(payment.tech_id)) {
-					totalPerPeriod += payment.amount;
-					paymentsForTable.push(payment);
-					if (payment.type_text.toLowerCase() === 'credit') {
-						creditTransaction += payment.amount;
-					}
-					if (payment.type_text.toLowerCase() === 'transfer') {
-						transferTransaction += payment.amount;
-					}
-					if (payment.type_text.toLowerCase() === 'cash') {
-						cashTransaction += payment.amount;
-					}
-					if (payment.type_text.toLowerCase() === 'check') {
-						checkTransaction += payment.amount;
-					}
-					if (dataOneDayByTech[payment.tech_id]) {
-						dataOneDayByTech[payment.tech_id] += payment.amount;
-					} else {
-						dataOneDayByTech[payment.tech_id] = payment.amount;
-					}
-				}
-			});
+	// 		selectedTechs.forEach((techId: any) => {
+	// 			if (!chartData[techId]) {
+	// 				chartData[techId] = [];
+	// 			}
+	// 			if (dataOneDayByTech[techId]) {
+	// 				chartData[techId].push(dataOneDayByTech[techId]);
+	// 			} else {
+	// 				chartData[techId].push(0);
+	// 			}
+	// 		});
+	// 	});
+	// 	let series: any[] = [];
+	// 	selectedTechs.forEach((techId: any) => {
+	// 		series.push({
+	// 			name: techs.find((tech) => tech.id === techId)?.name ?? 'Unknow',
+	// 			data: chartData[techId],
+	// 		});
+	// 	});
+	// 	setOptions((prevOptions: any) => ({ ...prevOptions, labels: labels }));
+	// 	setSeries(series);
+	// 	setTotalPerPeriod(totalPerPeriod);
+	// 	setCreditTransaction(creditTransaction);
+	// 	setTransferTransaction(transferTransaction);
+	// 	setCashTransaction(cashTransaction);
+	// 	setCheckTransaction(checkTransaction);
+	// 	setFilteredItems(paymentsForTable.sort((a, b) => b.id - a.id));
+	// };
 
-			selectedTechs.forEach((techId: any) => {
-				if (!chartData[techId]) {
-					chartData[techId] = [];
-				}
-				if (dataOneDayByTech[techId]) {
-					chartData[techId].push(dataOneDayByTech[techId]);
-				} else {
-					chartData[techId].push(0);
-				}
-			});
-		});
-		let series: any[] = [];
-		selectedTechs.forEach((techId: any) => {
-			series.push({
-				name: techs.find((tech) => tech.id === techId)?.name ?? 'Unknow',
-				data: chartData[techId],
-			});
-		});
-		setOptions((prevOptions: any) => ({ ...prevOptions, labels: labels }));
-		console.log('set series:', series);
-		setSeries(series);
-		setTotalPerPeriod(totalPerPeriod);
-		setCreditTransaction(creditTransaction);
-		setTransferTransaction(transferTransaction);
-		setCashTransaction(cashTransaction);
-		setCheckTransaction(checkTransaction);
-		setFilteredItems(paymentsForTable.sort((a, b) => b.id - a.id));
-	};
+	// const getTechsList = (allPayments: any) => {
+	// 	let techs: any[] = [];
+	// 	allPayments.forEach((payment: any) => {
+	// 		if (payment.payments.length === 0) return;
+	// 		payment.payments.forEach((p: any) => {
+	// 			if (!techs.includes(p.tech_id)) {
+	// 				techs.push(p.tech_id);
+	// 			}
+	// 		});
+	// 	});
+	// 	setSelectedTechs(techs);
+	// };
 
-	const getTechsList = (allPayments: any) => {
-		let techs: any[] = [];
-		allPayments.forEach((payment: any) => {
-			if (payment.payments.length === 0) return;
-			payment.payments.forEach((p: any) => {
-				if (!techs.includes(p.tech_id)) {
-					techs.push(p.tech_id);
-				}
-			});
-		});
-		setSelectedTechs(techs);
-	};
-
-	useEffect(() => {
-		getTechsList(payments);
-	}, [payments]);
+	// useEffect(() => {
+	// 	getTechsList(payments);
+	// }, [payments]);
 
 	const getPayments = (setStatus: (status: string) => void) => {
 		setStatus('loading');
 		axiosClient
 			.get('/payments', { params: { startDate, endDate } })
 			.then((response) => {
-				console.log(response.data.paymentForGraph);
-				setPayments(response.data.paymentForGraph);
-				setTechs(response.data.techs);
+				console.log(response.data);
+				setGroupPaymentsByType(response.data.totalByType);
+				setPayments(response.data.payments);
+				// setPayments(response.data.paymentForGraph);
+				// setTechs(response.data.techs);
 				setStatus('success');
 			})
 			.catch((error) => {
@@ -279,7 +180,6 @@ const PaymentsIndex = () => {
 	};
 
 	useEffect(() => {
-		console.log('isDark:', isDark);
 		setOptions({
 			...options,
 			colors: [isDark ? '#2196F3' : '#1B55E2', isDark ? '#E7515A' : '#E7515A'],
@@ -298,6 +198,7 @@ const PaymentsIndex = () => {
 	}, [isDark]);
 
 	const removePaymentHandler = (paymentId: number) => {
+		if (!confirm('Are you sure you want to delete this payment?')) return;
 		setPaymentRemoveStatus(paymentId);
 		axiosClient
 			.delete('/payments/' + paymentId)
@@ -377,23 +278,23 @@ const PaymentsIndex = () => {
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-6 text-center">
 						<div className="panel text-center col-span-2">
 							Total per period
-							<div className="text-[25px] font-bold mt-2">{viewCurrency(totalPerPeriod)}</div>
+							<div className="text-[25px] font-bold mt-2">{viewCurrency(Object.values(groupPaymentsByType).reduce((sum, value) => sum + value, 0))}</div>
 						</div>
 						<div className="panel">
 							Credit transaction
-							<div className="text-[25px] font-bold mt-2">{viewCurrency(creditTransaction)}</div>
+							<div className="text-[25px] font-bold mt-2">{viewCurrency(groupPaymentsByType[1] || 0)}</div>
 						</div>
 						<div className="panel">
 							Transfer transaction
-							<div className="text-[25px] font-bold mt-2">{viewCurrency(transferTransaction)}</div>
+							<div className="text-[25px] font-bold mt-2">{viewCurrency(groupPaymentsByType[4] || 0)}</div>
 						</div>
 						<div className="panel">
 							Cash transaction
-							<div className="text-[25px] font-bold mt-2">{viewCurrency(cashTransaction)}</div>
+							<div className="text-[25px] font-bold mt-2">{viewCurrency(groupPaymentsByType[2] || 0)}</div>
 						</div>
 						<div className="panel">
 							Check transaction
-							<div className="text-[25px] font-bold mt-2">{viewCurrency(checkTransaction)}</div>
+							<div className="text-[25px] font-bold mt-2">{viewCurrency(groupPaymentsByType[3] || 0)}</div>
 						</div>
 					</div>
 
@@ -412,19 +313,16 @@ const PaymentsIndex = () => {
 									</tr>
 								</thead>
 								<tbody>
-									{filteredItems.map((payment: any) => {
+									{payments.map((payment: any) => {
 										return (
 											<tr key={payment.id}>
 												<td>{payment.id}</td>
 												<td className="text-primary whitespace-nowrap">
-													<Link to={'/customer/' + payment.job?.customer?.id || '0'}>{payment.job?.customer ? payment.job?.customer.name : 'Unknow'}</Link>
+													<Link to={'/customer/' + payment.customer?.id || '0'}>{payment.customer ? payment.customer.name : 'Unknow'}</Link>
 												</td>
 												<td className="text-primary whitespace-nowrap">
-													<Link to={'/appointment/' + payment.job?.appointments[payment.job?.appointments?.length - 1]?.id || '0'}>
-														Appointment at{' '}
-														{payment.job?.appointments[payment.job?.appointments?.length - 1]
-															? formatDate(payment.job?.appointments[payment.job?.appointments?.length - 1].start, 'MMM DD YYYY')
-															: 'Unknow'}
+													<Link to={'/appointment/' + payment.appointment?.id || '0'}>
+														Appointment at {payment.appointment ? formatDate(payment.appointment.start, 'MMM DD YYYY') : 'Unknow'}
 													</Link>
 												</td>
 												<td className={'whitespace-nowrap' + (payment.amount > 0) ? 'text-success' : 'text-danger'}>{viewCurrency(payment.amount)}</td>

@@ -12,6 +12,7 @@ use Carbon\CarbonPeriod;
 use App\Models\Job\Job;
 use App\Models\Role;
 use App\Services\InvoiceService;
+use App\Http\Resources\PaymentResource;
 
 class PaymentController extends Controller
 {
@@ -19,46 +20,67 @@ class PaymentController extends Controller
    public function index(Request $request)
    {
 
-      $endDate = ($request->endDate) ? Carbon::parse($request->endDate) : Carbon::now();
-      $startDate = ($request->startDate) ? Carbon::parse($request->startDate) : Carbon::now()->subDays(31);
+      $endDate = ($request->endDate) ? Carbon::parse($request->endDate)->endOfDay() : Carbon::now()->endOfDay();
+      $startDate = ($request->startDate) ? Carbon::parse($request->startDate)->startOfDay() : Carbon::now()->subDays(31)->startOfDay();
 
-      $datesInRange = CarbonPeriod::create($startDate, $endDate->copy());
-      $paymentForGraph = [];
-      $techs_id = [];
-      foreach ($datesInRange as $date) {
-         $formattedDate = $date->toDateString();
-         $payments = Payment::where('company_id', $request->user()->company_id)
-            ->where(function ($query) use ($request) {
-               if (!$request->user()->isRole([Role::ADMIN, Role::DISP]))
-                  $query->where('tech_id', $request->user()->id);
-            })
-            ->whereDate('created_at', $formattedDate)
-            ->with('job.customer')
-            ->with('job.appointments')
-            ->get();
-         foreach ($payments as $payment) {
-            if (!in_array($payment->tech_id, $techs_id))
-               $techs_id[] = $payment->tech_id;
-         }
+      // Получаем все платежи в диапазоне
+      $payments = Payment::whereBetween('created_at', [$startDate, $endDate])
+         ->with('job')
+         ->orderBy('created_at', 'desc')
+         ->get();
 
-         $paymentForGraph[] = [
-            'payments' => $payments,
-            'date' => $formattedDate,
-         ];
-      }
+      // Подсчет по типу платежа
+      $totalByType = $payments->groupBy('payment_type')->map(function ($group) {
+         return $group->sum('amount');
+      });
 
-      $techs = [];
-      foreach ($techs_id as $tech_id) {
-         $tech = User::find($tech_id);
-         if ($tech) {
-            $techs[] = $tech;
-         }
-      }
+      $totalByTech = $payments->pluck('tech_id')
+         ->unique();
+
 
       return response()->json([
-         'paymentForGraph' => $paymentForGraph,
-         'techs' => $techs,
+         'totalByType' => $totalByType,
+         'payments' => PaymentResource::collection($payments),
+         'totalByTech' => $totalByTech,
       ], 200);
+
+      // $datesInRange = CarbonPeriod::create($startDate, $endDate->copy());
+      // $paymentForGraph = [];
+      // $techs_id = [];
+      // foreach ($datesInRange as $date) {
+      //    $formattedDate = $date->toDateString();
+      //    $payments = Payment::where('company_id', $request->user()->company_id)
+      //       ->where(function ($query) use ($request) {
+      //          if (!$request->user()->isRole([Role::ADMIN, Role::DISP]))
+      //             $query->where('tech_id', $request->user()->id);
+      //       })
+      //       ->whereDate('created_at', $formattedDate)
+      //       ->with('job.customer')
+      //       ->with('job.appointments')
+      //       ->get();
+      //    foreach ($payments as $payment) {
+      //       if (!in_array($payment->tech_id, $techs_id))
+      //          $techs_id[] = $payment->tech_id;
+      //    }
+
+      //    $paymentForGraph[] = [
+      //       'payments' => $payments,
+      //       'date' => $formattedDate,
+      //    ];
+      // }
+
+      // $techs = [];
+      // foreach ($techs_id as $tech_id) {
+      //    $tech = User::find($tech_id);
+      //    if ($tech) {
+      //       $techs[] = $tech;
+      //    }
+      // }
+
+      // return response()->json([
+      //    'paymentForGraph' => $paymentForGraph,
+      //    'techs' => $techs,
+      // ], 200);
    }
 
    public function store(Request $request, $job_id)
@@ -89,13 +111,13 @@ class PaymentController extends Controller
       ]);
 
       if ($request->send_invoice) {
-         if(!$job->customer->email)
-            return response()->json(['payment' => $payment,'info' => 'Customer email not found. Invoice was not sent'], 200);
+         if (!$job->customer->email)
+            return response()->json(['payment' => $payment, 'info' => 'Customer email not found. Invoice was not sent'], 200);
          try {
             $invoiceService = new InvoiceService();
             $invoiceService->sendInvoice($job->appointments->first());
          } catch (\Exception $e) {
-            return response()->json(['payment' => $payment,'info' => $e->getMessage()], 200);
+            return response()->json(['payment' => $payment, 'info' => $e->getMessage()], 200);
          }
       }
 
