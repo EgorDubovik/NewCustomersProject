@@ -9,16 +9,15 @@ import { PageLoadError } from '../../components/loading/Errors';
 import { getTechAbr } from '../../helpers/helper';
 import ReactApexChart, { Props } from 'react-apexcharts';
 import { useSelector } from 'react-redux';
-import { IRootState, } from '../../store';
+import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { SmallDangerLoader } from '../../components/loading/SmallCirculeLoader';
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 import { useDispatch } from 'react-redux';
-import {ButtonLoader} from '../../components/loading/ButtonLoader';
+import { ButtonLoader } from '../../components/loading/ButtonLoader';
 
 const PaymentsIndex = () => {
-	
 	const [loadingStatus, setLoadingStatus] = useState<string>('success');
 	const [newDateStatus, setNewDateStatus] = useState<string>('success');
 	const [startDate, setstartDate] = useState(moment().subtract(30, 'days').format('MM/DD/YYYY'));
@@ -34,7 +33,7 @@ const PaymentsIndex = () => {
 	const [checkTransaction, setCheckTransaction] = useState(0);
 	const [paymentRemoveStatus, setPaymentRemoveStatus] = useState(0);
 	const isDark = useSelector((state: IRootState) => state.themeConfig.isDarkMode);
-	const user = useSelector((state: IRootState) => state.themeConfig.user)
+	const user = useSelector((state: IRootState) => state.themeConfig.user);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -161,7 +160,7 @@ const PaymentsIndex = () => {
 				colors.push(tech.color);
 			}
 		});
-		
+
 		setOptions((prevOptions: any) => ({ ...prevOptions, colors: colors }));
 	};
 	const ParseDate = (date: any) => {
@@ -214,7 +213,6 @@ const PaymentsIndex = () => {
 		});
 		let series: any[] = [];
 		selectedTechs.forEach((techId: any) => {
-
 			series.push({
 				name: techs.find((tech) => tech.id === techId)?.name ?? 'Unknow',
 				data: chartData[techId],
@@ -248,7 +246,6 @@ const PaymentsIndex = () => {
 		getTechsList(payments);
 	}, [payments]);
 
-
 	const getPayments = (setStatus: (status: string) => void) => {
 		setStatus('loading');
 		axiosClient
@@ -263,7 +260,7 @@ const PaymentsIndex = () => {
 				console.log(error);
 				setStatus('error');
 			});
-	}
+	};
 
 	useEffect(() => {
 		getPayments(setNewDateStatus);
@@ -306,14 +303,13 @@ const PaymentsIndex = () => {
 			.delete('/payments/' + paymentId)
 			.then((response) => {
 				setFilteredItems(filteredItems.filter((payment) => payment.id !== paymentId));
-			}) 
+			})
 			.catch((error) => {
 				console.log(error);
 			})
 			.finally(() => {
 				setPaymentRemoveStatus(0);
 			});
-
 	};
 
 	return (
@@ -322,10 +318,9 @@ const PaymentsIndex = () => {
 			{loadingStatus === 'error' && <PageLoadError />}
 			{loadingStatus === 'success' && (
 				<div className="grid grid-flow-row gap-4">
-					<div className='flex justify-start items-center text-lg'>
+					<div className="flex justify-start items-center text-lg">
 						<h1>Payments</h1>
-						<div className='ml-3 p-2 dark:bg-gray-900 bg-gray-200 rounded cursor-pointer'>
-							
+						<div className="ml-3 p-2 dark:bg-gray-900 bg-gray-200 rounded cursor-pointer">
 							From:
 							<Flatpickr
 								options={{ dateFormat: 'm/d/Y' }}
@@ -333,7 +328,7 @@ const PaymentsIndex = () => {
 								onChange={(date) => {
 									setstartDate(moment(date[0]).format('MM/DD/YYYY'));
 								}}
-								className='border-0 bg-transparent text-primary dark:text-white ml-3 w-32'
+								className="border-0 bg-transparent text-primary dark:text-white ml-3 w-32"
 							/>
 							To:
 							<Flatpickr
@@ -342,11 +337,10 @@ const PaymentsIndex = () => {
 								onChange={(date) => {
 									setendDate(moment(date[0]).format('MM/DD/YYYY'));
 								}}
-								className='border-0 bg-transparent text-primary dark:text-white ml-3 w-32'
+								className="border-0 bg-transparent text-primary dark:text-white ml-3 w-32"
 							/>
 						</div>
 						{newDateStatus === 'loading' && <ButtonLoader />}
-						
 					</div>
 					<div className="panel p-2">
 						<ul className="">
@@ -426,8 +420,11 @@ const PaymentsIndex = () => {
 													<Link to={'/customer/' + payment.job?.customer?.id || '0'}>{payment.job?.customer ? payment.job?.customer.name : 'Unknow'}</Link>
 												</td>
 												<td className="text-primary whitespace-nowrap">
-													<Link to={'/appointment/' + payment.job.appointments[payment.job.appointments?.length-1]?.id || '0'}>
-														Appointment at {payment.job.appointments[payment.job.appointments?.length-1] ? formatDate(payment.job.appointments[payment.job.appointments?.length-1].start,'MMM DD YYYY') : 'Unknow'}
+													<Link to={'/appointment/' + payment.job?.appointments[payment.job?.appointments?.length - 1]?.id || '0'}>
+														Appointment at{' '}
+														{payment.job?.appointments[payment.job?.appointments?.length - 1]
+															? formatDate(payment.job?.appointments[payment.job?.appointments?.length - 1].start, 'MMM DD YYYY')
+															: 'Unknow'}
 													</Link>
 												</td>
 												<td className={'whitespace-nowrap' + (payment.amount > 0) ? 'text-success' : 'text-danger'}>{viewCurrency(payment.amount)}</td>
@@ -435,15 +432,15 @@ const PaymentsIndex = () => {
 												<td>{payment.type_text}</td>
 												<td>
 													{user.isAdmin && (
-													<div className="flex justify-center">
-														{paymentRemoveStatus === payment.id ? (
-															<SmallDangerLoader />
-														) : (
-															<span className="text-primary cursor-pointer" onClick={() => removePaymentHandler(payment.id)}>
-																<IconTrashLines className="text-danger" />
-															</span>
-														)}
-													</div>
+														<div className="flex justify-center">
+															{paymentRemoveStatus === payment.id ? (
+																<SmallDangerLoader />
+															) : (
+																<span className="text-primary cursor-pointer" onClick={() => removePaymentHandler(payment.id)}>
+																	<IconTrashLines className="text-danger" />
+																</span>
+															)}
+														</div>
 													)}
 												</td>
 											</tr>
