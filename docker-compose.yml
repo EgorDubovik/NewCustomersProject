@@ -81,7 +81,7 @@ services:
          - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
       volumes:
          - ./nodejs:/app
-
+         - /app/node_modules
       working_dir: /app
       command: sh -c " npm run dev"
       ports:
