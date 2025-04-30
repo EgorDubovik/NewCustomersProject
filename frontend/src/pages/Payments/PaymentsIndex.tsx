@@ -27,11 +27,6 @@ const PaymentsIndex = () => {
 	const [filteredItems, setFilteredItems] = useState<any[]>([]);
 	const [techs, setTechs] = useState<any[]>([]);
 	const [selectedTechs, setSelectedTechs] = useState<any[]>([]);
-	const [totalPerPeriod, setTotalPerPeriod] = useState(0);
-	const [creditTransaction, setCreditTransaction] = useState(0);
-	const [transferTransaction, setTransferTransaction] = useState(0);
-	const [cashTransaction, setCashTransaction] = useState(0);
-	const [checkTransaction, setCheckTransaction] = useState(0);
 	const [paymentRemoveStatus, setPaymentRemoveStatus] = useState(0);
 	const isDark = useSelector((state: IRootState) => state.themeConfig.isDarkMode);
 	const user = useSelector((state: IRootState) => state.themeConfig.user);
@@ -47,132 +42,55 @@ const PaymentsIndex = () => {
 	const [series, setSeries] = useState<any[]>([]);
 	const [options, setOptions] = useState<any>(graphConfig(isDark));
 
-	// useEffect(() => {
-	// 	ParseDate(payments);
-	// 	getTechsColors();
-	// }, [selectedTechs]);
+	useEffect(() => {
+		// Фильтруем по выбранным техникам
+		const filtered = techs.filter((item: any) => selectedTechs.includes(item.tech.id));
+		const newSeries = filtered.map((item: any) => ({
+			name: item.tech.name,
+			data: item.amounts,
+			color: item.tech.color,
+		}));
+		setSeries(newSeries);
+	}, [selectedTechs]);
 
-	// const getTechsColors = () => {
-	// 	const colors: any = [];
-	// 	selectedTechs.forEach((techId) => {
-	// 		const tech = techs.find((tech) => tech.id === techId);
-	// 		if (tech) {
-	// 			colors.push(tech.color);
-	// 		}
-	// 	});
-
-	// 	setOptions((prevOptions: any) => ({ ...prevOptions, colors: colors }));
-	// };
-	// const ParseDate = (date: any) => {
-	// 	console.log('ParseDate', date);
-	// 	const labels: string[] = [];
-	// 	const chartData: any = {};
-	// 	const paymentsForTable: any[] = [];
-	// 	let totalPerPeriod = 0;
-	// 	let creditTransaction = 0;
-	// 	let transferTransaction = 0;
-	// 	let cashTransaction = 0;
-	// 	let checkTransaction = 0;
-	// 	date.forEach((element: any) => {
-	// 		let dataOneDayByTech: any = {};
-	// 		labels.push(moment(element.date).format('DD MMM'));
-	// 		element.payments.forEach((payment: any) => {
-	// 			if (selectedTechs.includes(payment.tech_id)) {
-	// 				totalPerPeriod += payment.amount;
-	// 				paymentsForTable.push(payment);
-	// 				if (payment.type_text.toLowerCase() === 'credit') {
-	// 					creditTransaction += payment.amount;
-	// 				}
-	// 				if (payment.type_text.toLowerCase() === 'transfer') {
-	// 					transferTransaction += payment.amount;
-	// 				}
-	// 				if (payment.type_text.toLowerCase() === 'cash') {
-	// 					cashTransaction += payment.amount;
-	// 				}
-	// 				if (payment.type_text.toLowerCase() === 'check') {
-	// 					checkTransaction += payment.amount;
-	// 				}
-	// 				if (dataOneDayByTech[payment.tech_id]) {
-	// 					dataOneDayByTech[payment.tech_id] += payment.amount;
-	// 				} else {
-	// 					dataOneDayByTech[payment.tech_id] = payment.amount;
-	// 				}
-	// 			}
-	// 		});
-
-	// 		selectedTechs.forEach((techId: any) => {
-	// 			if (!chartData[techId]) {
-	// 				chartData[techId] = [];
-	// 			}
-	// 			if (dataOneDayByTech[techId]) {
-	// 				chartData[techId].push(dataOneDayByTech[techId]);
-	// 			} else {
-	// 				chartData[techId].push(0);
-	// 			}
-	// 		});
-	// 	});
-	// 	let series: any[] = [];
-	// 	selectedTechs.forEach((techId: any) => {
-	// 		series.push({
-	// 			name: techs.find((tech) => tech.id === techId)?.name ?? 'Unknow',
-	// 			data: chartData[techId],
-	// 		});
-	// 	});
-	// 	setOptions((prevOptions: any) => ({ ...prevOptions, labels: labels }));
-	// 	setSeries(series);
-	// 	setTotalPerPeriod(totalPerPeriod);
-	// 	setCreditTransaction(creditTransaction);
-	// 	setTransferTransaction(transferTransaction);
-	// 	setCashTransaction(cashTransaction);
-	// 	setCheckTransaction(checkTransaction);
-	// 	setFilteredItems(paymentsForTable.sort((a, b) => b.id - a.id));
-	// };
-
-	// const getTechsList = (allPayments: any) => {
-	// 	let techs: any[] = [];
-	// 	allPayments.forEach((payment: any) => {
-	// 		if (payment.payments.length === 0) return;
-	// 		payment.payments.forEach((p: any) => {
-	// 			if (!techs.includes(p.tech_id)) {
-	// 				techs.push(p.tech_id);
-	// 			}
-	// 		});
-	// 	});
-	// 	setSelectedTechs(techs);
-	// };
-
-	// useEffect(() => {
-	// 	getTechsList(payments);
-	// }, [payments]);
-
-	const getPayments = (setStatus: (status: string) => void) => {
-		setStatus('loading');
+	const getPayments = () => {
+		setLoadingStatus('loading');
 		axiosClient
 			.get('/payments', { params: { startDate, endDate } })
 			.then((response) => {
 				console.log(response.data);
 				setGroupPaymentsByType(response.data.totalByType);
 				setPayments(response.data.payments);
-				// setPayments(response.data.paymentForGraph);
-				// setTechs(response.data.techs);
-				setStatus('success');
+
+				const { dates, techs } = response.data.techsPaymentsByDate;
+
+				const allTechs = techs.map((tech: any) => tech);
+				setTechs(allTechs);
+
+				setSelectedTechs(allTechs.map((item: any) => item.tech.id));
+
+				const labels = dates.map((date: string) => formatDate(date, 'DD MMM'));
+
+				setOptions((prev: any) => ({
+					...prev,
+					labels,
+				}));
+
+				setLoadingStatus('success');
 			})
 			.catch((error) => {
 				console.log(error);
-				setStatus('error');
+				setLoadingStatus('error');
 			});
 	};
 
 	useEffect(() => {
-		getPayments(setNewDateStatus);
+		getPayments();
 	}, [startDate, endDate]);
-
-	useEffect(() => {
-		getPayments(setLoadingStatus);
-	}, []);
 
 	const toogleViewTech = (techId: number) => {
 		if (selectedTechs.includes(techId)) {
+			if (selectedTechs.length === 1) return;
 			setSelectedTechs(selectedTechs.filter((id) => id !== techId));
 		} else {
 			setSelectedTechs([...selectedTechs, techId]);
@@ -182,7 +100,7 @@ const PaymentsIndex = () => {
 	useEffect(() => {
 		setOptions({
 			...options,
-			colors: [isDark ? '#2196F3' : '#1B55E2', isDark ? '#E7515A' : '#E7515A'],
+
 			grid: {
 				...options.grid,
 				borderColor: isDark ? '#191E3A' : '#E0E6ED',
@@ -245,24 +163,27 @@ const PaymentsIndex = () => {
 					</div>
 					<div className="panel p-2">
 						<ul className="">
-							{techs.map((tech: any, index: number) => (
+							{techs.map((item: any, index: number) => (
 								<li
 									key={index}
 									className={
 										'p-2 float-left px-4 m-1 first:ml-0 flex cursor-pointer items-center ' +
-										(selectedTechs.includes(tech.id) ? 'dark:bg-success-dark-light' : 'dark:bg-gray-900') +
+										(selectedTechs.includes(item.tech.id) ? 'dark:bg-success-dark-light' : 'dark:bg-gray-900') +
 										'  bg-gray-100 rounded-md'
 									}
-									onClick={() => toogleViewTech(tech.id)}
+									onClick={() => toogleViewTech(item.tech.id)}
 								>
 									<div className="mr-2">
-										<span className={"flex justify-center items-center w-10 h-10 text-center rounded-full object-cover bg-'bg-danger text-white"} style={{ backgroundColor: tech.color }}>
-											{getTechAbr(tech.name)}
+										<span
+											className={"flex justify-center items-center w-10 h-10 text-center rounded-full object-cover bg-'bg-danger text-white"}
+											style={{ backgroundColor: item.tech.color }}
+										>
+											{getTechAbr(item.tech.name)}
 										</span>
 									</div>
 									<div className="flex-grow ml-4">
-										<p className="font-semibold">{tech.name}</p>
-										<p className="font-semibold">{tech.phone}</p>
+										<p className="font-semibold">{item.tech.name}</p>
+										<p className="font-semibold">{item.tech.phone}</p>
 									</div>
 								</li>
 							))}

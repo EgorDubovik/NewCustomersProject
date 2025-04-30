@@ -13,6 +13,7 @@ use App\Models\Job\Job;
 use App\Models\Role;
 use App\Services\InvoiceService;
 use App\Http\Resources\PaymentResource;
+use App\Http\Resources\TechPaymentsResource;
 
 class PaymentController extends Controller
 {
@@ -29,58 +30,70 @@ class PaymentController extends Controller
          ->orderBy('created_at', 'desc')
          ->get();
 
+      $groupedPayments = $payments->groupBy(function ($payment) {
+         return $payment->tech_id . '_' . $payment->created_at->toDateString();
+      });
+
       // Подсчет по типу платежа
       $totalByType = $payments->groupBy('payment_type')->map(function ($group) {
          return $group->sum('amount');
       });
 
-      $totalByTech = $payments->pluck('tech_id')
+      // Получаем всех техников
+      $techIds = $payments->pluck('tech_id')
          ->unique();
+      $techs = User::whereIn('id', $techIds)->get()->keyBy('id');
+
+      // Получаем все даты в диапазоне
+      $dates = collect(CarbonPeriod::create($startDate, $endDate->copy()))
+         ->map(fn($date) => $date->toDateString());
+
+      // Группируем платежи по дате и технику
+      $grouped = $payments->groupBy(function ($payment) {
+         return $payment->tech_id . '_' . $payment->created_at->toDateString();
+      });
+
+      $data = [];
+      foreach ($techIds as $techId) {
+         $tech = $techs[$techId];
+
+         $amounts = $dates->map(function ($date) use ($grouped, $techId) {
+            $key = $techId . '_' . $date;
+            return $grouped->get($key)?->sum('amount') ?? 0;
+         });
+
+         $data[] = [
+            'tech' => TechPaymentsResource::make($tech),
+            'amounts' => $amounts,
+         ];
+      }
+
+
+
+      // $techsPaymentsByDate = [];
+      // foreach ($techsId as $techId) {
+      //    $paymentsArray = [];
+      //    foreach ($datesInRange as $date) {
+      //       $payment = $grouped[$techId . '_' . $date->toDateString()] ?? null;
+      //       $paymentsArray[] = [
+      //          'amount' => $payment ? $payment->sum('amount') : 0,
+      //          'date' => $date->toDateString()
+      //       ];
+      //    }
+
+      //    $techsPaymentsByDate[] = [
+      //       'tech' => $techs[$techId] ? TechPaymentsResource::make($techs[$techId]) : null,
+      //       'payments' => $paymentsArray
+      //    ];
+      // }
 
 
       return response()->json([
          'totalByType' => $totalByType,
          'payments' => PaymentResource::collection($payments),
-         'totalByTech' => $totalByTech,
+         'techsPaymentsByDate' => ['dates' => $dates, 'techs' => $data],
       ], 200);
 
-      // $datesInRange = CarbonPeriod::create($startDate, $endDate->copy());
-      // $paymentForGraph = [];
-      // $techs_id = [];
-      // foreach ($datesInRange as $date) {
-      //    $formattedDate = $date->toDateString();
-      //    $payments = Payment::where('company_id', $request->user()->company_id)
-      //       ->where(function ($query) use ($request) {
-      //          if (!$request->user()->isRole([Role::ADMIN, Role::DISP]))
-      //             $query->where('tech_id', $request->user()->id);
-      //       })
-      //       ->whereDate('created_at', $formattedDate)
-      //       ->with('job.customer')
-      //       ->with('job.appointments')
-      //       ->get();
-      //    foreach ($payments as $payment) {
-      //       if (!in_array($payment->tech_id, $techs_id))
-      //          $techs_id[] = $payment->tech_id;
-      //    }
-
-      //    $paymentForGraph[] = [
-      //       'payments' => $payments,
-      //       'date' => $formattedDate,
-      //    ];
-      // }
-
-      // $techs = [];
-      // foreach ($techs_id as $tech_id) {
-      //    $tech = User::find($tech_id);
-      //    if ($tech) {
-      //       $techs[] = $tech;
-      //    }
-      // }
-
-      // return response()->json([
-      //    'paymentForGraph' => $paymentForGraph,
-      //    'techs' => $techs,
-      // ], 200);
    }
 
    public function store(Request $request, $job_id)
