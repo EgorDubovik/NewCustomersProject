@@ -26,6 +26,11 @@ class PaymentController extends Controller
 
       // Получаем все платежи в диапазоне
       $payments = Payment::whereBetween('created_at', [$startDate, $endDate])
+         ->where('company_id', $request->user()->company_id)
+         ->where(function ($query) use ($request) {
+            if (!$request->user()->isRole([Role::ADMIN, Role::DISP]))
+               $query->where('tech_id', $request->user()->id);
+         })
          ->with('job')
          ->with('tech')
          ->orderBy('created_at', 'desc')
