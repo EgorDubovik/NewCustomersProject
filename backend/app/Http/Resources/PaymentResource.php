@@ -15,8 +15,8 @@ class PaymentResource extends JsonResource
     public function toArray(Request $request): array
     {
         $job = $this->job ?? null;
-        $customer = $job->customer ?? null;
-        $firstAppointment = $job->appointments->first() ?? null;
+        $customer = $job ? $job->customer : null;
+        $firstAppointment = $job ? $job->appointments->first() : null;
 
         return [
             'id' => $this->id,
