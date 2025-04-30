@@ -23,7 +23,7 @@ class PaymentResource extends JsonResource
             'amount' => $this->amount,
             'payment_type' => $this->payment_type,
             'type_text' => $this->type_text,
-            'tech_id' => $this->tech_id,
+            'tech' => TechPaymentsResource::make($this->tech),
             'created_at' => $this->created_at,
             'customer' => [
                 'id' => $customer->id,

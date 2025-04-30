@@ -7,7 +7,7 @@ import { formatDate, viewCurrency } from '../../helpers/helper';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import { PageLoadError } from '../../components/loading/Errors';
 import { getTechAbr } from '../../helpers/helper';
-import ReactApexChart, { Props } from 'react-apexcharts';
+import ReactApexChart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
@@ -24,6 +24,7 @@ const PaymentsIndex = () => {
 	const [startDate, setstartDate] = useState(moment().subtract(30, 'days').format('MM/DD/YYYY'));
 	const [endDate, setendDate] = useState(moment().format('MM/DD/YYYY'));
 	const [payments, setPayments] = useState<any[]>([]);
+	const [filteredPayments, setFilteredPayments] = useState<any[]>([]);
 	const [filteredItems, setFilteredItems] = useState<any[]>([]);
 	const [techs, setTechs] = useState<any[]>([]);
 	const [selectedTechs, setSelectedTechs] = useState<any[]>([]);
@@ -51,6 +52,7 @@ const PaymentsIndex = () => {
 			color: item.tech.color,
 		}));
 		setSeries(newSeries);
+		setFilteredPayments(payments.filter((payment: any) => selectedTechs.includes(payment.tech.id)));
 	}, [selectedTechs]);
 
 	const getPayments = () => {
@@ -225,6 +227,7 @@ const PaymentsIndex = () => {
 								<thead>
 									<tr>
 										<th>ID</th>
+										<th>Tech</th>
 										<th>Customer</th>
 										<th>Appointment</th>
 										<th>Amount</th>
@@ -234,10 +237,18 @@ const PaymentsIndex = () => {
 									</tr>
 								</thead>
 								<tbody>
-									{payments.map((payment: any) => {
+									{filteredPayments.map((payment: any) => {
 										return (
 											<tr key={payment.id}>
 												<td>{payment.id}</td>
+												<td className="text-primary whitespace-nowrap">
+													<span
+														className={"flex justify-center items-center w-5 h-5 text-center text-[10px] rounded-full object-cover bg-'bg-danger text-white"}
+														style={{ backgroundColor: payment.tech.color }}
+													>
+														{getTechAbr(payment.tech.name)}
+													</span>
+												</td>
 												<td className="text-primary whitespace-nowrap">
 													<Link to={'/customer/' + payment.customer?.id || '0'}>{payment.customer ? payment.customer.name : 'Unknow'}</Link>
 												</td>

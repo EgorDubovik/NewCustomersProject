@@ -27,6 +27,7 @@ class PaymentController extends Controller
       // Получаем все платежи в диапазоне
       $payments = Payment::whereBetween('created_at', [$startDate, $endDate])
          ->with('job')
+         ->with('tech')
          ->orderBy('created_at', 'desc')
          ->get();
 
@@ -68,29 +69,10 @@ class PaymentController extends Controller
          ];
       }
 
-
-
-      // $techsPaymentsByDate = [];
-      // foreach ($techsId as $techId) {
-      //    $paymentsArray = [];
-      //    foreach ($datesInRange as $date) {
-      //       $payment = $grouped[$techId . '_' . $date->toDateString()] ?? null;
-      //       $paymentsArray[] = [
-      //          'amount' => $payment ? $payment->sum('amount') : 0,
-      //          'date' => $date->toDateString()
-      //       ];
-      //    }
-
-      //    $techsPaymentsByDate[] = [
-      //       'tech' => $techs[$techId] ? TechPaymentsResource::make($techs[$techId]) : null,
-      //       'payments' => $paymentsArray
-      //    ];
-      // }
-
-
       return response()->json([
          'totalByType' => $totalByType,
          'payments' => PaymentResource::collection($payments),
+
          'techsPaymentsByDate' => ['dates' => $dates, 'techs' => $data],
       ], 200);
 

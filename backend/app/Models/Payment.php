@@ -14,7 +14,7 @@ class Payment extends Model
     public const CASH = 2;
     public const CHECK = 3;
     public const TRANSFER = 4;
-    public const TYPE = ['credit','cash','check','transfer'];
+    public const TYPE = ['credit', 'cash', 'check', 'transfer'];
 
     protected $appends = ['type_text'];
     protected $table = 'payments';
@@ -29,28 +29,32 @@ class Payment extends Model
     public function amount(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => round($value/100,2),
-            set: fn($value) => round($value*100),
+            get: fn($value) => round($value / 100, 2),
+            set: fn($value) => round($value * 100),
         );
     }
 
-    public static function getPaymentTypeText($type){
-        $text = ['undefined','Credit', 'Cash', 'Check','Transfer'];
-        $index = (($type > 0) && ($type < count($text))) ? $type : 0; 
+    public static function getPaymentTypeText($type)
+    {
+        $text = ['undefined', 'Credit', 'Cash', 'Check', 'Transfer'];
+        $index = (($type > 0) && ($type < count($text))) ? $type : 0;
         return $text[$index];
     }
 
-    public function job() {
+    public function job()
+    {
         return $this->belongsTo(Job::class);
     }
 
-    public function tech() {
-        return $this->belongsTo(User::class,'id','tech_id');
+    public function tech()
+    {
+        return $this->belongsTo(User::class, 'tech_id', 'id');
     }
 
-    public function getTypeTextAttribute(){
+    public function getTypeTextAttribute()
+    {
         return self::getPaymentTypeText($this->payment_type);
     }
-    
-    
+
+
 }
