@@ -14,8 +14,8 @@ class PaymentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $job = $this->job;
-        $customer = $job->customer;
+        $job = $this->job ?? null;
+        $customer = $job->customer ?? null;
         $firstAppointment = $job->appointments->first() ?? null;
 
         return [
@@ -25,10 +25,10 @@ class PaymentResource extends JsonResource
             'type_text' => $this->type_text,
             'tech' => TechPaymentsResource::make($this->tech),
             'created_at' => $this->created_at,
-            'customer' => [
+            'customer' => $customer ? [
                 'id' => $customer->id,
                 'name' => $customer->name,
-            ],
+            ] : null,
             'appointment' => $firstAppointment ? [
                 'id' => $firstAppointment->id,
                 'start' => $firstAppointment->start,
