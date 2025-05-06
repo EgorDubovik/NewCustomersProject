@@ -117,7 +117,7 @@ const CreateCustomer = () => {
 			<div className="flex items-center justify-between flex-wrap gap-4">
 				<h2 className="text-xl">Create new customer</h2>
 			</div>
-			<div className="container w-full md:w-1/2 lg:w-1/3 mx-auto px-4 sm:px-8">
+			<div className="container w-full max-w-[600px] md:w-2/3 lg:w-1/2 xl:w-1/2 2xl:w-1/3 3xl:w-1/4 mx-auto px-4 sm:px-8">
 				<div className="panel">
 					<div className="flex items-center justify-between mb-5">
 						<h5 className="font-semibold text-lg dark:text-white-light">Enter customer infromation</h5>
