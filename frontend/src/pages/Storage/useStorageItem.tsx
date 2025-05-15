@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import axiosClient from '../../store/axiosClient';
+import { useDispatch, useSelector } from 'react-redux';
+import { IRootState } from '../../store';
+import { setSideBarNotifications } from '../../store/themeConfigSlice';
 
 interface IRecords {
 	id: number;
@@ -22,6 +25,9 @@ const useStorageItem = () => {
 	});
 	const [removeId, setRemoveId] = useState(0);
 
+	const dispatch = useDispatch();
+	const sideBarNotifications = useSelector((state: IRootState) => state.themeConfig.sideBarNotifications);
+
 	useEffect(() => {
 		setLoadingStatus('loading');
 		axiosClient
@@ -37,6 +43,11 @@ const useStorageItem = () => {
 			});
 	}, []);
 
+	useEffect(() => {
+		const count = initialRecords.filter((item) => item.quantity < item.expexted_quantity).length;
+		dispatch(setSideBarNotifications({ ...sideBarNotifications, storage: count }));
+	}, [initialRecords]);
+
 	const storeItem = () => {
 		if (loadingDataForm) return;
 
@@ -47,10 +58,9 @@ const useStorageItem = () => {
 				.post('/storage', dataForm)
 				.then((res: any) => {
 					if (res.status === 200) setModal(false);
-
-					let newRecords = [...initialRecords];
-					newRecords.unshift(res.data.storageItem);
-					setInitialRecords(newRecords);
+					if (res.data.allStorageItems) {
+						setInitialRecords(res.data.allStorageItems);
+					}
 				})
 				.catch((err: any) => {
 					console.log(err);
@@ -83,6 +93,7 @@ const useStorageItem = () => {
 
 	const removeItem = (id: number) => {
 		if (removeId !== 0) return;
+		console.log('removeID:', id);
 		setRemoveId(id);
 		axiosClient
 			.delete(`/storage/${id}`)

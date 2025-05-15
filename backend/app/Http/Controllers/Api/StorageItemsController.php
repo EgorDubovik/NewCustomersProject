@@ -11,80 +11,85 @@ use Illuminate\Support\Facades\Log;
 
 class StorageItemsController extends Controller
 {
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required',
-            'quantity' => 'required',
-            'expexted_quantity' => 'required'
-        ]);
+	public function store(Request $request)
+	{
+		$request->validate([
+			'title' => 'required',
+			'quantity' => 'required',
+			'expexted_quantity' => 'required'
+		]);
 
 
-        $storageItem = StorageItems::updateOrCreate(
-            [
-                'title' => $request->title,
-            ],
-            [
-                'title' => $request->title,
-                'quantity' => $request->quantity,
-                'expexted_quantity' => $request->expexted_quantity,
-                'company_id' => Auth::user()->company_id,
-                'user_id' => Auth::user()->id
-            ]
-        );
+		$storageItem = StorageItems::updateOrCreate(
+			[
+				'title' => $request->title,
+			],
+			[
+				'title' => $request->title,
+				'quantity' => $request->quantity,
+				'expexted_quantity' => $request->expexted_quantity,
+				'company_id' => Auth::user()->company_id,
+				'user_id' => Auth::user()->id
+			]
+		);
 
-        return response()->json(['storageItem' => $storageItem], 200);
-    }
+		$allStorageItems = StorageItems::where('user_id', Auth::user()->id)
+			->orderBy('created_at', 'DESC')
+			->get();
 
-    public function index(Request $request)
-    {
-        $storageItems = StorageItems::where('user_id', Auth::user()->id)
-            ->orderBy('created_at', 'DESC')
-            ->get();
 
-        return response()->json(['storageItems' => $storageItems, 'user_id' => Auth::user()->id], 200);
-    }
+		return response()->json(['storageItem' => $storageItem, 'allStorageItems' => $allStorageItems], 200);
+	}
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'title' => 'required',
-            'quantity' => 'required',
-            'expexted_quantity' => 'required'
-        ]);
+	public function index(Request $request)
+	{
+		$storageItems = StorageItems::where('user_id', Auth::user()->id)
+			->orderBy('created_at', 'DESC')
+			->get();
 
-        $storageItem = StorageItems::find($id);
-        if (!$storageItem)
-            return response()->json(['error' => 'Storage item not found'], 404);
+		return response()->json(['storageItems' => $storageItems, 'user_id' => Auth::user()->id], 200);
+	}
 
-        $this->authorize('update-storage', $storageItem);
+	public function update(Request $request, $id)
+	{
+		$request->validate([
+			'title' => 'required',
+			'quantity' => 'required',
+			'expexted_quantity' => 'required'
+		]);
 
-        $storageItem->title = $request->title;
-        $storageItem->quantity = $request->quantity;
-        $storageItem->expexted_quantity = $request->expexted_quantity;
-        $storageItem->save();
+		$storageItem = StorageItems::find($id);
+		if (!$storageItem)
+			return response()->json(['error' => 'Storage item not found'], 404);
 
-        return response()->json(['storageItem' => $storageItem], 200);
-    }
+		$this->authorize('update-storage', $storageItem);
 
-    public function destroy($id)
-    {
-        $storageItem = StorageItems::find($id);
-        if (!$storageItem)
-            return response()->json(['error' => 'Storage item not found'], 404);
+		$storageItem->title = $request->title;
+		$storageItem->quantity = $request->quantity;
+		$storageItem->expexted_quantity = $request->expexted_quantity;
+		$storageItem->save();
 
-        $this->authorize('update-storage', $storageItem);
+		return response()->json(['storageItem' => $storageItem], 200);
+	}
 
-        $storageItem->delete();
+	public function destroy($id)
+	{
+		$storageItem = StorageItems::find($id);
+		if (!$storageItem)
+			return response()->json(['error' => 'Storage item not found'], 404);
 
-        return response()->json(['message' => 'Storage item deleted'], 200);
-    }
+		$this->authorize('update-storage', $storageItem);
 
-    public static function getCountOfExpectedStorageItems($user_id)
-    {
-        $storageItems = StorageItems::where('user_id', $user_id)
-            ->whereColumn('quantity', '<', 'expexted_quantity')
-            ->count();
-        return $storageItems;
-    }
+		$storageItem->delete();
+
+		return response()->json(['message' => 'Storage item deleted'], 200);
+	}
+
+	public static function getCountOfExpectedStorageItems($user_id)
+	{
+		$storageItems = StorageItems::where('user_id', $user_id)
+			->whereColumn('quantity', '<', 'expexted_quantity')
+			->count();
+		return $storageItems;
+	}
 }

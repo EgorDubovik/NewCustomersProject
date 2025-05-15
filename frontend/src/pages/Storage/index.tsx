@@ -19,8 +19,7 @@ interface IRecords {
 	expexted_quantity: number;
 }
 const Storage = () => {
-	const { openModal, modal, setModal, removeItem, storeItem, changeValue, dataForm, initialRecords, loadingStatus, loadingDataForm ,removeId } = useStorageItem();
-	console.log('removeID:', removeId);
+	const { openModal, modal, setModal, removeItem, storeItem, changeValue, dataForm, initialRecords, loadingStatus, loadingDataForm, removeId } = useStorageItem();
 	const [records, setRecords] = useState<IRecords[]>([]);
 	const PAGE_SIZES = [10, 20, 30, 50, 100];
 	const [page, setPage] = useState(1);
@@ -56,7 +55,7 @@ const Storage = () => {
 		setSearch(e.target.value);
 		const data = initialRecords.filter((item) => item.title.toLowerCase().includes(e.target.value.toLowerCase()));
 		setRecords(data);
-	}
+	};
 	return (
 		<div>
 			<div className="flex items-center justify-between flex-wrap gap-4">
