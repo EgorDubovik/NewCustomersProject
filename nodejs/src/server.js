@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import express from 'express';
-import { generateResponse, generateResponseFromImage } from './utils/utils.js';
+import { generateResponseFromText, generateResponseFromImage } from './utils/utils.js';
 import userRoutes from './routes/userRoutes.js';
 
 const app = express();
@@ -28,7 +28,7 @@ app.post('/', async (req, res) => {
 		return res.status(400).json({ error: 'Message must be at least 10 characters' });
 	}
 
-	const response = await generateResponse(message, client);
+	const response = await generateResponseFromText(message, client);
 	res.send(response);
 });
 

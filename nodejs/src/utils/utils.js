@@ -1,40 +1,54 @@
-export const generateResponse = async (message, client) => {
-	const prompt = `
-      "${message}"
-      Please extract name, phone (if present), and address and return JSON in format 
-      {
-         "name": "",
-         "phone": "",
-         "address": {
-            "street1": "",
-            "street2": "",
-            "city": "",
-            "state": "",
-            "zip_code": ""
-         }
-      }
-      and define state as 2 letters and zip_code if not present.
-      `;
-
-	const chatCompletion = await client.chat.completions.create({
-		model: 'gpt-3.5-turbo',
-		messages: [
+export const extractCustomerData = async ({ input, client, isImage = false }) => {
+	const systemMessage = {
+		role: 'system',
+		content: [
 			{
-				role: 'user',
-				content: prompt,
+				type: 'input_text',
+				text: 'You are an assistant that extracts customer contact information from messages or images. Always return a JSON object with this exact structure:\n\n{\n  "name": "",\n  "phone": "",\n  "address": {\n    "street1": "",\n    "street2": "",\n    "city": "",\n    "state": "",\n    "zip_code": ""\n  }\n}\n\nIf any information is missing from the input, return an empty string for that field. Do not remove any fields from the JSON.\nUse your knowledge to infer missing state or ZIP code if possible. If not, leave them as empty strings.\n',
 			},
 		],
-		response_format: { type: 'json_object' },
-	});
+	};
+	const messages = isImage
+		? {
+				role: 'user',
+				content: [
+					{
+						type: 'input_image',
+						image_url: input,
+					},
+				],
+		  }
+		: {
+				role: 'user',
+				content: [
+					{
+						type: 'input_text',
+						text: input,
+					},
+				],
+		  };
+	try {
+		const response = await client.responses.create({
+			model: 'gpt-4.1-nano',
+			input: [systemMessage, messages],
+			text: {
+				format: {
+					type: 'json_object',
+				},
+			},
+			temperature: 0,
+			max_output_tokens: 500,
+			top_p: 1,
+			store: false,
+		});
 
-	const responseText = chatCompletion.choices[0].message.content;
-	console.log(responseText);
-
-	return responseText;
-};
-
-export const generateResponseFromImage = async (image, client) => {
-	if (!image || !image.startsWith('data:image/'))
+		const responseText = response.output_text;
+		// Убираем форматирование Markdown (на всякий случай)
+		const cleaned = responseText.replace(/```json\s*|```/g, '').trim();
+		const result = JSON.parse(cleaned);
+		return result;
+	} catch (err) {
+		console.error('Failed to parse ChatGPT response:', err);
 		return {
 			name: '',
 			phone: '',
@@ -46,45 +60,15 @@ export const generateResponseFromImage = async (image, client) => {
 				zip_code: '',
 			},
 		};
-	const chatCompletion = await client.chat.completions.create({
-		model: 'gpt-4-turbo',
-		messages: [
-			{
-				role: 'user',
-				content: [
-					{
-						type: 'text',
-						text: `Please extract name, phone (if present), and address and return JSON in format {
-                "name": "",
-                "phone": "",
-                "address": {
-                  "street1": "",
-                  "street2": "",
-                  "city": "",
-                  "state": "",
-                  "zip_code": ""
-                }
-              } and define state as 2 letters and zip_code if not present.`,
-					},
-					{
-						type: 'image_url',
-						image_url: {
-							url: image,
-						},
-					},
-				],
-			},
-		],
-	});
-	const responseText = chatCompletion.choices[0].message.content;
-	// Remove markdown formatting if present
-	const rawText = responseText.replace(/```json\s*|```/g, '').trim();
+	}
+};
 
-	const parsed = JSON.parse(rawText);
+export const generateResponseFromText = async (message, client) => {
+	return await extractCustomerData({ input: message, client, isImage: false });
+};
 
-	console.log(parsed);
-
-	return parsed;
+export const generateResponseFromImage = async (image, client) => {
+	return await extractCustomerData({ input: image, client, isImage: true });
 };
 
 export const bigIntToString = (obj) => {
