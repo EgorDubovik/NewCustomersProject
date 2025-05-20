@@ -43,7 +43,12 @@ class Customer extends Model
             }
 
             $query->orWhereHas('address', function ($a_query) use ($searchTerm) {
-                $a_query->where('line1', 'LIKE', "%$searchTerm%");
+                $a_query
+                    ->where('line1', 'LIKE', "%$searchTerm%")
+                    ->orWhere('line2', 'LIKE', "%$searchTerm%")
+                    ->orWhere('city', 'LIKE', "%$searchTerm%")
+                    ->orWhere('state', 'LIKE', "%$searchTerm%")
+                    ->orWhere('zip_code', 'LIKE', "%$searchTerm%");
             });
         });
     }
