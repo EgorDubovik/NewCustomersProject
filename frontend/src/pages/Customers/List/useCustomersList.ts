@@ -5,8 +5,8 @@ import axiosClient from '../../../store/axiosClient';
 import { useNavigate } from 'react-router-dom';
 import { ICustomerRecord } from '../../../types';
 export const useCustomersList = () => {
-   const [viewType, setViewType] = useState<string>(localStorage.getItem('customerViewType') || 'grid');
-   const navigator = useNavigate();
+	const [viewType, setViewType] = useState<string>(localStorage.getItem('customerViewType') || 'grid');
+	const navigator = useNavigate();
 
 	const changeViewType = (type: string) => {
 		localStorage.setItem('customerViewType', type);
@@ -25,6 +25,7 @@ export const useCustomersList = () => {
 		columnAccessor: 'firstName',
 		direction: 'asc',
 	});
+	const searchVersion = useRef(0);
 
 	useEffect(() => {
 		setPage(1);
@@ -59,29 +60,59 @@ export const useCustomersList = () => {
 	const debounceRef = useRef<NodeJS.Timeout | null>(null);
 	const [searchLoading, setSearchLoading] = useState(false);
 
-	const searchData = async (s: string) => {
+	const searchData = async (s: string, version: number) => {
 		console.log('sending:', s);
 		setSearchLoading(true);
 		const respons = await axiosClient.get('/customers', {
 			params: { search: s },
 		});
 		setSearchLoading(false);
-		setInitialRecords(respons.data.data);
-		setTotalRecords(respons.data.total);
+		if (version === searchVersion.current) {
+			setInitialRecords(respons.data.data);
+			setTotalRecords(respons.data.total);
+		} else {
+			console.log('not updated', version, searchVersion.current);
+		}
 	};
 
 	const searchHandler = (e: any) => {
 		setSearch(e.target.value);
 		const s = e.target.value.trim();
 		if (s.length < 3)
-			if (s.length === 0) searchData('');
+			if (s.length === 0) searchData('', 0);
 			else return;
 
 		if (debounceRef.current) clearTimeout(debounceRef.current);
+		searchVersion.current += 1;
 		debounceRef.current = setTimeout(() => {
-			searchData(s);
+			searchData(s, searchVersion.current);
 		}, 300);
 	};
 
-   return { viewType, changeViewType, search, setSearch, page, setPage, totalRecords, setTotalRecords, PAGE_SIZES, pageSize, setPageSize, initialRecords, setInitialRecords, loadingStatus, setLoadingStatus, records, setRecords, sortStatus, setSortStatus, editUser, searchLoading, setSearchLoading, searchData, searchHandler };
-}
+	return {
+		viewType,
+		changeViewType,
+		search,
+		setSearch,
+		page,
+		setPage,
+		totalRecords,
+		setTotalRecords,
+		PAGE_SIZES,
+		pageSize,
+		setPageSize,
+		initialRecords,
+		setInitialRecords,
+		loadingStatus,
+		setLoadingStatus,
+		records,
+		setRecords,
+		sortStatus,
+		setSortStatus,
+		editUser,
+		searchLoading,
+		setSearchLoading,
+		searchData,
+		searchHandler,
+	};
+};
