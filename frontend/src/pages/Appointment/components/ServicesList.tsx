@@ -17,7 +17,7 @@ const ServicesList = (props: any) => {
 	const [loadingRemove, setLoadingRemove] = useState(0);
 	const loadingStatus = props.loadingStatus || false;
 	const { services, payments, onRemoveService, onSaveService, onUpdateService, modal, setModal } = props;
-	const taxRate = useSelector((state: any) => state.themeConfig.companyInfo.taxRate);
+	const taxRate = useSelector((state: any) => state.themeConfig.companySettings.taxRate);
 	const { tax, total } = calculateTaxAndTotal(services, taxRate);
 	const [companyServices, setCompanyServices] = useState([]);
 	const [isEditMode, setIsEditMode] = useState(false);

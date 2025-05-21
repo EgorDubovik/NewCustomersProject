@@ -34,7 +34,7 @@ const useAppointmentContext = () => {
 const AppointmentProvider = ({ children, appointmentData }: { children: ReactNode; appointmentData: IAppointment | null }) => {
 	const [appointment, setAppointment] = useState<IAppointment | null>(appointmentData);
 	const [loadingStatus, setLoadingStatus] = useState<string>('loading');
-	const taxRate = useSelector((state: any) => state.themeConfig.companyInfo.taxRate);
+	const taxRate = useSelector((state: any) => state.themeConfig.companySettings.taxRate);
 	const updateStatus = (status: number) => {
 		if (appointment) {
 			setAppointment({ ...appointment, status: status });

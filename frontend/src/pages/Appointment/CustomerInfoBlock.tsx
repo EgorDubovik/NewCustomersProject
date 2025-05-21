@@ -21,7 +21,7 @@ const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
 	const { appointment, updateTags } = useAppointmentContext();
 	console.log('Customer:', appointment?.customer);
-	const companyTags = useSelector((state: IRootState) => state.themeConfig.companyInfo.companyTags);
+	const companyTags = useSelector((state: IRootState) => state.themeConfig.companySettings.companyTags);
 	const user = useSelector((state: IRootState) => state.themeConfig.user);
 	const [modal, setModal] = useState(false);
 	const [selectedTags, setSelectedTags] = useState<ITag[] | null>(appointment?.job?.tags || null);

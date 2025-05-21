@@ -26,4 +26,9 @@ class BookAppointment extends Model
     {
         return $this->belongsToMany(Service::class, 'book_appointment_services')->orderByPivot('id');
     }
+
+    public function getTagsAttribute($value)
+    {
+        return json_decode($value);
+    }
 }

@@ -48,7 +48,7 @@ class Customer extends Model
                     ->orWhere('line2', 'LIKE', "%$searchTerm%")
                     ->orWhere('city', 'LIKE', "%$searchTerm%")
                     ->orWhere('state', 'LIKE', "%$searchTerm%")
-                    ->orWhere('zip_code', 'LIKE', "%$searchTerm%");
+                    ->orWhere('zip', 'LIKE', "%$searchTerm%");
             });
         });
     }
