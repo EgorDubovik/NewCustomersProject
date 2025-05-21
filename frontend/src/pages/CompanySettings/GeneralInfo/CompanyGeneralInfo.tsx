@@ -5,7 +5,7 @@ import TaxRate from './TaxRate';
 import CompanyLogo from './CompanyLogo';
 import CompanyInfo from './CompanyInfo';
 import useFetchData from '../../../hooks/useFetchData';
-import DepositSettings from './ReviewLink';
+import ReviewLink from './ReviewLink';
 
 const CompanyGeneralInfo = () => {
 	const [companySettings, setCompanySettings] = useState<any>({});
@@ -32,18 +32,13 @@ const CompanyGeneralInfo = () => {
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-3">
 						<div className="grid grid-rows-none gap-3">
 							<CompanyLogo company={company} setCompany={setCompany} />
-							
+							<TaxRate companySettings={companySettings} setCompanySettings={setCompanySettings} />
+							<ReviewLink companySettings={companySettings} setCompanySettings={setCompanySettings} />
 						</div>
-                  
-                  <div className="grid grid-rows-none gap-3">
-                     <CompanyInfo company={company} setCompany={setCompany} />
-                  </div>
 
 						<div className="grid grid-rows-none gap-3">
-							<TaxRate companySettings={companySettings} setCompanySettings={setCompanySettings} />
-                     <DepositSettings companySettings={companySettings} setCompanySettings={setCompanySettings}/>
+							<CompanyInfo company={company} setCompany={setCompany} />
 						</div>
-                  
 					</div>
 				</div>
 			)}

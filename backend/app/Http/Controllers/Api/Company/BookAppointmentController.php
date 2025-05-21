@@ -15,8 +15,7 @@ class BookAppointmentController extends Controller
 
       $bookAppointmentSettings = Auth::user()->company->bookAppointment;
 
-      if(!$bookAppointmentSettings)
-      {
+      if (!$bookAppointmentSettings) {
          $bookAppointmentSettings = BookAppointment::create([
             'company_id' => Auth::user()->company->id,
             'key' => Str::random(30),
@@ -26,10 +25,12 @@ class BookAppointmentController extends Controller
 
       $comapnyServices = Auth::user()->company->services ?? [];
       $bookAppointmentServices = $bookAppointmentSettings->services ?? [];
+      $tags = $bookAppointmentSettings->tags ?? [];
       return response()->json([
-         'settings' => $bookAppointmentSettings, 
+         'settings' => $bookAppointmentSettings,
          'companyServices' => $comapnyServices,
          'bookAppointmentServices' => $bookAppointmentServices,
+         'bookAppointmentTagsId' => $tags,
       ], 200);
    }
 
@@ -40,16 +41,7 @@ class BookAppointmentController extends Controller
       ]);
 
       $this->authorize('book-online');
-      // Check if working time is valid json
-      /*
-            {
-                monday: {
-                    from: '08:00',
-                    to: '17:00'
-                },
-                ...
-            }
-        */
+
       Auth::user()->company->bookAppointment->update(['working_time' => $request->workingTime]);
 
       return response()->json(['workingTime' => $request->workingTime], 200);
@@ -71,15 +63,26 @@ class BookAppointmentController extends Controller
 
    function updateServices(Request $request)
    {
-      
+
       $services = $request->services ?? [];
 
       $this->authorize('book-online');
 
       $bookAppointment = Auth::user()->company->bookAppointment;
-      
+
       $bookAppointment->services()->sync($services);
 
       return response()->json(['services' => $services], 200);
+   }
+   public function updateTags(Request $request)
+   {
+      $company = Auth::user()->company;
+      $this->authorize('edit-company', ['company' => $company]);
+      $bookAppointment = $company->bookAppointment;
+      $bookAppointment->update([
+         'tags' => json_encode($request->tags)
+      ]);
+
+      return response()->json(['message' => 'Book appointment tags updated'], 200);
    }
 }

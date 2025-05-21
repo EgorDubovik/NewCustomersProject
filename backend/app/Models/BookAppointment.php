@@ -14,6 +14,7 @@ class BookAppointment extends Model
         'key',
         'active',
         'working_time',
+        'tags', // JSON array of tag ids
     ];
 
     public function company()

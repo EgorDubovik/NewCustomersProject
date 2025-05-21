@@ -18,6 +18,7 @@ const BookAppointmentSettings = () => {
 	const [settings, setSettings] = useState<any>({});
 	const [loadedCompanyServices, setLoadetCompanyServices] = useState<CompanyServiceType[]>([]);
 	const [bookService, setBookService] = useState<CompanyServiceType[]>([]);
+	const [bookAppointmentTagsId, setBookAppointmentTagsId] = useState<number[]>([]);
 	const [workingTime, setWorkingTime] = useState<WorkingTime>({
 		monday: { from: 0, to: 0 },
 		tuesday: { from: 0, to: 0 },
@@ -37,6 +38,8 @@ const BookAppointmentSettings = () => {
 				setSettings(res.data.settings);
 				setLoadetCompanyServices(res.data.companyServices || []);
 				setBookService(res.data.bookAppointmentServices || []);
+				setBookAppointmentTagsId(res.data.bookAppointmentTagsId || []);
+
 				setLoadingStatus('success');
 			})
 			.catch((err) => {
@@ -58,7 +61,7 @@ const BookAppointmentSettings = () => {
 						<div className="grid grid-cols-1 md:grid-cols-4 gap-5">
 							<WorkingTime workingTime={workingTime} />
 							<div className="md:col-span-2">
-								<LinkAndActiveBlock settings={settings} />
+								<LinkAndActiveBlock settings={settings} bookAppointmentTagsId={bookAppointmentTagsId} />
 								<div className="panel p-2 mt-5 pb-4">
 									<Services loadedCompanyServices={loadedCompanyServices} bookService={bookService} />
 								</div>

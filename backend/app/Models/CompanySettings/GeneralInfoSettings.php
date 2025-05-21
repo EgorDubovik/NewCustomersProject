@@ -69,6 +69,6 @@ class GeneralInfoSettings extends Model
         $settings = self::where('company_id', $companyId)
             ->where('setting_key', $key)
             ->value('setting_value');
-        return $settings ?? self::$DEFAULT_SETTINGS[$key];
+        return $settings ?? self::$DEFAULT_SETTINGS[$key] ?? null;
     }
 }

@@ -38,8 +38,8 @@ const initialState = {
 		color: '#ccc',
 		isAdmin: false,
 	},
-	companyInfo: {
-		taxRate: 0.0825,
+	companySettings: {
+		taxRate: 0,
 		reviewLink: '',
 		companyTags: [],
 	},
@@ -60,10 +60,13 @@ const themeConfigSlice = createSlice({
 			if (payload.roles.includes(1)) state.user.isAdmin = true;
 		},
 		setCompanySettings(state, { payload }) {
-			state.companyInfo = payload;
+			state.companySettings = {
+				...state.companySettings,
+				...payload,
+			};
 		},
 		setCompanyTags(state, { payload }) {
-			state.companyInfo.companyTags = payload;
+			state.companySettings.companyTags = payload;
 		},
 		toggleTheme(state, { payload }) {
 			payload = payload || state.theme; // light | dark | system

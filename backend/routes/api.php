@@ -74,6 +74,7 @@ Route::prefix('v1')->group(function () {
          Route::put('/', [CompanySettingsController::class, 'update']);
          Route::put('/update-info', [CompanySettingsController::class, 'updateCompanyInfo']);
          Route::post('/logo', [CompanySettingsController::class, 'uploadLogo']);
+
          //Services
          Route::prefix('services')->group(function () {
             Route::get('/', [CompanyServicesController::class, 'index']);
@@ -88,6 +89,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/working-time', [BookAppointmentController::class, 'workingTime']);
             Route::post('/update', [BookAppointmentController::class, 'update']);
             Route::post('/update-services', [BookAppointmentController::class, 'updateServices']);
+            Route::post('/tags', [BookAppointmentController::class, 'updateTags']);
          });
          Route::prefix('tags')->group(function () {
             Route::get('/', [CompanyTagController::class, 'index']);

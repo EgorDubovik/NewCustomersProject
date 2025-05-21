@@ -26,7 +26,7 @@ class CompanySettingsController extends Controller
     public function update(Request $request)
     {
         $this->authorize('change-company-settings');
-        
+
         foreach ($request->all() as $key => $value) {
             if (array_key_exists($key, GeneralInfoSettings::$DEFAULT_SETTINGS)) {
                 GeneralInfoSettings::setSetting($request->user()->company_id, $key, $value);
@@ -110,4 +110,6 @@ class CompanySettingsController extends Controller
         $company->save();
         return response()->json(['message' => 'Company info updated', 'return' => $request->address], 200);
     }
+
+
 }

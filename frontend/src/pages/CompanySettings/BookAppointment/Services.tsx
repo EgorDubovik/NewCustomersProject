@@ -49,7 +49,7 @@ const Services = (props: any) => {
 	return (
 		<div className="grid grid-cols-2">
 			<div className="px-2">
-				<p className='my-2 mb-4'>Click to add</p>
+				<p className="my-2 mb-4">Click to add</p>
 				{companyServices.map((service: CompanyServiceType, index: number) => {
 					return (
 						<div
@@ -71,22 +71,22 @@ const Services = (props: any) => {
 				})}
 			</div>
 			<div className="px-2 border-l dark:border-gray-800">
-				<p className='my-2 mb-4'>Click to remove</p>
+				<p className="my-2 mb-4">Click to remove</p>
 				{bookService.map((service: CompanyServiceType, index: number) => {
 					return (
 						<div
 							key={index}
-							className="flex justify-between p-2 bg-slate-950 mt-2 rounded cursor-pointer"
+							className="flex justify-between p-2 dark:bg-slate-950 bg-slate-100 mt-2 rounded cursor-pointer"
 							onClick={() => {
 								removeBookService(service);
 							}}
 						>
 							<div>
-								<p className="text-white">{service.title}</p>
-								<p>{service.description}</p>
+								<p className="dark:text-white">{service.title}</p>
+								<p className="text-gray-500">{service.description}</p>
 							</div>
 							<div>
-								<p className="text-white">{service.price}</p>
+								<p className="dark:text-white">{service.price}</p>
 							</div>
 						</div>
 					);
