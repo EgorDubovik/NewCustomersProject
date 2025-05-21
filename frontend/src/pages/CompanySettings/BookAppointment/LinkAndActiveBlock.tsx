@@ -125,7 +125,7 @@ const LinkAndActiveBlock = (props: any) => {
 				<div className="grid grid-cols-2 mt-4">
 					<div className="border-r dark:border-gray-800 pr-2">
 						Choose a tag to link with this book appointment online:
-						<div className="flex gap-2 mt-2">
+						<div className="flex flex-wrap gap-2 mt-2">
 							{tags.map((tag: any, index: number) =>
 								bookAppointmentTags.find((t: any) => t.id === tag.id) ? null : (
 									<button onClick={() => addTagToBookAppointmentOnline(tag.id)} key={index} className="btn btn-sm border-none text-white shadow-none" style={{ backgroundColor: tag.color }}>
