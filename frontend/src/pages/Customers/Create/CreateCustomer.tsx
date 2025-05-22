@@ -7,6 +7,7 @@ import { alertError, resizeImage } from '../../../helpers/helper';
 import IconChecks from '../../../components/Icon/IconChecks';
 import IconImageUpload from '../../../components/Icon/IconImageUpload';
 import axios from 'axios';
+import axiosClient from '../../../store/axiosClient';
 const CreateCustomer = () => {
 	const {
 		error,
@@ -32,36 +33,14 @@ const CreateCustomer = () => {
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
-	const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files?.[0];
-		if (!file) return;
-
-		const resizedBase64 = await resizeImage(file, 500);
-
-		requestHandle('/upload', resizedBase64 as string);
-	};
-
 	const requestHandle = (url: string, message: string) => {
 		setAIloadingStatus('loading');
-		fetch(import.meta.env.VITE_AI_URL + url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
+		axiosClient
+			.post(import.meta.env.VITE_AI_URL + url, {
 				message: message,
-			}),
-		})
-			.then(async (res) => {
-				if (!res.ok) {
-					const errorText = await res.text();
-					const statusText = res.statusText;
-
-					throw new Error('Network response was not ok');
-				}
-				return res.json();
 			})
-			.then((data) => {
+			.then((res) => {
+				console.log(res.data);
 				const newDataForm = {
 					name: '',
 					phone: '',
@@ -72,14 +51,14 @@ const CreateCustomer = () => {
 					state: '',
 					zip: '',
 				};
-				if (data) {
-					newDataForm.name = data.name;
-					newDataForm.phone = data.phone;
-					newDataForm.address1 = data.address.street1;
-					newDataForm.address2 = data.address.street2;
-					newDataForm.city = data.address.city;
-					newDataForm.state = data.address.state;
-					newDataForm.zip = data.address.zip_code;
+				if (res.data) {
+					newDataForm.name = res.data.name;
+					newDataForm.phone = res.data.phone;
+					newDataForm.address1 = res.data.address.street1;
+					newDataForm.address2 = res.data.address.street2;
+					newDataForm.city = res.data.address.city;
+					newDataForm.state = res.data.address.state;
+					newDataForm.zip = res.data.address.zip_code;
 				}
 
 				const nonEmptyKeys = Object.entries(newDataForm)
@@ -92,14 +71,11 @@ const CreateCustomer = () => {
 				setAIloadingStatus('success');
 			})
 			.catch((err) => {
+				alertError('AI failed to generate answer');
 				console.log(err);
-				setAIloadingStatus('error');
 			})
 			.finally(() => {
-				window.setTimeout(() => {
-					setAIloadingStatus('none');
-					setArrayReturnInputs([]);
-				}, 3000);
+				setAIloadingStatus('none');
 			});
 	};
 
@@ -110,7 +86,16 @@ const CreateCustomer = () => {
 		}
 
 		setAIloadingStatus('loading');
-		requestHandle('/', AIForm);
+		requestHandle('/ai/parse-customer/text', AIForm);
+	};
+
+	const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		const resizedBase64 = await resizeImage(file, 500);
+
+		requestHandle('/ai/parse-customer/image', resizedBase64 as string);
 	};
 	return (
 		<div>

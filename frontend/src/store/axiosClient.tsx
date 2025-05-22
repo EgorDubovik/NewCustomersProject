@@ -4,7 +4,6 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
 const axiosClient = axios.create({
-	// baseURL : env.API_URL,
 	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 10000,
 });
@@ -13,7 +12,6 @@ axiosClient.interceptors.request.use((config) => {
 	const token = cookies.get('_auth');
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
-		config.headers['Access-Control-Allow-Origin'] = '*';
 	}
 	return config;
 });
