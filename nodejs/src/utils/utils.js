@@ -27,28 +27,8 @@ export const extractCustomerData = async ({ input, client, isImage = false }) =>
 					},
 				],
 		  };
-	try {
-		const response = await client.responses.create({
-			model: 'gpt-4.1-nano',
-			input: [systemMessage, messages],
-			text: {
-				format: {
-					type: 'json_object',
-				},
-			},
-			temperature: 0,
-			max_output_tokens: 500,
-			top_p: 1,
-			store: false,
-		});
-
-		const responseText = response.output_text;
-		// Убираем форматирование Markdown (на всякий случай)
-		const cleaned = responseText.replace(/```json\s*|```/g, '').trim();
-		const result = JSON.parse(cleaned);
-		return result;
-	} catch (err) {
-		console.error('Failed to parse ChatGPT response:', err);
+	const result = await getOpenAIResponse([systemMessage, messages], client);
+	if (!result) {
 		return {
 			name: '',
 			phone: '',
@@ -60,6 +40,33 @@ export const extractCustomerData = async ({ input, client, isImage = false }) =>
 				zip_code: '',
 			},
 		};
+	}
+	return result;
+};
+
+export const getOpenAIResponse = async (messages, client, format = 'json_object', model = 'gpt-4.1-nano', maxOutputTokens = 500, temperature = 0, topP = 1) => {
+	try {
+		const response = await client.responses.create({
+			model,
+			input: messages,
+			text: {
+				format: {
+					type: format,
+				},
+			},
+			temperature,
+			max_output_tokens: maxOutputTokens,
+			top_p: topP,
+			store: false,
+		});
+		const responseText = response.output_text;
+		// Убираем форматирование Markdown (на всякий случай)
+		const cleaned = responseText.replace(/```json\s*|```/g, '').trim();
+		const result = JSON.parse(cleaned);
+		return result;
+	} catch (error) {
+		console.error('Failed to get OpenAI response:', error);
+		return null;
 	}
 };
 

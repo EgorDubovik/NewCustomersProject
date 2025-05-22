@@ -34,4 +34,20 @@ router.post('/parse-customer/image', async (req, res) => {
 	res.send(response);
 });
 
+// router.post('/get-job-report', async (req, res) => {
+// 	if (!req.body) {
+// 		return res.status(400).json({ error: 'Missing message' });
+// 	}
+// 	const { message } = req.body;
+// 	if (!message) {
+// 		return res.status(400).json({ error: 'Missing message' });
+// 	}
+// 	if (message.length < 10) {
+// 		return res.status(400).json({ error: 'Message must be at least 10 characters' });
+// 	}
+
+// 	const response = await generateResponseFromText(message, client);
+// 	res.send(response);
+// });
+
 export default router;
