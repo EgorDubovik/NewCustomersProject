@@ -1,7 +1,7 @@
 import IconTrashLines from '../../../components/Icon/IconTrashLines';
 import IconPlus from '../../../components/Icon/IconPlus';
 import IconPencil from '../../../components/Icon/IconPencil';
-import { viewCurrency, calculateTaxAndTotal, alertSuccsess } from '../../../helpers/helper';
+import { viewCurrency, calculateTaxAndTotal, alertSuccsess, alertError } from '../../../helpers/helper';
 import { useState, Fragment, useEffect, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { SmallDangerLoader } from '../../../components/loading/SmallCirculeLoader';
@@ -11,6 +11,7 @@ import axiosClient from '../../../store/axiosClient';
 import { IService } from '../../../types';
 import { useSelector } from 'react-redux';
 import IconCopy from '../../../components/Icon/IconCopy';
+import IconAI from '../../../components/Icon/IconAI';
 
 const ServicesList = (props: any) => {
 	const isEditble = props.isEditble;
@@ -22,6 +23,7 @@ const ServicesList = (props: any) => {
 	const [companyServices, setCompanyServices] = useState([]);
 	const [isEditMode, setIsEditMode] = useState(false);
 	const priceRef = useRef(null);
+	const [AIloadingStatus, setAIloadingStatus] = useState<'none' | 'loading' | 'success'>('none');
 
 	const isTaxble = localStorage.getItem('isTaxable') === 'true' ? true : false;
 	console.log('isTaxble:', isTaxble);
@@ -114,6 +116,29 @@ const ServicesList = (props: any) => {
 			})
 			.catch((err) => {
 				console.log(err);
+			});
+	};
+
+	const handleAI = () => {
+		setAIloadingStatus('loading');
+		axiosClient
+			.post(import.meta.env.VITE_AI_URL + '/ai/get-job-report', {
+				title: serviceForm.title,
+				description: serviceForm.description,
+			})
+			.then((res) => {
+				console.log(res.data);
+				if (!res.data.report) return;
+				setServiceForm({ ...serviceForm, description: res.data.report });
+				setAIloadingStatus('success');
+				setTimeout(() => {
+					setAIloadingStatus('none');
+				}, 2000);
+			})
+			.catch((err) => {
+				console.log(err);
+				alertError('AI failed to generate answer');
+				setAIloadingStatus('none');
 			});
 	};
 
@@ -228,14 +253,25 @@ const ServicesList = (props: any) => {
 													onFocus={(e) => e.target.select()}
 												/>
 											</div>
-											<div className="relative mb-4">
-												<textarea placeholder="Description" className="form-textarea" name="description" onChange={serviceFormChangeHandler} value={serviceForm.description}></textarea>
+											<div className={`relative mb-4 ${AIloadingStatus === 'success' ? 'has-success' : ''}`}>
+												<textarea
+													placeholder="Description"
+													className="form-textarea transition-colors duration-500"
+													name="description"
+													onChange={serviceFormChangeHandler}
+													value={serviceForm.description}
+												></textarea>
 											</div>
-											<div className="relative mb-4">
+											<div className="relative mb-4 flex items-center justify-between">
 												<label className="inline-flex items-center text-sm">
 													<input type="checkbox" className="form-checkbox outline-primary" name="taxable" onChange={serviceFormChangeHandler} checked={serviceForm.taxable} />
 													<span className=" text-white-dark">Taxable</span>
 												</label>
+
+												<div onClick={handleAI} className="cursor-pointer flex items-center gap-2  ">
+													{AIloadingStatus === 'loading' ? <ButtonLoader /> : <IconAI className="text-orange-400" />}
+													<span className="bg-gradient-to-r from-orange-500 via-blue-500 to-violet-500 text-transparent bg-clip-text">AI generate</span>
+												</div>
 											</div>
 											<div className="flex justify-end items-center mt-8">
 												<button type="button" onClick={() => setModal(false)} className="btn btn-outline-danger">
