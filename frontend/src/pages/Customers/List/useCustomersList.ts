@@ -66,8 +66,9 @@ export const useCustomersList = () => {
 		const respons = await axiosClient.get('/customers', {
 			params: { search: s },
 		});
-		setSearchLoading(false);
+
 		if (version === searchVersion.current) {
+			setSearchLoading(false);
 			setInitialRecords(respons.data.data);
 			setTotalRecords(respons.data.total);
 		} else {
