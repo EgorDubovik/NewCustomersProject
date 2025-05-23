@@ -106,7 +106,7 @@ const ViewCustomer = () => {
 								</div>
 
 								<div className="appointments-list py-4">
-									{customer?.jobs?.slice(-limitViewJobs).map((job: any, index: number) =>
+									{customer?.jobs?.slice(0, limitViewJobs).map((job: any, index: number) =>
 										job.appointments.length > 0 ? (
 											<Link to={`/appointment/${job.appointments[job.appointments.length - 1].id}`} key={index}>
 												<div

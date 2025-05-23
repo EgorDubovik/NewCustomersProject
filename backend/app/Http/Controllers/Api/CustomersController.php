@@ -33,6 +33,7 @@ class CustomersController extends Controller
          ->with([
             'address',
             'jobs' => function ($query) use ($user) {
+               $query->orderBy('updated_at', 'DESC');
                $query->with('appointments');
                if (!$user->isRole([Role::ADMIN, Role::DISP])) {
                   $query->whereHas('appointments.techs', function ($q) use ($user) {
