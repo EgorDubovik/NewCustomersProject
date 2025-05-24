@@ -43,8 +43,10 @@ class EndPointsWebHookController extends Controller
 		}
 
 		return response()->json([
-			'message' => 'Appointments that already booked',
-			'appointments' => $returnData,
+			'result' => [
+				'message' => 'Appointments that already booked',
+				'appointments' => $returnData,
+			]
 		]);
 	}
 }
