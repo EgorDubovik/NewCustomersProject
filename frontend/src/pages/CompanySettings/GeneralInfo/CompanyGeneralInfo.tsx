@@ -4,14 +4,18 @@ import { PageLoadError } from '../../../components/loading/Errors';
 import TaxRate from './TaxRate';
 import CompanyLogo from './CompanyLogo';
 import CompanyInfo from './CompanyInfo';
-import useFetchData from '../../../hooks/useApiRequest';
+import { useApiRequest } from '../../../hooks/useApiRequest';
 import ReviewLink from './ReviewLink';
+import { alertError } from '../../../helpers/helper';
 
 const CompanyGeneralInfo = () => {
 	const [companySettings, setCompanySettings] = useState<any>({});
 	const [company, setCompany] = useState<any>({});
 
-	const { loadingStatus, data } = useFetchData('/company/settings');
+	const { loadingStatus, data, error, sendRequest } = useApiRequest({
+		url: '/company/settings',
+		method: 'get',
+	});
 
 	useEffect(() => {
 		if (data) {
@@ -19,6 +23,10 @@ const CompanyGeneralInfo = () => {
 			setCompany(data.company);
 		}
 	}, [data]);
+
+	useEffect(() => {
+		sendRequest();
+	}, []);
 
 	return (
 		<div>
