@@ -4,7 +4,7 @@ import { PageLoadError } from '../../../components/loading/Errors';
 import TaxRate from './TaxRate';
 import CompanyLogo from './CompanyLogo';
 import CompanyInfo from './CompanyInfo';
-import useFetchData from '../../../hooks/useFetchData';
+import useFetchData from '../../../hooks/useApiRequest';
 import ReviewLink from './ReviewLink';
 
 const CompanyGeneralInfo = () => {

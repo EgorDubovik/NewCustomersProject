@@ -30,6 +30,7 @@ class Appointment extends Model
         'status',
         'job_id',
     ];
+    protected $dates = ['start', 'end'];
 
     public function company()
     {

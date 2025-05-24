@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\Company\CompanySettingsController;
 use App\Http\Controllers\Api\Job\JobController;
 use App\Http\Controllers\Landing\LandingController;
 use App\Http\Controllers\EndPointsWebHookController;
+use App\Http\Controllers\Api\Company\EndPointTokenController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +99,11 @@ Route::prefix('v1')->group(function () {
             Route::delete('/{id}', [CompanyTagController::class, 'delete']);
             Route::put('/{id}', [CompanyTagController::class, 'update']);
          });
+
+         // End points and access token
+         Route::get('access-token', [EndPointTokenController::class, 'show']);
+         Route::post('access-token', [EndPointTokenController::class, 'store']);
+         Route::delete('access-token', [EndPointTokenController::class, 'delete']);
 
       });
 

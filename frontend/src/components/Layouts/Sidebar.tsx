@@ -163,7 +163,7 @@ const Sidebar = () => {
 													<NavLink to="/company-settings/services">Company services</NavLink>
 													<NavLink to="/company-settings/book-online">Book appointments</NavLink>
 													<NavLink to="/company-settings/tags">Tags</NavLink>
-													<NavLink to="/company-settings/deposit">Deposit settings</NavLink>
+													<NavLink to="/company-settings/endpoints">End points</NavLink>
 												</li>
 											</ul>
 										</AnimateHeight>

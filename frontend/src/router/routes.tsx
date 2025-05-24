@@ -15,6 +15,7 @@ import ReviewFeedback from '../pages/ReviewFeedback/Index';
 import SingUp from '../pages/Authentication/SingUp';
 import MapView from '../pages/Schedule/MapView';
 import DefaultFullSpaceLayout from '../components/Layouts/DefaultFullSpaceLayout';
+import EndPoints from '../pages/CompanySettings/EndPoints/EndPoints';
 const Invoices = lazy(() => import('../pages/Invoice/Invoices'));
 const Employees = lazy(() => import('../pages/Employees'));
 const CreateAppointment = lazy(() => import('../pages/Appointment/Create/CreateAppointment'));
@@ -181,10 +182,17 @@ const routes = [
 				),
 			},
 			{
+				path: '/company-settings/endpoints',
+				element: (
+					<DefaultLayout>
+						<EndPoints />
+					</DefaultLayout>
+				),
+			},
+			{
 				path: '/employees',
 				element: (
 					<DefaultLayout>
-						{' '}
 						<Employees />
 					</DefaultLayout>
 				),
