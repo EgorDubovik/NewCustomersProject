@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Company\CompanyTagController;
 use App\Http\Controllers\Api\Company\CompanySettingsController;
 use App\Http\Controllers\Api\Job\JobController;
 use App\Http\Controllers\Landing\LandingController;
+use App\Http\Controllers\EndPointsWebHookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -207,9 +208,11 @@ Route::prefix('v1')->group(function () {
       Route::post('/{key}', [ReviewFeedbackController::class, 'store']);
    });
 
-
    // Landing page store stat
    Route::post('landing', [LandingController::class, 'store']);
+
+   // End points for geting some information from AI
+   Route::post('/get-appointment-info', [EndPointsWebHookController::class, 'getAppointmentInfo']);
 
 });
 
