@@ -44,11 +44,15 @@ class EndPointsWebHookController extends Controller
 
 		$data = $request->json()->all();
 		$toolCallId = $data['message']['toolCallList'][0]['id'] ?? null;
-		return response()->json([
-			'results' => [
-				'toolCallId' => $toolCallId,
-				'result' => $returnData
+		$result = [
+			'toolCallId' => $toolCallId,
+			'result' => [
+				'bookedSlots' => $returnData,
+				'message' => 'Here are not available slots.'
 			]
+		];
+		return response()->json([
+			'results' => [$result]
 		]);
 	}
 }
