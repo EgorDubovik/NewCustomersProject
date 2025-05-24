@@ -44,7 +44,7 @@ class EndPointsWebHookController extends Controller
 
 		return response()->json([
 			'results' => [
-				'toolCallId' => $request->toolCallId,
+				'toolCallId' => $request->all(),
 				'result' => $returnData,
 			]
 		]);
