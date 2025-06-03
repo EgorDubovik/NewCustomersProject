@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\Appointment;
 use Carbon\Carbon;
 use App\Models\Role;
+use App\Models\Job\Job;
 
 class DashboardController extends Controller
 {
@@ -21,17 +22,30 @@ class DashboardController extends Controller
       $field = $isAmind ? 'company_id' : 'tech_id';
       $id = $isAmind ? $user->company_id : $user->id;
 
+      $jobsForLast30Days = Job::where('company_id', $user->company_id)
+         ->where('created_at', '>=', now()->subDays(30)->format('Y-m-d H:i:s'))
+         ->count();
+
+      $jobsForLastWeek = Job::where('company_id', $user->company_id)
+         ->where('created_at', '>=', now()->subWeeks(1)->format('Y-m-d H:i:s'))
+         ->count();
 
 
-
-
-
-      return response()->json([
+      $returnData = [
          'mainStat' => $this->getMainStat($field, $id),
          'daylyForCurrentWeek' => $this->getTotalForEachDayOfCurrWheek($field, $id),
          'lastSevenWeeks' => $this->getLastSevenWeeksStatistics($field, $id),
          'days' => $this->dailyPaymentsSum($field, $id),
-      ], 200);
+      ];
+
+      if ($isAmind) {
+         $returnData['jobsForLast30Days'] = $jobsForLast30Days;
+         $returnData['jobsForLastWeek'] = $jobsForLastWeek;
+         $returnData['jobsAverageForDay'] = round(($jobsForLastWeek / 7 + $jobsForLast30Days / 30) / 2);
+      }
+
+
+      return response()->json($returnData, 200);
    }
 
    private function dailyPaymentsSum($field, $id)
