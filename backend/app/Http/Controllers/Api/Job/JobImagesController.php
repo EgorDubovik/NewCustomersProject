@@ -32,7 +32,7 @@ class JobImagesController extends Controller
 
          $manager = new ImageManager(
             new Driver(),
-            autoOrientation: false,
+            autoOrientation: true,
             decodeAnimation: false,
             strip: false
          );
