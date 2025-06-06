@@ -42,7 +42,12 @@ class JobImagesController extends Controller
          $manager = new ImageManager(new Driver());
          Log::info('Image manager created');
 
-         $image = $manager->read($request->image);
+         try {
+            $image = $manager->read($request->image);
+         } catch (\Throwable $e) {
+            Log::error('Image read failed', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Failed to read image', 'details' => $e->getMessage()], 500);
+         }
          Log::info('Image read');
          $image->scaleDown(width: env('UPLOAD_WIDTH_SIZE'));
          Log::info('Image scaled');
