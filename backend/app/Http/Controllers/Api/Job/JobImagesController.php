@@ -29,14 +29,15 @@ class JobImagesController extends Controller
             return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
          }
 
-         Log::info('Validation passed');
          Log::info('MIME type', ['mime' => $request->image->getMimeType()]);
          Log::info('File size', ['size' => $request->image->getSize()]);
+
+         $path = $request->image->getRealPath();
+         $exif = @exif_read_data($path);
+         Log::info('EXIF orientation', ['orientation' => $exif['Orientation'] ?? 'not set']);
+
          $appointment = Appointment::find($appointment_id);
          $this->authorize('update-remove-appointment', $appointment);
-
-         Log::info('Authorization passed');
-
 
          $filePath = 'images/' . (env('APP_DEBUG') ? 'debug/' : "prod/") . 'app' . $appointment_id . '-' . time() . '_' . $request->image->hashName();
          $s3path = env('AWS_FILE_ACCESS_URL');
