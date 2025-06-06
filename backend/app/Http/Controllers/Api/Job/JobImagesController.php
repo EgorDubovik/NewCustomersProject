@@ -31,10 +31,15 @@ class JobImagesController extends Controller
 
          Log::info('Validation passed');
          Log::info('MIME type', ['mime' => $request->image->getMimeType()]);
+         Log::info('File size', ['size' => $request->image->getSize()]);
          $appointment = Appointment::find($appointment_id);
          $this->authorize('update-remove-appointment', $appointment);
 
          Log::info('Authorization passed');
+
+         $request->image->storeAs('debug', 'raw-upload.jpg');
+
+         Log::info('Raw image saved');
 
          $filePath = 'images/' . (env('APP_DEBUG') ? 'debug/' : "prod/") . 'app' . $appointment_id . '-' . time() . '_' . $request->image->hashName();
          $s3path = env('AWS_FILE_ACCESS_URL');
