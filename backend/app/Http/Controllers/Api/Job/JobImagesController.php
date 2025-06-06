@@ -37,9 +37,6 @@ class JobImagesController extends Controller
 
          Log::info('Authorization passed');
 
-         $request->image->storeAs('debug', 'raw-upload.jpg');
-
-         Log::info('Raw image saved');
 
          $filePath = 'images/' . (env('APP_DEBUG') ? 'debug/' : "prod/") . 'app' . $appointment_id . '-' . time() . '_' . $request->image->hashName();
          $s3path = env('AWS_FILE_ACCESS_URL');
@@ -48,7 +45,7 @@ class JobImagesController extends Controller
          Log::info('Image manager created');
 
          try {
-            $image = $manager->read($request->image);
+            $image = $manager->read($request->image->getPathname());
          } catch (\Throwable $e) {
             Log::error('Image read failed', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to read image', 'details' => $e->getMessage()], 500);
