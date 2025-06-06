@@ -29,19 +29,29 @@ class JobImagesController extends Controller
             return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
          }
 
+         Log::info('Validation passed');
+
          $appointment = Appointment::find($appointment_id);
          $this->authorize('update-remove-appointment', $appointment);
+
+         Log::info('Authorization passed');
 
          $filePath = 'images/' . (env('APP_DEBUG') ? 'debug/' : "prod/") . 'app' . $appointment_id . '-' . time() . '_' . $request->image->hashName();
          $s3path = env('AWS_FILE_ACCESS_URL');
 
          $manager = new ImageManager(new Driver());
+         Log::info('Image manager created');
 
          $image = $manager->read($request->image);
+         Log::info('Image read');
          $image->scaleDown(width: env('UPLOAD_WIDTH_SIZE'));
+         Log::info('Image scaled');
          $image = $image->toJpeg();
+         Log::info('Image converted to JPEG');
          $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
+         Log::info('File path prepared');
          $path = Storage::disk('s3')->put($filePath, $image);
+         Log::info('Image uploaded to S3');
          if (!$path)
             return response()->json(['error' => 'Something went wrong'], 500);
          $image = Image::create([
@@ -49,6 +59,7 @@ class JobImagesController extends Controller
             'path' => $s3path . $filePath,
             'owner_id' => Auth::user()->id,
          ]);
+         Log::info('Image created');
 
          Log::info('End uploading photo');
          return response()->json(['success' => 'You have successfully uploaded the image.', 'image' => $image], 200);
