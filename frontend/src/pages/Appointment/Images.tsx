@@ -5,80 +5,72 @@ import { useAppointmentContext } from './context/AppointmentContext';
 import IconTrash from '../../components/Icon/IconTrash';
 import { alertError, alertSuccsess } from '../../helpers/helper';
 import { SmallDangerLoader } from '../../components/loading/SmallCirculeLoader';
+import CircularProgress from '../../components/loading/CircularProgress';
+
+type UploadinImage = {
+	file: File;
+	previewUrl: string;
+	progress: number;
+};
 
 const Images = (props: any) => {
 	const { appointment, updateImages } = useAppointmentContext();
 
 	const appointmentId = appointment?.id;
 	const [images, setImages] = useState<any[]>(appointment?.images || []);
-	const [uploadingStatus, setUploadingStatus] = useState('');
 	const fileInputRef = useRef(null);
-	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [showGallery, setShowGallery] = useState(false);
 	const [showImageIndex, setShowImageIndex] = useState(0);
 	const [delytingImageId, setDelytingImageId] = useState(0);
-	const [testError, setTestError] = useState<String[]>([]);
-
-	useEffect(() => {
-		handleUpload();
-	}, [selectedFiles]);
-
-	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setSelectedFiles([...event.target.files!]);
-	};
+	const [uploadingImages, setUploadingImages] = useState<UploadinImage[]>([]);
 
 	const handleLinkClick = () => {
-		if (fileInputRef.current && !uploadingStatus) {
+		if (fileInputRef.current) {
 			(fileInputRef.current as HTMLInputElement).click();
 		}
 	};
 
-	const removeMetadata = async (file: File): Promise<File> => {
-		return new Promise((resolve, reject) => {
-		  const reader = new FileReader();
-		  reader.readAsArrayBuffer(file);
-		  reader.onloadend = () => {
-			 const buffer = reader.result as ArrayBuffer;
-			 const blob = new Blob([buffer], { type: file.type });
-			 resolve(new File([blob], file.name, { type: file.type }));
-		  };
-		  reader.onerror = reject;
-		});
-	 };
+	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const files = Array.from(event.target.files || []);
 
-	const handleUpload = async () => {
-		if (selectedFiles.length == 0) return;
-		try {
-			for (let i = 0; i < selectedFiles.length; i++) {
-				let file = selectedFiles[i];
-				setUploadingStatus(`${i + 1}/${selectedFiles.length} uploading...`);
-				const formData = new FormData();
-				formData.append('image', file);
+		const previews = files.map((file) => ({
+			file,
+			previewUrl: URL.createObjectURL(file),
+			progress: 70,
+		}));
+		uploadAll(previews);
+		setUploadingImages(previews);
+	};
 
-				try {
-					const response = await axiosClient.post('appointment/images/' + appointmentId, formData, {
-						headers: {
-							'Content-Type': 'multipart/form-data',
-						},
-						maxContentLength: 10 * 1024 * 1024,
-					});
-					console.log('File uploaded successfully:', response.data);
-					setImages((prevImages) => [...prevImages, response.data.image]);
-				} catch (error:any) {
-					alertError('Error uploading image');
-				}
+	const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+	const uploadAll = async (imagesToUpload: UploadinImage[]) => {
+		console.log('uploading images', imagesToUpload);
+		for (let i = 0; i < imagesToUpload.length; i++) {
+			const image = imagesToUpload[i];
+			const formData = new FormData();
+			formData.append('image', image.file);
+
+			try {
+				const res = await axiosClient.post(`appointment/images/${appointmentId}`, formData, {
+					headers: { 'Content-Type': 'multipart/form-data' },
+					onUploadProgress: (e) => {
+						console.log('progress', e);
+						if (e.total) {
+							const percent = Math.round((e.loaded * 100) / e.total);
+							setUploadingImages((prev) => prev.map((img, index) => (index === i ? { ...img, progress: percent } : img)));
+						}
+					},
+				});
+
+				console.log('uploaded image', res.data.image);
+				setUploadingImages((prev) => prev.filter((img, index) => index !== i));
+				setImages((prevImages) => [...prevImages, res.data.image]);
+			} catch (err) {
+				alertError('Ошибка загрузки файла');
 			}
-			console.log('All files uploaded successfully');
-		} catch (error: any) {
-			alertError('Error uploading one or more files');
-			console.error('Error uploading one or more files:', error);
-		} finally {
-			setUploadingStatus('Uploading completed');
-			setTimeout(() => {
-				setUploadingStatus('');
-			}, 2000);
-			setSelectedFiles([]);
 		}
+		// Очистить после загрузки
+		setUploadingImages([]);
 	};
 
 	const openGallery = (index: number) => {
@@ -123,12 +115,6 @@ const Images = (props: any) => {
 		<>
 			<div className="flex items-center justify-between px-4 py-2">
 				<h3 className="font-semibold text-lg dark:text-white-light">Images</h3>
-				<div>
-					{testError.map((err, index) => (
-						<div key={index}>{err}</div>
-					))}
-				</div>
-				{uploadingStatus && <div className="ml-2">{uploadingStatus}</div>}
 				<button onClick={handleLinkClick} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
 					<IconPlus className="w-4 h-4" />
 				</button>
@@ -154,7 +140,18 @@ const Images = (props: any) => {
 						<img src={image.path} className={`w-full cursor-pointer rounded-lg h-20 ${delytingImageId == image.id ? 'blur' : ''}`} onClick={() => openGallery(index)} />
 					</div>
 				))}
+				{uploadingImages.map((img, index) => (
+					<div key={`preview-${index}`} className="relative w-full h-20">
+						<img src={img.previewUrl} className="w-full h-full object-cover rounded-lg" />
+						{img.progress <= 100 && (
+							<div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+								<CircularProgress progress={img.progress} />
+							</div>
+						)}
+					</div>
+				))}
 			</div>
+
 			{showGallery && (
 				<>
 					<div className="z-60 fixed bottom-0 top-0 left-0 right-0 bg-black bg-opacity-80 "></div>

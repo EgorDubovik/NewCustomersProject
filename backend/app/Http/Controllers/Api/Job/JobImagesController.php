@@ -20,21 +20,9 @@ class JobImagesController extends Controller
       Log::info('Start uploading photo', ['files' => $request->allFiles()]);
 
       try {
-         try {
-            $request->validate([
-               'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg|max:10240',
-            ]);
-         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation failed', ['errors' => $e->errors()]);
-            return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
-         }
-
-         Log::info('MIME type', ['mime' => $request->image->getMimeType()]);
-         Log::info('File size', ['size' => $request->image->getSize()]);
-
-         $path = $request->image->getRealPath();
-         $exif = @exif_read_data($path);
-         Log::info('EXIF orientation', ['orientation' => $exif['Orientation'] ?? 'not set']);
+         $request->validate([
+            'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg|max:10240',
+         ]);
 
          $appointment = Appointment::find($appointment_id);
          $this->authorize('update-remove-appointment', $appointment);
@@ -42,24 +30,20 @@ class JobImagesController extends Controller
          $filePath = 'images/' . (env('APP_DEBUG') ? 'debug/' : "prod/") . 'app' . $appointment_id . '-' . time() . '_' . $request->image->hashName();
          $s3path = env('AWS_FILE_ACCESS_URL');
 
-         $manager = new ImageManager(new Driver());
-         Log::info('Image manager created');
+         $manager = new ImageManager(
+            new Driver(),
+            autoOrientation: false,
+            decodeAnimation: false,
+            strip: false
+         );
 
-         try {
-            $image = $manager->read($request->image->getPathname());
-         } catch (\Throwable $e) {
-            Log::error('Image read failed', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Failed to read image', 'details' => $e->getMessage()], 500);
-         }
-         Log::info('Image read');
+         $image = $manager->read($request->image->getPathname());
+
+
          $image->scaleDown(width: env('UPLOAD_WIDTH_SIZE'));
-         Log::info('Image scaled');
          $image = $image->toJpeg();
-         Log::info('Image converted to JPEG');
-         $filePath = preg_replace('/\.[^.]+$/', '.jpg', $filePath);
-         Log::info('File path prepared');
+         Log::info('File path', ['path' => $filePath]);
          $path = Storage::disk('s3')->put($filePath, $image);
-         Log::info('Image uploaded to S3');
          if (!$path)
             return response()->json(['error' => 'Something went wrong'], 500);
          $image = Image::create([
@@ -67,12 +51,9 @@ class JobImagesController extends Controller
             'path' => $s3path . $filePath,
             'owner_id' => Auth::user()->id,
          ]);
-         Log::info('Image created');
 
-         Log::info('End uploading photo');
          return response()->json(['success' => 'You have successfully uploaded the image.', 'image' => $image], 200);
       } catch (\Exception $e) {
-         Log::error($e->getMessage());
          return response()->json(['error' => $e->getMessage()], 500);
       }
    }
