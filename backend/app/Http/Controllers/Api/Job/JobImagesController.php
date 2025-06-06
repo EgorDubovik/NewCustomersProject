@@ -30,7 +30,7 @@ class JobImagesController extends Controller
          }
 
          Log::info('Validation passed');
-
+         Log::info('MIME type', ['mime' => $request->image->getMimeType()]);
          $appointment = Appointment::find($appointment_id);
          $this->authorize('update-remove-appointment', $appointment);
 
