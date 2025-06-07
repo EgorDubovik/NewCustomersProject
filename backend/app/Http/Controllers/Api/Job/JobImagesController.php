@@ -17,8 +17,6 @@ class JobImagesController extends Controller
    function store(Request $request, $appointment_id)
    {
 
-      Log::info('Start uploading photo', ['files' => $request->allFiles()]);
-
       try {
          $request->validate([
             'image' => 'required|file|mimetypes:image/jpeg,image/png,image/jpg|max:10240',
@@ -39,10 +37,9 @@ class JobImagesController extends Controller
 
          $image = $manager->read($request->image->getPathname());
 
-
          $image->scaleDown(width: env('UPLOAD_WIDTH_SIZE'));
          $image = $image->toJpeg();
-         Log::info('File path', ['path' => $filePath]);
+
          $path = Storage::disk('s3')->put($filePath, $image);
          if (!$path)
             return response()->json(['error' => 'Something went wrong'], 500);
@@ -51,6 +48,8 @@ class JobImagesController extends Controller
             'path' => $s3path . $filePath,
             'owner_id' => Auth::user()->id,
          ]);
+
+         Logger()->info('Peak memory usage: ' . round(memory_get_peak_usage(true) / 1024 / 1024, 2) . ' MB');
 
          return response()->json(['success' => 'You have successfully uploaded the image.', 'image' => $image], 200);
       } catch (\Exception $e) {
@@ -64,6 +63,9 @@ class JobImagesController extends Controller
       $this->authorize('update-remove-appointment', $appointment);
 
       $image = Image::find($image_id);
+      if (!$image)
+         return response()->json(['error' => 'Image not found'], 404);
+
       if ($appointment->job_id != $image->job_id)
          return response()->json(['error' => 'No premitions'], 404);
 

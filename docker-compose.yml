@@ -34,6 +34,7 @@ services:
          - REDIS_PASSWORD=${REDIS_PASSWORD}
       volumes:
          - ./backend:/app
+         - ./backend/php.ini:/opt/bitnami/php/etc/conf.d/memory-limit.ini
       ports:
          - '8000:8000'
       command:

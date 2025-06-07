@@ -45,6 +45,7 @@ const Images = (props: any) => {
 	const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 	const uploadAll = async (imagesToUpload: UploadinImage[]) => {
 		console.log('uploading images', imagesToUpload);
+
 		for (let i = 0; i < imagesToUpload.length; i++) {
 			const image = imagesToUpload[i];
 			const formData = new FormData();
@@ -99,13 +100,15 @@ const Images = (props: any) => {
 		axiosClient
 			.delete('appointment/images/' + appointment?.id + '/' + id)
 			.then((response) => {
-				console.log('Image deleted successfully:', response.data);
-
 				setImages(images.filter((image) => image.id !== id));
 			})
 			.catch((error) => {
+				if (error.response?.status === 404) {
+					alertError('Image not found');
+					setImages(images.filter((image) => image.id !== id));
+					return;
+				}
 				alertError('Error deleting image');
-				console.error('Error deleting image:', error);
 			})
 			.finally(() => {
 				setDelytingImageId(0);
