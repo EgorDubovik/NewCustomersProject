@@ -14,9 +14,9 @@ datasource db {
 }
 
 model PersonalAccessToken {
-  id             BigInt   @id @default(autoincrement())
+  id             Int   @id @default(autoincrement())
   tokenable_type String
-  tokenable_id   BigInt
+  tokenable_id   Int
   name           String
   token          String
   abilities      String?    // abilities могут быть NULL
@@ -29,8 +29,23 @@ model PersonalAccessToken {
 }
 
 model User {
-  id             BigInt   @id @default(autoincrement())
+  id             Int   @id @default(autoincrement())
   name           String
-
+  company_id     Int
   @@map("users") // чтобы Prisma знала правильное имя таблицы
+}
+
+model Job {
+	id             Int   @id @default(autoincrement())
+	company_id     Int
+  @@map("jobs")
+}
+	
+
+model JobImage {
+  id             Int   @id @default(autoincrement())
+  job_id         Int
+  path           String
+  owner_id       Int
+  @@map("job_images")
 }

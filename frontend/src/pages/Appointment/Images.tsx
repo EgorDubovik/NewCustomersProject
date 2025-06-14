@@ -52,7 +52,7 @@ const Images = (props: any) => {
 			formData.append('image', image.file);
 
 			try {
-				const res = await axiosClient.post(`appointment/images/${appointmentId}`, formData, {
+				const res = await axiosClient.post(import.meta.env.VITE_AI_URL + `/job/upload-image/${appointment?.job_id}`, formData, {
 					headers: { 'Content-Type': 'multipart/form-data' },
 					onUploadProgress: (e) => {
 						console.log('progress', e);
@@ -63,11 +63,15 @@ const Images = (props: any) => {
 					},
 				});
 
-				console.log('uploaded image', res.data.image);
 				setUploadingImages((prev) => prev.filter((img, index) => index !== i));
 				setImages((prevImages) => [...prevImages, res.data.image]);
-			} catch (err) {
-				alertError('Ошибка загрузки файла');
+			} catch (err: any) {
+				if (err.response?.status === 403) {
+					alertError('Forbidden');
+				} else {
+					alertError('Ошибка загрузки файла');
+				}
+				setUploadingImages((prev) => prev.filter((img, index) => index !== i));
 			}
 		}
 		// Очистить после загрузки
@@ -98,7 +102,7 @@ const Images = (props: any) => {
 	const destroyImage = (id: number) => {
 		setDelytingImageId(id);
 		axiosClient
-			.delete('appointment/images/' + appointment?.id + '/' + id)
+			.delete(import.meta.env.VITE_AI_URL + '/job/delete-image/' + id)
 			.then((response) => {
 				setImages(images.filter((image) => image.id !== id));
 			})

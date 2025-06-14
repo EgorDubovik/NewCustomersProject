@@ -17,7 +17,7 @@ export default async function authMiddleware(req, res, next) {
 
 		if (!isMatch) return res.status(401).json({ error: 'Unauthorized' });
 
-		const user = await prisma.User.findUnique({ where: { id: userToken.tokenable_id.toString() } });
+		const user = await prisma.User.findUnique({ where: { id: userToken.tokenable_id } });
 		req.user = user;
 		return next();
 	} catch (error) {
