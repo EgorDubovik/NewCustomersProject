@@ -44,6 +44,7 @@ class DashboardController extends Controller
          $returnData['jobsAverageForDay'] = round(($jobsForLastWeek / 7 + $jobsForLast30Days / 30) / 2);
       }
 
+      $returnData['appVersion'] = config('version.app_version');
 
       return response()->json($returnData, 200);
    }

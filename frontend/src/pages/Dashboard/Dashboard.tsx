@@ -5,12 +5,12 @@ import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import { PageLoadError } from '../../components/loading/Errors';
 import DaylyOfWeek from './DaylyOfWeek';
 import LastSevenWeeks from './LastSevenWeeks';
-import { useApiRequest } from '../../hooks/useApiRequest';
-import IconArchive from '../../components/Icon/IconArchive';
-import IconBell from '../../components/Icon/IconBell';
 import IconBarChart from '../../components/Icon/IconBarChart';
+import { setShowUpdateWarning } from '../../store/themeConfigSlice';
+import { useDispatch } from 'react-redux';
 
 const Dashboard = () => {
+	const dispatch = useDispatch();
 	const [loadingStatus, setLoadingStatus] = useState<string>('loading');
 	const [mainState, setMainState] = useState<any>({
 		currentMonth: 0,
@@ -38,6 +38,11 @@ const Dashboard = () => {
 					today: res.data.mainStat.sumCurrentDay,
 					avarage: 0,
 				};
+
+				console.log('frontend version:', import.meta.env.VITE_APP_VERSION);
+				console.log('backend version:', res.data.appVersion);
+				if (res.data.appVersion && import.meta.env.VITE_APP_VERSION !== res.data.appVersion) dispatch(setShowUpdateWarning(true));
+
 				setMainState(newStat);
 				setDaylyOfWeek(res.data.daylyForCurrentWeek);
 				setLastSevenWeeks(res.data.lastSevenWeeks);

@@ -2,7 +2,7 @@ import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import App from '../../App';
 import { IRootState } from '../../store';
-import { toggleSidebar, setUserInformation, setCompanySettings, setSideBarNotifications } from '../../store/themeConfigSlice';
+import { toggleSidebar, setUserInformation, setCompanySettings, setSideBarNotifications, setShowUpdateWarning } from '../../store/themeConfigSlice';
 import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -14,12 +14,10 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
 	const dispatch = useDispatch();
 
 	const [showLoader, setShowLoader] = useState(true);
-	const [showUpdateWarning, setShowUpdateWarning] = useState(false);
+
 	function loadHeadData() {
 		axiosClient.get('/user').then((res) => {
 			if (res.status == 200) {
-				console.log('main data:', res.data);
-				console.log('app version:', import.meta.env.VITE_APP_VERSION);
 				if (res.data.app_version && import.meta.env.VITE_APP_VERSION !== res.data.app_version) setShowUpdateWarning(true);
 				const user = {
 					id: res.data.user.id,
@@ -73,7 +71,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
 					{/* END SIDEBAR */}
 
 					<div className="main-content flex flex-col min-h-screen">
-						{showUpdateWarning && (
+						{themeConfig.showUpdateWarning && (
 							<div className="fixed top-0 left-0 right-0 h-16 bg-orange-800/70 z-50 text-center text-white text-lg">
 								Current Version: {import.meta.env.VITE_APP_VERSION} is out of date<br></br>
 								Please{' '}

@@ -48,6 +48,7 @@ const initialState = {
 		storage: 0,
 		schedule: 0,
 	},
+	showUpdateWarning: false,
 };
 
 const themeConfigSlice = createSlice({
@@ -129,6 +130,9 @@ const themeConfigSlice = createSlice({
 		setSideBarNotifications(state, { payload }) {
 			state.sideBarNotifications = payload;
 		},
+		setShowUpdateWarning(state, { payload }) {
+			state.showUpdateWarning = payload;
+		},
 	},
 });
 
@@ -146,6 +150,7 @@ export const {
 	setCompanySettings,
 	setCompanyTags,
 	setSideBarNotifications,
+	setShowUpdateWarning,
 } = themeConfigSlice.actions;
 
 export default themeConfigSlice.reducer;
