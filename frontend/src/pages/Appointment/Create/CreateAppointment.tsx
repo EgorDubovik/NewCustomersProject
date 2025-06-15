@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TimePicker from 'edtimepicker';
 import moment from 'moment';
 import IconEdit from '../../../components/Icon/IconEdit';
-import { Dialog, Transition } from '@headlessui/react';
 import { alertError, manualIsoString } from '../../../helpers/helper';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../../store';
@@ -17,8 +16,12 @@ import { ICustomer, IAddress } from '../../../types';
 
 const CreateAppointment = () => {
 	const navigate = useNavigate();
-
+	const queryString = window.location.search; // Получаем строку после ? из URL
+	const params = new URLSearchParams(queryString);
+	const choosenStartTime = params.get('startTime') || null;
+	console.log(choosenStartTime);
 	const getCurrentDate = () => {
+		if (choosenStartTime) return new Date(choosenStartTime);
 		const date = new Date();
 		if (date.getMinutes() > 45 && date.getMinutes() <= 59) {
 			date.setHours(date.getHours() + 1);
@@ -33,7 +36,6 @@ const CreateAppointment = () => {
 	const [timeToIsSelected, setTimeToIsSelected] = useState(false);
 	const [services, setServices] = useState<any[]>([]);
 	const [modalService, setModalService] = useState(false);
-	const [modalAddresses, setModalAddresses] = useState(false);
 	const [openAddresses, setOpenAddresses] = useState(false);
 	const modalRef = useRef<HTMLDivElement | null>(null);
 	const [loadingCreate, setLoadingCreate] = useState(false);
@@ -74,7 +76,6 @@ const CreateAppointment = () => {
 	}, []);
 
 	const onTimeFromChanged = (date: any) => {
-		console.log('time from:', date);
 		setTimeFrom(new Date(date));
 		if (!timeToIsSelected) setTimeTo(new Date(date.getTime() + 60 * 120 * 1000));
 	};

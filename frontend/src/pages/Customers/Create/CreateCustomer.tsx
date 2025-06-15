@@ -6,7 +6,6 @@ import IconAI from '../../../components/Icon/IconAI';
 import { alertError, resizeImage } from '../../../helpers/helper';
 import IconChecks from '../../../components/Icon/IconChecks';
 import IconImageUpload from '../../../components/Icon/IconImageUpload';
-import axios from 'axios';
 import axiosClient from '../../../store/axiosClient';
 const CreateCustomer = () => {
 	const {
@@ -50,6 +49,7 @@ const CreateCustomer = () => {
 					city: '',
 					state: '',
 					zip: '',
+					startTime: '',
 				};
 				if (res.data) {
 					newDataForm.name = res.data.name;
@@ -59,6 +59,7 @@ const CreateCustomer = () => {
 					newDataForm.city = res.data.address.city;
 					newDataForm.state = res.data.address.state;
 					newDataForm.zip = res.data.address.zip_code;
+					newDataForm.startTime = res.data.startTime;
 				}
 
 				const nonEmptyKeys = Object.entries(newDataForm)

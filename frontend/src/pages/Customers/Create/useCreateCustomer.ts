@@ -13,6 +13,7 @@ export const useCreateCustomer = () => {
 		city: '',
 		state: '',
 		zip: '',
+		startTime: '',
 	});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
@@ -50,7 +51,8 @@ export const useCreateCustomer = () => {
 		axiosClient
 			.post('/customers', dataForm)
 			.then((res) => {
-				navigate('/appointment/create/' + res.data.id);
+				console.log(dataForm.startTime);
+				navigate('/appointment/create/' + res.data.id + (dataForm.startTime.length > 0 ? '?startTime=' + dataForm.startTime : ''));
 			})
 			.catch((err) => {
 				setError(true);

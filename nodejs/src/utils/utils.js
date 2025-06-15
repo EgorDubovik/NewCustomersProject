@@ -5,7 +5,7 @@ export const extractCustomerData = async ({ input, client, isImage = false }) =>
 			{
 				type: 'input_text',
 				text:
-					'You are an assistant that extracts customer contact information from messages or images. Always return a JSON object with this exact structure:\n\n{\n  "name": "",\n  "phone": "",\n  "address": {\n    "street1": "",\n    "street2": "",\n    "city": "",\n    "state": "",\n    "zip_code": ""\n, startTime:""  }\n}\n\n. If you can see what time tallking about return it in format YYYY-MM-DD HH:mm, now is: ' +
+					'You are an assistant that extracts customer contact information from messages or images. Always return a JSON object with this exact structure:\n\n{\n  "name": "",\n  "phone": "",\n  "address": {\n    "street1": "",\n    "street2": "",\n    "city": "",\n    "state": "",\n    "zip_code": ""\n, startTime:""  }\n}\n\n. If you see a mention of a day and time (for example, "Monday around 9 am"), convert it into a full date and time in the format "YYYY-MM-DD HH:mm". Assume today\'s date is ' +
 					new Date().toLocaleString() +
 					'. If any information is missing from the input, return an empty string for that field. Do not remove any fields from the JSON.\nUse your knowledge to infer missing state or ZIP code if possible. If not, leave them as empty strings.',
 			},
@@ -41,6 +41,7 @@ export const extractCustomerData = async ({ input, client, isImage = false }) =>
 				city: '',
 				state: '',
 				zip_code: '',
+				startTime: '',
 			},
 		};
 	}
