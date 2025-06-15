@@ -106,6 +106,7 @@ services:
       depends_on:
          - phpmyadmin
          - laravel
+         - nodejs
       networks:
          - test-network
    certbot:
