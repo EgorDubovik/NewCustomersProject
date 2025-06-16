@@ -220,6 +220,15 @@ Route::prefix('v1')->group(function () {
    // End points for geting some information from AI
    Route::post('/get-appointment-info', [EndPointsWebHookController::class, 'getAppointmentInfo']);
 
+   // OpenPhone webHooks 
+   Route::post('/openphone/webhook/call', function (Request $request) {
+      Log::info($request->all());
+      return response()->json([
+         'status' => 'success',
+         'message' => 'Call received',
+      ], 200);
+   });
+
 });
 
 
