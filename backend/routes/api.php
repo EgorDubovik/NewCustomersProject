@@ -25,6 +25,9 @@ use App\Http\Controllers\Api\Job\JobController;
 use App\Http\Controllers\Landing\LandingController;
 use App\Http\Controllers\EndPointsWebHookController;
 use App\Http\Controllers\Api\Company\EndPointTokenController;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+
 
 /*
 |--------------------------------------------------------------------------
