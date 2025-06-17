@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Api\CallWebhookController;
 use App\Http\Controllers\Api\MapsController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\BookAppointmentOnlineController;
@@ -224,13 +225,7 @@ Route::prefix('v1')->group(function () {
    Route::post('/get-appointment-info', [EndPointsWebHookController::class, 'getAppointmentInfo']);
 
    // OpenPhone webHooks 
-   Route::post('/openphone/webhook/call', function (Request $request) {
-      Log::info($request->all());
-      return response()->json([
-         'status' => 'success',
-         'message' => 'Call received',
-      ], 200);
-   });
+   Route::post('/openphone/webhook/call', [CallWebhookController::class, 'store']);
 
 });
 

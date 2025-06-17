@@ -32,6 +32,7 @@ const CompanyGeneralInfo = lazy(() => import('../pages/CompanySettings/GeneralIn
 const CompanyServices = lazy(() => import('../pages/CompanySettings/CompanyServices'));
 const CompanyTags = lazy(() => import('../pages/CompanySettings/CompanyTags'));
 const ActiveAppointments = lazy(() => import('../pages/Schedule/ActiveAppointments'));
+const Calls = lazy(() => import('../pages/Calls/Index'));
 
 const routes = [
 	// dashboard
@@ -218,6 +219,14 @@ const routes = [
 				element: (
 					<DefaultLayout>
 						<Storage />
+					</DefaultLayout>
+				),
+			},
+			{
+				path: '/calls',
+				element: (
+					<DefaultLayout>
+						<Calls />
 					</DefaultLayout>
 				),
 			},
