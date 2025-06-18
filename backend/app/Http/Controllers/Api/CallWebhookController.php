@@ -16,59 +16,57 @@ class CallWebhookController extends Controller
 
 		$callId = $data['id'];
 
+		// Всегда либо находим, либо создаём базовую запись
+		$call = Call::firstOrNew(['id' => $callId]);
+
+		// Общие поля (могут прийти при любом событии)
+		$call->fill([
+			'from_number' => $data['from'] ?? $call->from_number,
+			'to_number' => $data['to'] ?? $call->to_number,
+			'direction' => $data['direction'] ?? $call->direction,
+			'conversation_id' => $data['conversationId'] ?? $call->conversation_id,
+			'user_id' => $data['userId'] ?? $call->user_id,
+			'phone_number_id' => $data['phoneNumberId'] ?? $call->phone_number_id,
+		]);
+
+		if (!empty($data['answeredAt']) && !empty($data['completedAt'])) {
+			$answeredAt = Carbon::parse($data['answeredAt']);
+			$completedAt = Carbon::parse($data['completedAt']);
+			$call->duration_seconds = $completedAt->diffInSeconds($answeredAt);
+		}
+
+		$call->status = $data['status'] ?? 'unknown';
+
 		if ($eventType === 'call.ringing') {
-			// Создаём, если не существует
-			$call = Call::firstOrCreate(
-				['id' => $callId],
-				[
-					'from_number' => $data['from'],
-					'to_number' => $data['to'],
-					'direction' => $data['direction'],
-					'status' => 'ringing',
-					'conversation_id' => $data['conversationId'],
-					'user_id' => $data['userId'] ?? null,
-					'phone_number_id' => $data['phoneNumberId'],
-				]
-			);
+
 		}
 
 		if ($eventType === 'call.completed') {
-			// Обновляем звонок
-			$call = Call::find($callId);
 
-			if ($call) {
-				$isMissed = $data['direction'] === 'incoming' &&
-					$data['status'] === 'completed' &&
-					empty($data['answeredAt']);
-				if (!empty($data['answeredAt']) && !empty($data['completedAt'])) {
-					$answeredAt = Carbon::parse($data['answeredAt']);
-					$completedAt = Carbon::parse($data['completedAt']);
+			$call->completed_at = $data['completedAt'] ?? null;
+			$call->answered_at = $data['answeredAt'] ?? null;
 
-					$durationSeconds = $completedAt->diffInSeconds($answeredAt);
-				} else {
-					$durationSeconds = 0;
-				}
-				$call->update([
-					'status' => 'completed',
-					'completed_at' => $data['completedAt'] ?? null,
-					'answered_at' => $data['answeredAt'] ?? null,
-					'voicemail_url' => $data['voicemail']['url'] ?? null,
-					'voicemail_duration' => $data['voicemail']['duration'] ?? null,
-					'is_missed_call' => $isMissed,
-					'duration_seconds' => $durationSeconds,
-				]);
-			}
+			$call->voicemail_url = $data['voicemail']['url'] ?? null;
+			$call->voicemail_duration = $data['voicemail']['duration'] ?? null;
+
+			$isMissed = $data['direction'] === 'incoming' &&
+				($data['status'] ?? null) === 'completed' &&
+				empty($data['answeredAt']);
+
+			$call->is_missed_call = $isMissed;
+
 		}
 
 		if ($eventType === 'call.recording.completed') {
-			// Добавляем ссылку на запись
-			$call = Call::find($callId);
-			if ($call) {
-				$call->update([
-					'recording_url' => $data['recording']['url'] ?? null
-				]);
+			// Попробуем вытащить первую запись из media[]
+			$media = $data['media'][0] ?? null;
+			if ($media) {
+				$call->recording_url = $media['url'] ?? null;
 			}
+
 		}
+
+		$call->save();
 
 		return response()->json(['status' => 'ok']);
 	}

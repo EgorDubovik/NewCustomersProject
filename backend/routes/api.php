@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Api\CallController;
 use App\Http\Controllers\Api\CallWebhookController;
 use App\Http\Controllers\Api\MapsController;
 use App\Http\Controllers\Api\PaymentController;
@@ -202,6 +203,11 @@ Route::prefix('v1')->group(function () {
       Route::prefix('maps')->group(function () {
          Route::get('/todays', [MapsController::class, 'todays']);
          Route::get('/all', [MapsController::class, 'all']);
+      });
+
+
+      Route::prefix('calls')->group(function () {
+         Route::get('/', [CallController::class, 'index']);
       });
 
    });

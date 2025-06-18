@@ -240,3 +240,12 @@ export const resizeImage = (file: File, maxWidth: number) => {
 		reader.readAsDataURL(file);
 	});
 };
+
+export const formatCallDurationText = (seconds: number): string => {
+	const minutes = Math.floor(seconds / 60);
+	const remainingSeconds = seconds % 60;
+	const minPart = minutes > 0 ? `${minutes} min` : '';
+	const secPart = `${remainingSeconds} sec`;
+
+	return [minPart, secPart].filter(Boolean).join(' ');
+};

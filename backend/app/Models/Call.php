@@ -24,6 +24,7 @@ class Call extends Model
         'user_id',
         'phone_number_id',
         'company_id',
+        'duration_seconds',
     ];
 
     public function company()
