@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->integer('company_id');
             $table->boolean('is_missed_call')->default(false);
             $table->integer('duration_seconds')->default(0);
+            $table->integer('customer_id')->nullable();
             $table->timestamps();
         });
     }

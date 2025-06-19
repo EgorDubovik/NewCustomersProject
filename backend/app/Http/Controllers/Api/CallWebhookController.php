@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Call;
+use App\Models\Customer;
 use Carbon\Carbon;
 
 class CallWebhookController extends Controller
@@ -20,14 +21,21 @@ class CallWebhookController extends Controller
 		$call = Call::firstOrNew(['id' => $callId]);
 
 		// Общие поля (могут прийти при любом событии)
+
 		$call->fill([
-			'from_number' => $data['from'] ?? $call->from_number,
-			'to_number' => $data['to'] ?? $call->to_number,
+			'from_number' => $data['direction'] === 'incoming' ? $data['from'] : $data['to'],
+			'to_number' => $data['direction'] === 'incoming' ? $data['to'] : $data['from'],
 			'direction' => $data['direction'] ?? $call->direction,
 			'conversation_id' => $data['conversationId'] ?? $call->conversation_id,
 			'user_id' => $data['userId'] ?? $call->user_id,
 			'phone_number_id' => $data['phoneNumberId'] ?? $call->phone_number_id,
 		]);
+
+		$customerNumber = $data['direction'] === 'incoming' ? $data['from'] : $data['to'];
+		$customer = Customer::where('phone_number', substr(preg_replace("/[^0-9]/", "", $customerNumber), -10))->first();
+		if ($customer) {
+			$call->customer_id = $customer->id;
+		}
 
 		if (!empty($data['answeredAt']) && !empty($data['completedAt'])) {
 			$answeredAt = Carbon::parse($data['answeredAt']);
@@ -65,6 +73,8 @@ class CallWebhookController extends Controller
 			}
 
 		}
+
+
 
 		$call->save();
 
