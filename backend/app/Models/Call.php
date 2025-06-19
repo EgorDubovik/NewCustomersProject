@@ -27,6 +27,7 @@ class Call extends Model
 		'company_id',
 		'duration_seconds',
 		'customer_id',
+		'created_at',
 	];
 
 	public function fromNumber(): Attribute

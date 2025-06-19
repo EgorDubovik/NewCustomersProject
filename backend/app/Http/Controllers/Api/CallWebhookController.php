@@ -29,10 +29,11 @@ class CallWebhookController extends Controller
 			'conversation_id' => $data['conversationId'] ?? $call->conversation_id,
 			'user_id' => $data['userId'] ?? $call->user_id,
 			'phone_number_id' => $data['phoneNumberId'] ?? $call->phone_number_id,
+			'created_at' => $data['createdAt'] ?? now(),
 		]);
 
 		$customerNumber = $data['direction'] === 'incoming' ? $data['from'] : $data['to'];
-		$customer = Customer::where('phone_number', substr(preg_replace("/[^0-9]/", "", $customerNumber), -10))->first();
+		$customer = Customer::where('phone', substr(preg_replace("/[^0-9]/", "", $customerNumber), -10))->first();
 		if ($customer) {
 			$call->customer_id = $customer->id;
 		}
@@ -73,8 +74,6 @@ class CallWebhookController extends Controller
 			}
 
 		}
-
-
 
 		$call->save();
 
