@@ -243,7 +243,7 @@ export const resizeImage = (file: File, maxWidth: number) => {
 
 export const formatCallDurationText = (seconds: number): string => {
 	const minutes = Math.floor(seconds / 60);
-	const remainingSeconds = seconds % 60;
+	const remainingSeconds = Math.floor(seconds % 60);
 	const minPart = minutes > 0 ? `${minutes} min` : '';
 	const secPart = `${remainingSeconds} sec`;
 

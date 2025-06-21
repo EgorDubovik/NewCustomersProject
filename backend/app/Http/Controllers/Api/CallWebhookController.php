@@ -32,12 +32,13 @@ class CallWebhookController extends Controller
 			'created_at' => $data['createdAt'] ?? now(),
 		]);
 
-		$customerNumber = $data['direction'] === 'incoming' ? $data['from'] : $data['to'];
-		$customer = Customer::where('phone', substr(preg_replace("/[^0-9]/", "", $customerNumber), -10))->first();
-		if ($customer) {
-			$call->customer_id = $customer->id;
+		if ($call->customer_id == null) {
+			$customerNumber = $data['direction'] === 'incoming' ? $data['from'] : $data['to'];
+			$customer = Customer::where('phone', substr(preg_replace("/[^0-9]/", "", $customerNumber), -10))->first();
+			if ($customer) {
+				$call->customer_id = $customer->id;
+			}
 		}
-
 		if (!empty($data['answeredAt']) && !empty($data['completedAt'])) {
 			$answeredAt = Carbon::parse($data['answeredAt']);
 			$completedAt = Carbon::parse($data['completedAt']);
