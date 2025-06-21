@@ -16,6 +16,7 @@ import SingUp from '../pages/Authentication/SingUp';
 import MapView from '../pages/Schedule/MapView';
 import DefaultFullSpaceLayout from '../components/Layouts/DefaultFullSpaceLayout';
 import EndPoints from '../pages/CompanySettings/EndPoints/EndPoints';
+import Settings from '../pages/Calls/Settings';
 const Invoices = lazy(() => import('../pages/Invoice/Invoices'));
 const Employees = lazy(() => import('../pages/Employees'));
 const CreateAppointment = lazy(() => import('../pages/Appointment/Create/CreateAppointment'));
@@ -227,6 +228,14 @@ const routes = [
 				element: (
 					<DefaultLayout>
 						<Calls />
+					</DefaultLayout>
+				),
+			},
+			{
+				path: '/calls/settings',
+				element: (
+					<DefaultLayout>
+						<Settings />
 					</DefaultLayout>
 				),
 			},

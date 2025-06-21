@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanySettings\GeneralInfoSettings;
 use Illuminate\Http\Request;
 use App\Models\Call;
 use App\Models\Customer;
@@ -10,8 +11,14 @@ use Carbon\Carbon;
 
 class CallWebhookController extends Controller
 {
-	public function store(Request $request)
+	public function store(Request $request, $key)
 	{
+
+		$companyId = GeneralInfoSettings::getCompanyByKey('callWebhookKey', $key);
+		if (!$companyId) {
+			return response()->json(['status' => 'error', 'message' => 'Invalid webhook key']);
+		}
+
 		$eventType = $request->input('type');
 		$data = $request->input('data.object');
 

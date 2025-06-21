@@ -12,6 +12,7 @@ import { PageLoadError } from '../../components/loading/Errors';
 import { ICall } from './type';
 import CallInfo from './CallInfo';
 import { Pagination, Select } from '@mantine/core';
+import IconSettings from '../../components/Icon/IconSettings';
 
 const Calls = () => {
 	const [calls, setCalls] = useState<ICall[]>([]);
@@ -65,20 +66,28 @@ const Calls = () => {
 				<>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						<div className="sm:col-span-1 md:col-span-2">
-							<div className="flex justify-start items-center gap-2">
-								<button className={`text-white px-4 py-2 rounded ${status === 'all' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('all')}>
-									All Calls
-								</button>
-								<button className={`text-white px-4 py-2 rounded flex items-center gap-2 ${status === 'incoming' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('incoming')}>
-									<IconIncomingCall className="w-5 h-5" />
-									Incoming
-								</button>
-								<button className={`text-white px-4 py-2 rounded ${status === 'outgoing' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('outgoing')}>
-									Outgoing
-								</button>
-								<button className={`text-white px-4 py-2 rounded ${status === 'missed' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('missed')}>
-									Missed
-								</button>
+							<div className="flex justify-between items-center gap-2">
+								<div className="flex items-center gap-2">
+									<button className={`text-white px-4 py-2 rounded ${status === 'all' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('all')}>
+										All Calls
+									</button>
+									<button className={`text-white px-4 py-2 rounded flex items-center gap-2 ${status === 'incoming' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('incoming')}>
+										<IconIncomingCall className="w-5 h-5" />
+										Incoming
+									</button>
+									<button className={`text-white px-4 py-2 rounded flex items-center gap-2 ${status === 'outgoing' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('outgoing')}>
+										<IconPhoneForwarded className="w-5 h-5" />
+										Outgoing
+									</button>
+									<button className={`text-white px-4 py-2 rounded flex items-center gap-2 ${status === 'missed' ? 'bg-primary' : 'bg-primary/50'}`} onClick={() => setStatus('missed')}>
+										<IconPhoneMissed className="w-5 h-5" />
+										Missed
+									</button>
+								</div>
+								<Link to="/calls/settings" className="flex items-center gap-2 hover:text-primary">
+									<IconSettings className="w-5 h-5" />
+									Settings
+								</Link>
 							</div>
 							<div className="list mt-4 flex flex-col gap-2">
 								{calls.map((call, index) => (

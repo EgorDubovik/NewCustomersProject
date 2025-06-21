@@ -15,6 +15,7 @@ class GeneralInfoSettings extends Model
     public static $DEFAULT_SETTINGS = [
         'taxRate' => 0,
         'reviewLink' => '',
+        'callWebhookKey' => '',
     ];
 
     protected $fillable = [
@@ -70,5 +71,12 @@ class GeneralInfoSettings extends Model
             ->where('setting_key', $key)
             ->value('setting_value');
         return $settings ?? self::$DEFAULT_SETTINGS[$key] ?? null;
+    }
+
+    public static function getCompanyByKey($key, $value)
+    {
+        return self::where('setting_key', $key)
+            ->where('setting_value', $value)
+            ->value('company_id');
     }
 }

@@ -208,6 +208,9 @@ Route::prefix('v1')->group(function () {
 
       Route::prefix('calls')->group(function () {
          Route::get('/', [CallController::class, 'index']);
+         Route::get('/settings', [CallController::class, 'getCallSettings']);
+         Route::post('/settings', [CallController::class, 'createCallWebhook']);
+         Route::delete('/settings', [CallController::class, 'deleteCallWebhook']);
       });
 
    });
@@ -230,8 +233,8 @@ Route::prefix('v1')->group(function () {
    // End points for geting some information from AI
    Route::post('/get-appointment-info', [EndPointsWebHookController::class, 'getAppointmentInfo']);
 
-   // OpenPhone webHooks 
-   Route::post('/openphone/webhook/call', [CallWebhookController::class, 'store']);
+   // Calls Webhooks
+   Route::post('/calls/webhook/{key}', [CallWebhookController::class, 'store']);
 
 });
 

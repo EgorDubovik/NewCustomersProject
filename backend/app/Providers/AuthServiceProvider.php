@@ -266,5 +266,15 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('update-storage', function (User $user, StorageItems $storageItem) {
             return $user->id === $storageItem->user_id;
         });
+
+
+        //Calls
+        Gate::define('change-call-settings', function (User $user) {
+            return $user->isRole([Role::ADMIN]);
+        });
+
+        Gate::define('see-calls', function (User $user) {
+            return $user->isRole([Role::ADMIN, Role::DISP]);
+        });
     }
 }

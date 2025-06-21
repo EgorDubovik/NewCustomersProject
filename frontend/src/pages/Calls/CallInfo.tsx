@@ -95,18 +95,23 @@ const CallInfo = ({ selectedCall, setSelectedCall }: { selectedCall: ICall; setS
 				</div>
 			</div>
 			<div className="content mt-4">
-				<div className="call-info">
-					<p className="text-sm">Duration: {formatCallDurationText(selectedCall.duration_seconds)}</p>
-					<p className="text-sm">Status: {selectedCall.is_missed_call ? 'Missed' : selectedCall.direction}</p>
-					<p className="text-sm">Date: {formatDate(selectedCall.created_at, 'MMM DD YYYY at HH:mm A')}</p>
+				<div className="call-info py-4">
+					<div className="grid grid-cols-3 gap-2 items-center">
+						<div>
+							<p className="text-sm font-semibold">Duration:</p>
+							<p className="text-sm dark:text-white text-gray-600">{formatCallDurationText(selectedCall.duration_seconds)}</p>
+						</div>
+						<div>
+							<p className="text-sm font-semibold">Answered:</p>
+							<p className="text-sm dark:text-white text-gray-600">{formatDate(selectedCall.answered_at, 'at HH:mm A')}</p>
+						</div>
+						<div>
+							<p className="text-sm font-semibold">Created Date:</p>
+							<p className="text-sm dark:text-white text-gray-600">{formatDate(selectedCall.created_at, 'MMM DD YYYY at HH:mm A')}</p>
+						</div>
+					</div>
 				</div>
-				<div className="call-actions">
-					{!selectedCall.customer && (
-						<button className="">
-							<IconPersonAdd className="w-6 h-6  text-success" />
-						</button>
-					)}
-				</div>
+
 				{selectedCall.recording_url && (
 					<div className="call-record flex items-center gap-2 mt-4 ml-auto">
 						<div className="">
@@ -141,6 +146,19 @@ const CallInfo = ({ selectedCall, setSelectedCall }: { selectedCall: ICall; setS
 						<audio ref={audioRef} src={selectedCall.recording_url} preload="metadata" />
 					</div>
 				)}
+				<div className="call-actions border-t border-gray-200 dark:border-gray-800 mt-4 flex items-center justify-start">
+					{!selectedCall.customer && (
+						<div className="mt-4">
+							<Link
+								to={`/customers/create?phone=${selectedCall.from_number}`}
+								className="flex items-center gap-2 px-4 py-2 rounded dark:bg-primary/10 bg-primary/10  dark:text-white text-gray-700 hover:bg-primary/20 "
+							>
+								<IconPersonAdd className="w-6 h-6  text-success" />
+								Create Customer
+							</Link>
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);
