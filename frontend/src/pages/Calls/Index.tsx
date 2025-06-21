@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import IconPersonAdd from '../../components/Icon/IconPersonAdd';
 import IconPhoneForwarded from '../../components/Icon/IconPhoneForwarded';
 import IconPhoneMissed from '../../components/Icon/IconPhoneMissed';
@@ -30,6 +30,7 @@ const Calls = () => {
 		},
 	});
 
+	const navigate = useNavigate();
 	const height = 30;
 	const barCount = 60;
 
@@ -52,6 +53,10 @@ const Calls = () => {
 			bars.current = Array.from({ length: barCount }, () => Math.floor(Math.random() * height));
 		}
 	}, [selectedCall]);
+
+	const createCustomer = (phoneNumber: string) => {
+		navigate('/customers/create?phone=' + phoneNumber);
+	};
 	return (
 		<div>
 			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
@@ -98,7 +103,7 @@ const Calls = () => {
 														<Link className="text-base text-primary flex items-center gap-2" to={`/customer/${call.customer.id}`}>
 															{call.customer.name}
 														</Link>
-														<p className="dark:text-white text-sm flex items-center gap-2">{call.from_number}</p>
+														<p className="dark:text-gray-400 text-gray-500 text-sm flex items-center gap-2">{call.from_number}</p>
 													</>
 												) : (
 													<p className="dark:text-white text-base flex items-center gap-2">{call.from_number}</p>
@@ -121,9 +126,12 @@ const Calls = () => {
 													<IconPlayCircle className="w-8 h-8  text-primary" />
 												</div>
 											)}
-											<button className="">
-												<IconPersonAdd className="w-6 h-6  text-success" />
-											</button>
+
+											{!call.customer && (
+												<button className="" onClick={() => createCustomer(call.direction === 'incoming' ? call.from_number : call.to_number)}>
+													<IconPersonAdd className="w-6 h-6  text-success" />
+												</button>
+											)}
 										</div>
 									</div>
 								))}

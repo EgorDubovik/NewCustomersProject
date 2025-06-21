@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ButtonLoader } from '../../../components/loading/ButtonLoader';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useCreateCustomer } from './useCreateCustomer';
 import IconAI from '../../../components/Icon/IconAI';
 import { alertError, resizeImage } from '../../../helpers/helper';
@@ -24,6 +24,14 @@ const CreateCustomer = () => {
 		storeCustomer,
 		loading,
 	} = useCreateCustomer();
+
+	const [searchParams] = useSearchParams();
+	const phone = searchParams.get('phone');
+	useEffect(() => {
+		if (phone) {
+			setDataForm({ ...dataForm, phone: '+' + phone });
+		}
+	}, [phone]);
 	const [openParse, setOpenParse] = useState(false);
 	const [openAIParse, setOpenAIParse] = useState(false);
 	const [AIForm, setAIForm] = useState('');

@@ -8,6 +8,7 @@ import IconPlayArrow from '../../components/Icon/IconPlayArrow';
 import { formatCallDurationText, formatDate } from '../../helpers/helper';
 import IconIncomingCall from '../../components/Icon/InconIncomingCall';
 import IconPause from '../../components/Icon/IconPause';
+import { Link } from 'react-router-dom';
 
 const CallInfo = ({ selectedCall, setSelectedCall }: { selectedCall: ICall; setSelectedCall: (call: ICall | null) => void }) => {
 	const height = 30;
@@ -77,7 +78,14 @@ const CallInfo = ({ selectedCall, setSelectedCall }: { selectedCall: ICall; setS
 						)}
 					</div>
 					<div className="number">
-						<p className="text-lg">{selectedCall.from_number}</p>
+						{selectedCall.customer ? (
+							<Link className="text-base text-primary" to={`/customer/${selectedCall.customer.id}`}>
+								<p className="text-xl">{selectedCall.customer.name}</p>
+								<p className="text-sm dark:text-gray-400 text-gray-600">{selectedCall.from_number}</p>
+							</Link>
+						) : (
+							<p className="dark:text-white text-base">{selectedCall.from_number}</p>
+						)}
 					</div>
 				</div>
 				<div className="actions flex items-center gap-4">
@@ -93,9 +101,11 @@ const CallInfo = ({ selectedCall, setSelectedCall }: { selectedCall: ICall; setS
 					<p className="text-sm">Date: {formatDate(selectedCall.created_at, 'MMM DD YYYY at HH:mm A')}</p>
 				</div>
 				<div className="call-actions">
-					<button className="">
-						<IconPersonAdd className="w-6 h-6  text-success" />
-					</button>
+					{!selectedCall.customer && (
+						<button className="">
+							<IconPersonAdd className="w-6 h-6  text-success" />
+						</button>
+					)}
 				</div>
 				{selectedCall.recording_url && (
 					<div className="call-record flex items-center gap-2 mt-4 ml-auto">
