@@ -17,6 +17,7 @@ import AnimateHeight from 'react-animate-height';
 import IconMenuForms from '../Icon/Menu/IconMenuForms';
 import IconPhoneCall from '../Icon/IconPhoneCall';
 import IconMenuCall from '../Icon/Menu/IconMenuCall';
+import { canViewCalls } from '../../helpers/gate';
 
 const Sidebar = () => {
 	const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -106,12 +107,14 @@ const Sidebar = () => {
 										<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Customers</span>
 									</div>
 								</NavLink>
-								<NavLink to="/calls" className="group">
-									<div className="flex items-center">
-										<IconMenuCall className="group-hover:!text-primary shrink-0" />
-										<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Calls</span>
-									</div>
-								</NavLink>
+								{canViewCalls(user) && (
+									<NavLink to="/calls" className="group">
+										<div className="flex items-center">
+											<IconMenuCall className="group-hover:!text-primary shrink-0" />
+											<span className="ltr:pl-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Calls</span>
+										</div>
+									</NavLink>
+								)}
 								<NavLink to="/invoices" className="group">
 									<div className="flex items-center">
 										<IconMenuDatatables className="group-hover:!text-primary shrink-0" />
