@@ -112,10 +112,10 @@ const Calls = () => {
 														<Link className="text-base text-primary flex items-center gap-2" to={`/customer/${call.customer.id}`}>
 															{call.customer.name}
 														</Link>
-														<p className="dark:text-gray-400 text-gray-500 text-sm flex items-center gap-2">{call.from_number}</p>
+														<p className="dark:text-gray-400 text-gray-500 text-sm flex items-center gap-2">{call.direction === 'incoming' ? call.from_number : call.to_number}</p>
 													</>
 												) : (
-													<p className="dark:text-white text-base flex items-center gap-2">{call.from_number}</p>
+													<p className="dark:text-white text-base flex items-center gap-2">{call.direction === 'incoming' ? call.from_number : call.to_number}</p>
 												)}
 											</div>
 											<div className="status ml-6 w-[70px]">

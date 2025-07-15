@@ -30,8 +30,9 @@ class CallWebhookController extends Controller
 		// Общие поля (могут прийти при любом событии)
 
 		$call->fill([
-			'from_number' => $data['direction'] === 'incoming' ? $data['from'] : $data['to'],
-			'to_number' => $data['direction'] === 'incoming' ? $data['to'] : $data['from'],
+			'company_id' => $companyId,
+			'from_number' => $data['from'],
+			'to_number' => $data['to'],
 			'direction' => $data['direction'] ?? $call->direction,
 			'conversation_id' => $data['conversationId'] ?? $call->conversation_id,
 			'user_id' => $data['userId'] ?? $call->user_id,
