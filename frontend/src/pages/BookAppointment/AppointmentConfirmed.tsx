@@ -7,6 +7,10 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { ButtonLoader } from '../../components/loading/ButtonLoader';
 import { SinglePageErrorLoading, SinglePageLoading } from '../../components/loading/Loadings';
 import { viewCurrency } from '../../helpers/helper';
+import IconPhone from '../../components/Icon/IconPhone';
+import IconPhoneCall from '../../components/Icon/IconPhoneCall';
+import IconMail from '../../components/Icon/IconMail';
+import IconHome from '../../components/Icon/IconHome';
 const AppointmentConfirmed = () => {
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -188,7 +192,21 @@ const AppointmentConfirmed = () => {
 									</div>
 								</div>
 							</div>
-
+							{/* Company information */}
+							<div className="mt-8 border-t border-gray-200">
+								<div className="p-8 text-center flex flex-col items-center">
+									<h3 className="text-lg font-semibold text-gray-900 mb-4">Company Information:</h3>
+									<div className="flex items-center">
+										<div>
+											<img src={appointmentInfo.company.logo} alt="" className="h-10" />
+										</div>
+										<div className="text-left ml-4">
+											<p className="text-base font-semibold text-gray-900 ">{appointmentInfo.company.name}</p>
+											<p className="text-base font-medium text-gray-500 ">{appointmentInfo.company.phone}</p>
+										</div>
+									</div>
+								</div>
+							</div>
 							{/* Card Footer */}
 							<div className="bg-gray-50 px-6 py-5 sm:px-8 border-t border-gray-200 rounded-b-2xl">
 								<div className="flex flex-col sm:flex-row justify-between items-center">
