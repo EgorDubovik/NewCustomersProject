@@ -37,6 +37,7 @@ const initialState = {
 		roles: [0],
 		color: '#ccc',
 		isAdmin: false,
+		settings: {},
 	},
 	companySettings: {
 		taxRate: 0,
@@ -57,7 +58,10 @@ const themeConfigSlice = createSlice({
 	reducers: {
 		setUserInformation(state, { payload }) {
 			payload = payload || state.user;
-			state.user = payload;
+			state.user = {
+				...state.user,
+				...payload,
+			};
 			if (payload.roles.includes(1)) state.user.isAdmin = true;
 		},
 		setCompanySettings(state, { payload }) {

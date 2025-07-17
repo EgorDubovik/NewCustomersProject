@@ -7,6 +7,7 @@ use App\Models\CompanySettings\GeneralInfoSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\CompanySettings\CompanyTag;
+use App\Models\UserSettings;
 
 class ProfileController extends Controller
 {
@@ -22,6 +23,7 @@ class ProfileController extends Controller
             'storage' => StorageItemsController::getCountOfExpectedStorageItems($user->id),
             'schedule' => 0 //count(AppointmentController::getActiveAppointments($user->id)),
         ];
+        $user['userSettings'] = UserSettings::getAllSettingsForUser($user->id);
 
         // get app version to compare on frontend
         $app_version = config('version.app_version');

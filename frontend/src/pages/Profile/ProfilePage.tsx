@@ -1,21 +1,23 @@
 import { useEffect, useState } from 'react';
 import { PageCirclePrimaryLoader } from '../../components/loading/PageLoading';
 import { PageLoadError } from '../../components/loading/Errors';
-import { Link } from 'react-router-dom';
-import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import axiosClient from '../../store/axiosClient';
 import { getTechAbr } from '../../helpers/helper';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { IRootState } from '../../store';
 import UpdatePassword from './UpdatePassword';
 import UpdateUserInfo from './UpdateUserInfo';
+import UserSettings from './USerSettings';
+import { setPageTitle, setUserInformation } from '../../store/themeConfigSlice';
 
 const ProfilePage = () => {
 	const [loadingStatus, setLoadingStatus] = useState('loading');
 	const [user, setUser] = useState<any>({});
 	const rolesTitle = useSelector((state: IRootState) => state.themeConfig.rolesTitle);
 	const rolesColor = useSelector((state: IRootState) => state.themeConfig.rolesColor);
-
+	const [userSettings, setUserSettings] = useState<any>({});
+	const dispatch = useDispatch();
+	dispatch(setPageTitle('User Profile'));
 	useEffect(() => {
 		// Load user information
 		setLoadingStatus('loading');
@@ -24,7 +26,9 @@ const ProfilePage = () => {
 			.then((res) => {
 				console.log('data:', res.data);
 				setLoadingStatus('success');
+				setUserSettings(res.data.user.userSettings);
 				setUser(res.data.user);
+				dispatch(setUserInformation(res.data.user));
 			})
 			.catch((err) => {
 				setLoadingStatus('error');
@@ -67,8 +71,11 @@ const ProfilePage = () => {
 							</div>
 							<UpdatePassword />
 						</div>
-						<div className='grid grid-rows-none gap-3'>
-							<UpdateUserInfo user={user} setUser={setUser}/>
+						<div className="grid grid-rows-none gap-3">
+							<UpdateUserInfo user={user} setUser={setUser} />
+						</div>
+						<div className="grid grid-rows-none gap-3">
+							<UserSettings userSettings={userSettings} setUserSettings={setUserSettings} />
 						</div>
 					</div>
 				</>
