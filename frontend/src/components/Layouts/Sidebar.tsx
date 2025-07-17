@@ -17,7 +17,7 @@ import AnimateHeight from 'react-animate-height';
 import IconMenuForms from '../Icon/Menu/IconMenuForms';
 import IconPhoneCall from '../Icon/IconPhoneCall';
 import IconMenuCall from '../Icon/Menu/IconMenuCall';
-import { canViewCalls } from '../../helpers/gate';
+import { canViewAndChangeCompanySettings, canViewCalls } from '../../helpers/gate';
 
 const Sidebar = () => {
 	const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -154,7 +154,7 @@ const Sidebar = () => {
 									</div>
 								</NavLink> */}
 
-								{user.isAdmin && (
+								{canViewAndChangeCompanySettings(user) && (
 									<>
 										<button type="button" className={`${currentMenu === 'company_settings' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('company_settings')}>
 											<div className="flex items-center">

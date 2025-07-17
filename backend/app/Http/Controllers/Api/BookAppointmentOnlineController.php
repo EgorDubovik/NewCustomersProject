@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendEmailsBookAppointmentOnline;
+use App\Models\Job\Notes;
 use Illuminate\Http\Request;
 use App\Models\BookAppointment;
 use Illuminate\Support\Facades\DB;
@@ -101,6 +102,8 @@ class BookAppointmentOnlineController extends Controller
 			]);
 
 
+
+
 			// Geting list of bookAppointment online tags
 			$tags = $companyBook->tags;
 			if ($tags) {
@@ -124,7 +127,7 @@ class BookAppointmentOnlineController extends Controller
 						JobService::create([
 							'job_id' => $job->id,
 							'title' => $company_service->title,
-							'description' => $company_service->description,
+							'description' => ($request->has('problemDescription') && strlen($request->problemDescription) > 0) ? $request->problemDescription : $company_service->description,
 							'price' => $company_service->price,
 							'taxable' => 1,
 						]);

@@ -9,3 +9,10 @@ export const canViewCalls = (user: any) => {
 	}
 	return false;
 };
+
+export const canViewAndChangeCompanySettings = (user: any) => {
+	if (user.roles.includes(ADMIN)) {
+		return true;
+	}
+	return false;
+};
