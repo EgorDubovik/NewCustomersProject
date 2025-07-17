@@ -17,7 +17,7 @@ const AppointmentConfirmed = () => {
 		dispatch(setPageTitle('View Appointment'));
 	});
 	const { providerKey } = useParams();
-	const [btnStatus, setBtnStatus] = useState(false);
+	const [deleteStatus, setDeleteStatus] = useState(false);
 	const [loadingStatus, setLoadingStatus] = useState('loading');
 	const [appointmentInfo, setAppointmentInfo] = useState<AppointmentInfoType>({
 		company: {
@@ -56,8 +56,8 @@ const AppointmentConfirmed = () => {
 
 	const navigate = useNavigate();
 	const cancelAppointment = () => {
-		if (btnStatus) return;
-		setBtnStatus(true);
+		if (deleteStatus) return;
+		setDeleteStatus(true);
 		fetch(import.meta.env.VITE_API_URL + '/appointment/book/remove/' + providerKey)
 			.then((response) => {
 				if (!response.ok) throw Error(response.statusText);
@@ -71,7 +71,7 @@ const AppointmentConfirmed = () => {
 				console.error('Error:', error);
 			})
 			.finally(() => {
-				setBtnStatus(false);
+				setDeleteStatus(false);
 			});
 	};
 
@@ -222,9 +222,9 @@ const AppointmentConfirmed = () => {
 											onClick={() => {
 												cancelAppointment();
 											}}
-											className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+											className="outline-none inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-red-600 hover:bg-red-100 focus:outline-none "
 										>
-											Cancel Appointment
+											Cancel Appointment {deleteStatus && <ButtonLoader />}
 										</button>
 									</div>
 								</div>
