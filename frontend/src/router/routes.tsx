@@ -17,6 +17,7 @@ import MapView from '../pages/Schedule/MapView';
 import DefaultFullSpaceLayout from '../components/Layouts/DefaultFullSpaceLayout';
 import EndPoints from '../pages/CompanySettings/EndPoints/EndPoints';
 import Settings from '../pages/Calls/Settings';
+import AppointmentConfirmed from '../pages/BookAppointment/AppointmentConfirmed';
 const Invoices = lazy(() => import('../pages/Invoice/Invoices'));
 const Employees = lazy(() => import('../pages/Employees'));
 const CreateAppointment = lazy(() => import('../pages/Appointment/Create/CreateAppointment'));
@@ -264,7 +265,8 @@ const routes = [
 	},
 	{
 		path: '/appointment/book/view/:providerKey',
-		element: <ViewAppointment />,
+		// element: <ViewAppointment />,
+		element: <AppointmentConfirmed />,
 	},
 	{
 		path: '/appointment/book/cancel/:paramKey',

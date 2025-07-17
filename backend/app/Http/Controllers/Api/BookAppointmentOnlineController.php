@@ -183,6 +183,7 @@ class BookAppointmentOnlineController extends Controller
 		foreach ($appointment->job->services as $key => $servcie) {
 			$services[] = [
 				'title' => $servcie->title,
+				'description' => $servcie->description,
 				'price' => $servcie->price,
 			];
 		}
