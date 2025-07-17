@@ -26,11 +26,17 @@ class BookAppointmentController extends Controller
       $comapnyServices = Auth::user()->company->services ?? [];
       $bookAppointmentServices = $bookAppointmentSettings->services ?? [];
       $tags = $bookAppointmentSettings->tags ?? [];
+
+      $employees = Auth::user()->company->techs;
+      $selectedEmployeesId = [1];
+
       return response()->json([
          'settings' => $bookAppointmentSettings,
          'companyServices' => $comapnyServices,
          'bookAppointmentServices' => $bookAppointmentServices,
          'bookAppointmentTagsId' => $tags,
+         'employees' => $employees,
+         'selectedEmployeesId' => $selectedEmployeesId,
       ], 200);
    }
 

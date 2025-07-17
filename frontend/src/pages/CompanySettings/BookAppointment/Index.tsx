@@ -5,6 +5,7 @@ import { PageLoadError } from '../../../components/loading/Errors';
 import { PageCirclePrimaryLoader } from '../../../components/loading/PageLoading';
 import LinkAndActiveBlock from './LinkAndActiveBlock';
 import Services from './Services'; // Add this line
+import Employee from './Employee';
 
 export interface CompanyServiceType {
 	id: number;
@@ -65,6 +66,9 @@ const BookAppointmentSettings = () => {
 								<div className="panel p-2 mt-5 pb-4">
 									<Services loadedCompanyServices={loadedCompanyServices} bookService={bookService} />
 								</div>
+							</div>
+							<div className="panel">
+								<Employee />
 							</div>
 						</div>
 					</div>
