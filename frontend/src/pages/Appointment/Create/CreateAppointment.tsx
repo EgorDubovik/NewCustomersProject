@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TimePicker from 'edtimepicker';
 import moment from 'moment';
 import IconEdit from '../../../components/Icon/IconEdit';
-import { alertError, manualIsoString } from '../../../helpers/helper';
+import { alertError, getCurrentDate, manualIsoString } from '../../../helpers/helper';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../../store';
 import ServicesList from '../components/ServicesList';
@@ -19,18 +19,8 @@ const CreateAppointment = () => {
 	const queryString = window.location.search; // Получаем строку после ? из URL
 	const params = new URLSearchParams(queryString);
 	const choosenStartTime = params.get('startTime') || null;
-	console.log(choosenStartTime);
-	const getCurrentDate = () => {
-		if (choosenStartTime) return new Date(choosenStartTime);
-		const date = new Date();
-		if (date.getMinutes() > 45 && date.getMinutes() <= 59) {
-			date.setHours(date.getHours() + 1);
-			date.setMinutes(0);
-			date.setSeconds(0);
-		}
-		return date;
-	};
-	const [timeFrom, setTimeFrom] = useState(getCurrentDate());
+
+	const [timeFrom, setTimeFrom] = useState(getCurrentDate(choosenStartTime));
 	const [timeTo, setTimeTo] = useState(new Date(new Date().getTime() + 60 * 120 * 1000));
 	const [selectedTime, setSelectedTime] = useState('timeFrom');
 	const [timeToIsSelected, setTimeToIsSelected] = useState(false);
@@ -39,7 +29,8 @@ const CreateAppointment = () => {
 	const [openAddresses, setOpenAddresses] = useState(false);
 	const modalRef = useRef<HTMLDivElement | null>(null);
 	const [loadingCreate, setLoadingCreate] = useState(false);
-	const userId = useSelector((state: IRootState) => state.themeConfig.user.id);
+	const user = useSelector((state: IRootState) => state.themeConfig.user);
+	console.log('user:', user);
 	const [loadingStatus, setLoadingStatus] = useState('loading');
 	const [selectedAddress, setSelectedAddress] = useState<IAddress | null>(null);
 	// Services...
@@ -108,8 +99,8 @@ const CreateAppointment = () => {
 		setModalTech(false);
 	};
 	useEffect(() => {
-		setTechsIds([userId]);
-	}, [userId]);
+		setTechsIds([user.id]);
+	}, [user]);
 
 	const setNewAddress = (address: IAddress) => {
 		setSelectedAddress(address);
@@ -235,6 +226,7 @@ const CreateAppointment = () => {
 												itemsHeight: 45,
 												textAlign: 'right',
 												borderColor: '#077afe',
+												viewItems: user.settings?.timePickerLineLength || 3,
 											}}
 											onDateChange={onTimeFromChanged}
 										/>
@@ -246,6 +238,7 @@ const CreateAppointment = () => {
 												itemsHeight: 45,
 												daysNameFormat: 'MMM DD, DDDD',
 												borderColor: '#077afe',
+												itemsCount: user.settings?.timePickerLineLength || 3,
 											}}
 											onDateChange={onTimeToChanged}
 										/>

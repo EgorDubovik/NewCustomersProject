@@ -14,7 +14,8 @@ class ProfileController extends Controller
     public function show(Request $request)
     {
         $user = $request->user();
-        $user->rolesArray = $user->roles->pluck('role');
+        $user->roles_ids = $user->roles->pluck('role');
+
         $companySettings = GeneralInfoSettings::getSettingsForCompany($user->company_id);
         // get company tags
         $companySettings['companyTags'] = CompanyTag::where('company_id', $user->company_id)->get();
@@ -23,7 +24,7 @@ class ProfileController extends Controller
             'storage' => StorageItemsController::getCountOfExpectedStorageItems($user->id),
             'schedule' => 0 //count(AppointmentController::getActiveAppointments($user->id)),
         ];
-        $user['userSettings'] = UserSettings::getAllSettingsForUser($user->id);
+        $user['settings'] = UserSettings::getAllSettingsForUser($user->id);
 
         // get app version to compare on frontend
         $app_version = config('version.app_version');

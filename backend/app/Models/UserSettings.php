@@ -32,6 +32,10 @@ class UserSettings extends Model
 
 	public static function setSetting($userId, $key, $value)
 	{
+		if (!self::$DEFAULT_SETTINGS[$key]) {
+			return false;
+		}
+
 		return self::updateOrCreate(
 			['user_id' => $userId, 'key' => $key],
 			['value' => $value]

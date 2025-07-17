@@ -249,3 +249,14 @@ export const formatCallDurationText = (seconds: number): string => {
 
 	return [minPart, secPart].filter(Boolean).join(' ');
 };
+
+export const getCurrentDate = (choosenStartTime: string | null) => {
+	if (choosenStartTime) return new Date(choosenStartTime);
+	const date = new Date();
+	if (date.getMinutes() > 45 && date.getMinutes() <= 59) {
+		date.setHours(date.getHours() + 1);
+		date.setMinutes(0);
+		date.setSeconds(0);
+	}
+	return date;
+};

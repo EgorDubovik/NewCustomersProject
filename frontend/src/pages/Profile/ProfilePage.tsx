@@ -12,27 +12,24 @@ import { setPageTitle, setUserInformation } from '../../store/themeConfigSlice';
 
 const ProfilePage = () => {
 	const [loadingStatus, setLoadingStatus] = useState('loading');
-	const [user, setUser] = useState<any>({});
+	const user = useSelector((state: IRootState) => state.themeConfig.user);
 	const rolesTitle = useSelector((state: IRootState) => state.themeConfig.rolesTitle);
 	const rolesColor = useSelector((state: IRootState) => state.themeConfig.rolesColor);
-	const [userSettings, setUserSettings] = useState<any>({});
+
 	const dispatch = useDispatch();
-	dispatch(setPageTitle('User Profile'));
 	useEffect(() => {
-		// Load user information
+		dispatch(setPageTitle('User Profile'));
+	}, [dispatch]);
+	useEffect(() => {
 		setLoadingStatus('loading');
 		axiosClient
 			.get('/user')
 			.then((res) => {
-				console.log('data:', res.data);
-				setLoadingStatus('success');
-				setUserSettings(res.data.user.userSettings);
-				setUser(res.data.user);
 				dispatch(setUserInformation(res.data.user));
+				setLoadingStatus('success');
 			})
 			.catch((err) => {
 				setLoadingStatus('error');
-				console.log(err);
 			});
 	}, []);
 
@@ -62,9 +59,9 @@ const ProfilePage = () => {
 									</div>
 								</div>
 								<div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-									{user.roles.map((role: any, index: number) => (
-										<span key={index} className={'badge badge-outline-' + (rolesColor[role.role] ?? 'primary')}>
-											{rolesTitle[role.role] ?? 'unknown'}
+									{user.roles_ids.map((role: any, index: number) => (
+										<span key={index} className={'badge badge-outline-' + (rolesColor[role] ?? 'primary')}>
+											{rolesTitle[role] ?? 'unknown'}
 										</span>
 									))}
 								</div>
@@ -72,10 +69,10 @@ const ProfilePage = () => {
 							<UpdatePassword />
 						</div>
 						<div className="grid grid-rows-none gap-3">
-							<UpdateUserInfo user={user} setUser={setUser} />
+							<UpdateUserInfo user={user} />
 						</div>
 						<div className="grid grid-rows-none gap-3">
-							<UserSettings userSettings={userSettings} setUserSettings={setUserSettings} />
+							<UserSettings user={user} />
 						</div>
 					</div>
 				</>

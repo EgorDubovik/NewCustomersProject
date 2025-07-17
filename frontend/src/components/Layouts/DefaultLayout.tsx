@@ -19,15 +19,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
 		axiosClient.get('/user').then((res) => {
 			if (res.status == 200) {
 				if (res.data.app_version && import.meta.env.VITE_APP_VERSION !== res.data.app_version) setShowUpdateWarning(true);
-				const user = {
-					id: res.data.user.id,
-					name: res.data.user.name,
-					email: res.data.user.email,
-					phone: res.data.user.phone,
-					roles: res.data.user.rolesArray,
-					color: res.data.user.color,
-				};
-				dispatch(setUserInformation(user));
+				dispatch(setUserInformation(res.data.user));
 				dispatch(setCompanySettings(res.data.companySettings || {}));
 				dispatch(setSideBarNotifications(res.data.sideBarNotifications || {}));
 			}

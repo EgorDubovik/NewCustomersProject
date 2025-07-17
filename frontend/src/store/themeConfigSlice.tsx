@@ -34,10 +34,12 @@ const initialState = {
 		name: 'unknown',
 		email: '',
 		phone: '',
-		roles: [0],
+		roles_ids: [],
 		color: '#ccc',
 		isAdmin: false,
-		settings: {},
+		settings: {
+			timePickerLineLength: 3,
+		},
 	},
 	companySettings: {
 		taxRate: 0,
@@ -62,7 +64,7 @@ const themeConfigSlice = createSlice({
 				...state.user,
 				...payload,
 			};
-			if (payload.roles.includes(1)) state.user.isAdmin = true;
+			if (payload?.roles_ids?.includes(1)) state.user.isAdmin = true;
 		},
 		setCompanySettings(state, { payload }) {
 			state.companySettings = {
