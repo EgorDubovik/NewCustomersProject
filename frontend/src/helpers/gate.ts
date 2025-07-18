@@ -15,3 +15,17 @@ export const canViewAndChangeCompanySettings = (user: any) => {
 	}
 	return false;
 };
+
+export const canChangeCustomerTags = (user: any) => {
+	if (user.roles_ids.includes(ADMIN) || user.roles_ids.includes(DISPATCHER)) {
+		return true;
+	}
+	return false;
+};
+
+export const canDeleteAppointment = (user: any) => {
+	if (user.roles_ids.includes(ADMIN) || user.roles_ids.includes(DISPATCHER)) {
+		return true;
+	}
+	return false;
+};

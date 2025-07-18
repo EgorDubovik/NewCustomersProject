@@ -16,6 +16,7 @@ import ButtonLoader from '../../components/loading/ButtonLoader';
 import { ITag } from '../../types';
 import axiosClient from '../../store/axiosClient';
 import IconLoader from '../../components/Icon/IconLoader';
+import { canChangeCustomerTags } from '../../helpers/gate';
 
 const CustomerInfoBlock = (props: any) => {
 	const navigate = useNavigate();
@@ -169,7 +170,7 @@ const CustomerInfoBlock = (props: any) => {
 								))}
 							</div>
 
-							{(user.roles.includes(1) || user.roles.includes(3)) && (
+							{canChangeCustomerTags(user) && (
 								<div className="mt-2 text-right min-w-fit">
 									{/* Add new tag */}
 									<span className="text-primary cursor-pointer" onClick={() => setModal(true)}>

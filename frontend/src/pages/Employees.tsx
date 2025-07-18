@@ -184,7 +184,7 @@ const Employees = () => {
 						<div className="flex sm:flex-row flex-col sm:items-center sm:gap-3 gap-4 w-full sm:w-auto">
 							<div className="flex gap-3">
 								<div>
-									{user.roles.includes(1) && (
+									{user.roles_ids.includes(1) && (
 										<button type="button" className="btn btn-primary" onClick={() => addNewEmployee()}>
 											<IconUserPlus className="ltr:mr-2 rtl:ml-2" />
 											Add Employee
@@ -251,7 +251,7 @@ const Employees = () => {
 														))}
 													</td>
 													<td>
-														{user.roles.includes(1) && (
+														{user.roles_ids.includes(1) && (
 															<div className="flex gap-4 items-center justify-center">
 																<button type="button" className="btn btn-sm btn-outline-primary" onClick={() => editEmployee(employee)}>
 																	Edit
@@ -278,7 +278,7 @@ const Employees = () => {
 									<div className="bg-white dark:bg-[#1a294166] rounded-md shadow" key={employee.id}>
 										<div className="p-4">
 											<div className="flex items-center relative">
-												{user.roles.includes(1) && (
+												{user.roles_ids.includes(1) && (
 													<div className="absolute top-0 right-0 z-10">
 														<div className="dropdown">
 															<Dropdown offset={[0, 5]} btnClassName="align-middle" button={<IconHorizontalDots className="rotate-90 opacity-70" />}>

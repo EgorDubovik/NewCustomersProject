@@ -16,11 +16,11 @@ import { PageLoadError } from '../../components/loading/Errors';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import TimeLine from './TimeLine';
+import { canDeleteAppointment } from '../../helpers/gate';
 
 const AppointmentPage = () => {
 	const navigate = useNavigate();
 	const user = useSelector((state: IRootState) => state.themeConfig.user);
-	console.log(user.roles);
 	const [deleteStatus, setDeleteStatus] = useState(false);
 	const { appointment, fetchAppointmentData, loadingStatus } = useAppointmentContext();
 	const { id } = useParams();
@@ -102,7 +102,7 @@ const AppointmentPage = () => {
 								</div>
 							</div>
 						</div>
-						{(user.roles.includes(3) || user.roles.includes(1)) && (
+						{canDeleteAppointment(user) && (
 							<div className="text-center mt-6">
 								<div className="text-danger cursor-pointer" onClick={cancelAppointment}>
 									{deleteStatus ? 'Canceling...' : 'Cancel Appointment'}

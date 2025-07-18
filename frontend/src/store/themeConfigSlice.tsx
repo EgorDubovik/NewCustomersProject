@@ -34,7 +34,7 @@ const initialState = {
 		name: 'unknown',
 		email: '',
 		phone: '',
-		roles_ids: [],
+		roles_ids: [] as number[],
 		color: '#ccc',
 		isAdmin: false,
 		settings: {
