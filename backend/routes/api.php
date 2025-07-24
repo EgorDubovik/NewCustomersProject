@@ -97,7 +97,12 @@ Route::prefix('v1')->group(function () {
             Route::post('/update', [BookAppointmentController::class, 'update']);
             Route::post('/update-services', [BookAppointmentController::class, 'updateServices']);
             Route::post('/tags', [BookAppointmentController::class, 'updateTags']);
+            Route::get('/employees', [BookAppointmentController::class, 'getEmployees']);
+            Route::post('/employees', [BookAppointmentController::class, 'updateEmployees']);
          });
+
+
+         // Tags
          Route::prefix('tags')->group(function () {
             Route::get('/', [CompanyTagController::class, 'index']);
             Route::post('/', [CompanyTagController::class, 'store']);

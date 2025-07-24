@@ -260,3 +260,10 @@ export const getCurrentDate = (choosenStartTime: string | null) => {
 	}
 	return date;
 };
+
+export const areArraysEqual = (a: number[], b: number[]) => {
+	if (a.length !== b.length) return false;
+	const sortedA = [...a].sort();
+	const sortedB = [...b].sort();
+	return sortedA.every((val, index) => val === sortedB[index]);
+};

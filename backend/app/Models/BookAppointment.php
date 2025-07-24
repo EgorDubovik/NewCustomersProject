@@ -15,6 +15,7 @@ class BookAppointment extends Model
         'active',
         'working_time',
         'tags', // JSON array of tag ids
+        'selected_employees', // JSON array of employee ids
     ];
 
     public function company()
@@ -28,6 +29,11 @@ class BookAppointment extends Model
     }
 
     public function getTagsAttribute($value)
+    {
+        return json_decode($value);
+    }
+
+    public function getSelectedEmployeesAttribute($value)
     {
         return json_decode($value);
     }

@@ -91,4 +91,49 @@ class BookAppointmentController extends Controller
 
       return response()->json(['message' => 'Book appointment tags updated'], 200);
    }
+
+   public function getEmployees(Request $request)
+   {
+      $this->authorize('book-online');
+
+      $company = Auth::user()->company;
+      if (!$company->bookAppointment) {
+         return response()->json(['employees' => []], 200);
+      }
+
+      $employees = $company->techs;
+
+      $employees = $employees->map(function ($employee) {
+         return [
+            'id' => $employee->id,
+            'name' => $employee->name,
+            'email' => $employee->email,
+            'phone' => $employee->phone,
+            'roles_ids' => $employee->roles->pluck('role')->toArray(),
+            'color' => $employee->color,
+         ];
+      });
+
+      $selectedEmployeesId = $company->bookAppointment->selected_employees;
+
+      return response()->json(['employees' => $employees, 'selectedEmployeesId' => $selectedEmployeesId], 200);
+   }
+
+   public function updateEmployees(Request $request)
+   {
+      $selectedEmployeesId = $request->selectedEmployeesId ?? null; // null if no employees selected
+
+      $this->authorize('book-online');
+
+      $company = Auth::user()->company;
+      if (!$company->bookAppointment) {
+         return response()->json(['message' => 'Book appointment not found'], 404);
+      }
+      $bookAppointment = $company->bookAppointment;
+      $bookAppointment->update([
+         'selected_employees' => json_encode($selectedEmployeesId)
+      ]);
+
+      return response()->json(['message' => 'Book appointment employees updated'], 200);
+   }
 }
