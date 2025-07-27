@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendEmailsBookAppointmentOnline;
-use App\Models\Job\Notes;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\BookAppointment;
 use Illuminate\Support\Facades\DB;
@@ -14,15 +14,13 @@ use App\Models\Appointment;
 use App\Models\BookAppointmentProvider;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use App\Mail\BookOnline;
-use App\Mail\BookOnlineForCompany;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DeleteAppointment;
 use App\Models\Job\Job;
 use App\Models\Service;
 use App\Models\Job\Service as JobService;
 use App\Models\AppointmentTechs;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class BookAppointmentOnlineController extends Controller
 {
@@ -136,15 +134,26 @@ class BookAppointmentOnlineController extends Controller
 			}
 
 			$atachedTech = false;
-			foreach ($company->techs as $tech) {
-				if ($tech->roles->pluck('role')->contains(2)) {
+			if ($company->bookAppointment->selected_employees) {
+				$selectedEmployeesId = $company->bookAppointment->selected_employees;
+				// get random employee from selected employees
+				$selectedEmployeeId = $selectedEmployeesId[array_rand($selectedEmployeesId)];
+				$tech = User::where('id', $selectedEmployeeId)->first(); // For checking if employee exists
+				if ($tech) {
 					$appointment->techs()->attach($tech->id);
 					$atachedTech = true;
-					break;
 				}
+
 			}
+
+			// if no employee selected, or some employee not found attach Admin
 			if (!$atachedTech) {
-				$appointment->techs()->attach($company->techs->first()->id);
+				foreach ($company->techs as $tech) {
+					if ($tech->roles->pluck('role')->contains(Role::ADMIN)) {
+						$appointment->techs()->attach($tech->id);
+						break;
+					}
+				}
 			}
 
 			$key = Str::random(40);

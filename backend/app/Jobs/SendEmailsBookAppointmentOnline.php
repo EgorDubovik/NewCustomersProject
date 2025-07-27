@@ -28,7 +28,7 @@ class SendEmailsBookAppointmentOnline implements ShouldQueue
         $this->appointment = $appointment;
         $this->key = $key;
     }
-    
+
 
     /**
      * Execute the job.
@@ -36,12 +36,17 @@ class SendEmailsBookAppointmentOnline implements ShouldQueue
     public function handle(): void
     {
         // Send email to customer
-        Log::info('SendEmailsBookAppointmentOnline:'.$this->appointment);
-        if($this->appointment->job->customer->email)
-            Mail::to($this->appointment->job->customer->email)->send(new BookOnline($this->appointment,$this->key));
-        
+        if ($this->appointment->job->customer->email)
+            Mail::to($this->appointment->job->customer->email)->send(new BookOnline($this->appointment, $this->key));
+
         // Send email to company
-        if($this->appointment->company->email)
+        if ($this->appointment->company->email)
             Mail::to($this->appointment->company->email)->send(new BookOnlineForCompany($this->appointment));
+
+        // Send email to techs
+        foreach ($this->appointment->techs as $tech) {
+            if ($tech->email)
+                Mail::to($tech->email)->send(new BookOnlineForCompany($this->appointment));
+        }
     }
 }
