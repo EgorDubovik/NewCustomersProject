@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\SendTechNotifOnAttachAppointment;
-use App\Mail\DeleteAppointment;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Job\Job;
 use App\Models\Role;
-use Illuminate\Support\Facades\Log;
-
+use App\Events\AppointmentCreated;
+use App\Events\AppointmentUpdated;
+use App\Events\AppointmentCancelled;
 
 class AppointmentController extends Controller
 {
@@ -39,14 +38,14 @@ class AppointmentController extends Controller
 				'title' => $appointment->job->customer->name,
 				'status' => $appointment->status,
 				'techs' => $appointment->techs,
-				// 'backgroundColor' => $appointment->techs->first()->color ?? '#1565c0',
-
 			];
 		});
 
 		return response()->json(['appointments' => $returnAppointments], 200);
 	}
 
+
+	// Get all active appointments
 	public function active(Request $request)
 	{
 		$appointments = Appointment::with(['job.customer', 'techs'])
@@ -159,10 +158,10 @@ class AppointmentController extends Controller
 					]);
 				}
 			}
-			//send notification to techs
-			$techEmails = $appointment->techs->pluck('email')->toArray();
-			SendTechNotifOnAttachAppointment::dispatch($appointment, $techEmails);
 			DB::commit();
+
+			AppointmentCreated::dispatch($appointment);
+
 		} catch (\Exception $e) {
 			DB::rollBack();
 			return response()->json(['error' => 'Error creating appointment'], 500);
@@ -171,6 +170,7 @@ class AppointmentController extends Controller
 		return response()->json(['message' => 'Appointment created', 'appointment' => $appointment], 200);
 	}
 
+	// Update appointment
 	public function update(Request $request, $id)
 	{
 		$appointment = Appointment::find($id);
@@ -185,6 +185,7 @@ class AppointmentController extends Controller
 			$appointment->end = Carbon::parse($request->timeTo);
 
 		$appointment->save();
+		AppointmentUpdated::dispatch($appointment);
 
 		return response()->json(['message' => 'Appointment updated'], 200);
 	}
@@ -197,13 +198,11 @@ class AppointmentController extends Controller
 
 		$this->authorize('update-remove-appointment', $appointment);
 
-		// Sending notification to techs that appointment is deleted
-		foreach ($appointment->techs as $tech) {
-			// $tech->notify(new DeleteAppointment($appointment));
-		}
+		AppointmentCancelled::dispatch($appointment);
 
 		$appointment->techs()->detach();
 		$job = $appointment->job;
+
 		$appointment->delete();
 
 		// Delete job if no appointments
@@ -212,9 +211,10 @@ class AppointmentController extends Controller
 			$job->notes()->delete();
 			$job->expenses()->delete();
 			$job->images()->delete();
-
 			$job->delete();
 		}
+
+
 
 		return response()->json(['message' => 'Appointment deleted'], 200);
 	}
