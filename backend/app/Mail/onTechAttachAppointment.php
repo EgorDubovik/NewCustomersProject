@@ -12,54 +12,54 @@ use Illuminate\Mail\Mailables\Address;
 
 class onTechAttachAppointment extends Mailable
 {
-    use Queueable, SerializesModels;
+   use Queueable, SerializesModels;
 
-    public $appointment;
-    public $company;
-    public $headerTitle;
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($appointment)
-    {
-        $this->appointment = $appointment;
-        $this->headerTitle = 'New appointment';
-        $this->company = $appointment->company;
-    }
+   public $appointment;
+   public $company;
+   public $headerTitle;
+   /**
+    * Create a new message instance.
+    */
+   public function __construct($appointment)
+   {
+      $this->appointment = $appointment;
+      $this->headerTitle = 'New appointment';
+      $this->company = $appointment->company;
+   }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            from: new Address($this->appointment->company->email, $this->appointment->company->name),
-            subject: 'New Appointment created',
-        );
-    }
+   /**
+    * Get the message envelope.
+    */
+   public function envelope(): Envelope
+   {
+      return new Envelope(
+         from: new Address($this->appointment->company->email, $this->appointment->company->name),
+         subject: 'New Appointment created',
+      );
+   }
 
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'emails.book-online-company',
-            with: [
-                'appointment' => $this->appointment,
-                'company' => $this->company,
-                'headerTitle' => $this->headerTitle,
-            ],
-        );
-    }
+   /**
+    * Get the message content definition.
+    */
+   public function content(): Content
+   {
+      return new Content(
+         view: 'emails.book-online-company',
+         with: [
+            'appointment' => $this->appointment,
+            'company' => $this->company,
+            'headerTitle' => $this->headerTitle,
+         ],
+      );
+   }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
-    }
+   /**
+    * Get the attachments for the message.
+    *
+    * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+    */
+   public function attachments(): array
+   {
+      return [];
+   }
 }
