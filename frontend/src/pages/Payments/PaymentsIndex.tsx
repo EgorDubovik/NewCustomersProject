@@ -120,10 +120,11 @@ const PaymentsIndex = () => {
 	const removePaymentHandler = (paymentId: number) => {
 		if (!confirm('Are you sure you want to delete this payment?')) return;
 		setPaymentRemoveStatus(paymentId);
+
 		axiosClient
 			.delete('/payments/' + paymentId)
 			.then((response) => {
-				setFilteredItems(filteredItems.filter((payment) => payment.id !== paymentId));
+				setFilteredPayments(filteredPayments.filter((payment) => payment.id !== paymentId));
 			})
 			.catch((error) => {
 				console.log(error);
