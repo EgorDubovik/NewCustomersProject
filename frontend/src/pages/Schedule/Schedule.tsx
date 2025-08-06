@@ -36,7 +36,7 @@ const Schedule = () => {
 		axiosClient
 			.get('/appointment')
 			.then((res) => {
-				//console.log('Schedule:', res.data.appointments);
+				console.log('Schedule:', res.data.appointments);
 				setAppointments(res.data.appointments);
 				setActiveAppointments(res.data.appointments.filter((app: IAppointment) => app.status !== 2).length);
 				setLoadingStatus('success');
@@ -83,15 +83,11 @@ const Schedule = () => {
 	const setAppointmentStyle = (appointment: any) => {
 		let extendedBackgroundStyles = {};
 		let extendedTitleStyle = {};
-		console.log('app title:', appointment.title);
-
 		const appointmentColor = getAppointmentColor(appointment);
-
 		extendedBackgroundStyles = {
 			backgroundColor: appointmentColor,
 		};
 		if (appointment.status === 2) {
-			console.log('app status:', appointment.status);
 			extendedBackgroundStyles = {
 				backgroundColor: theme === 'dark' ? '#4a4a4ab0' : '#ccc',
 				borderLeft: '3px solid ' + appointmentColor,
@@ -144,18 +140,6 @@ const Schedule = () => {
 					</div>
 					<h2 className="text-xl">Schedule</h2>
 				</div>
-				{/* <div className="flex gap-2 md:justify-end justify-around mb-2">
-					<div className="flex justify-end items-center gap-x-4">
-						<Link to="/schedule/active/appointments" className="flex items-center border-b border-gray-300 dark:border-gray-700 py-2 rounded">
-							<IconChecks className="mr-1" />
-							View active appointments
-						</Link>
-						<Link to="/schedule/maps/todays" className="flex items-center border-b border-gray-300 dark:border-gray-700 py-2 rounded">
-							<IconMapPin className="mr-1" />
-							Map View
-						</Link>
-					</div>
-				</div> */}
 			</div>
 			{loadingStatus === 'loading' && <PageCirclePrimaryLoader />}
 			{loadingStatus === 'error' && <PageLoadError />}

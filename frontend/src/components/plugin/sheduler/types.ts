@@ -9,6 +9,7 @@ export interface IAppointment {
 	addClass?: string;
 	opacity?: number;
 	status?: number;
+	paymentPending?: boolean;
 }
 
 export interface AppointmentsSchedulerProps {

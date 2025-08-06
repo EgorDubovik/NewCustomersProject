@@ -148,6 +148,7 @@ const Grids = (props: any) => {
 												<div className="appointment-title px-2 pt-1 hover:underline ">{tile.appointment.title}</div>
 												{/* <div className="appointment-time px-2">{{tile.start.format('hh:mm A')} - {form tile.end.format('hh:mm A')}}</div> */}
 											</div>
+											{tile.appointment.paymentPending && <div className="absolute right-2 bottom-2 w-2 h-2 bg-red-500 rounded-full"></div>}
 										</Link>
 									);
 								})}

@@ -38,6 +38,7 @@ class AppointmentController extends Controller
 				'title' => $appointment->job->customer->name,
 				'status' => $appointment->status,
 				'techs' => $appointment->techs,
+				'paymentPending' => $appointment->job->remainingBalance > 0,
 			];
 		});
 
