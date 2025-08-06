@@ -17,6 +17,7 @@ import 'flatpickr/dist/flatpickr.css';
 import { useDispatch } from 'react-redux';
 import { ButtonLoader } from '../../components/loading/ButtonLoader';
 import { graphConfig } from './config/graphConfig';
+import { canDeletePayment } from '../../helpers/gate';
 
 const PaymentsIndex = () => {
 	const [loadingStatus, setLoadingStatus] = useState<string>('success');
@@ -262,7 +263,7 @@ const PaymentsIndex = () => {
 												<td>{moment(payment.created_at).format('DD MMM YYYY')}</td>
 												<td>{payment.type_text}</td>
 												<td>
-													{user.isAdmin && (
+													{canDeletePayment(user) && (
 														<div className="flex justify-center">
 															{paymentRemoveStatus === payment.id ? (
 																<SmallDangerLoader />

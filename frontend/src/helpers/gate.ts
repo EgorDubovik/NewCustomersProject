@@ -29,3 +29,11 @@ export const canDeleteAppointment = (user: any) => {
 	}
 	return false;
 };
+
+// Payments
+export const canDeletePayment = (user: any) => {
+	if (user.roles_ids.includes(ADMIN)) {
+		return true;
+	}
+	return false;
+};
