@@ -29,7 +29,7 @@ class AppointmentController extends Controller
 
 			})
 			->orderBy('start', 'desc')
-			->limit(100)
+			->limit(1000)
 			->get();
 
 		$returnAppointments = $appointments->map(function ($appointment) {
