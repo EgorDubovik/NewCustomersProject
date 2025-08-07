@@ -28,6 +28,7 @@ class AppointmentController extends Controller
 				}
 
 			})
+			->limit(100)
 			->get();
 
 		$returnAppointments = $appointments->map(function ($appointment) {
