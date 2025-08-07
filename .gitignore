@@ -9,3 +9,4 @@ nodejs/node_modules
 build-and-update.sh
 Templates
 python_server
+.ssh

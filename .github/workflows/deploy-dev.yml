@@ -1,0 +1,31 @@
+name: Deploy to Dev
+
+on:
+   push:
+      branches:
+         - develop
+
+jobs:
+   deploy-dev:
+      runs-on: ubuntu-latest
+
+      steps:
+         - name: Checkout code
+           uses: actions/checkout@v4
+
+         - name: Setup SSH for DEV
+           run: |
+              mkdir -p ~/.ssh
+              echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+              chmod 600 ~/.ssh/id_ed25519
+              ssh-keyscan -H ${{ secrets.DEV_HOST }} >> ~/.ssh/known_hosts
+
+         - name: Deploy to DEV Server
+           run: |
+              ssh ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }} "
+                cd ${{ secrets.DEV_PATH }} &&
+                git checkout develop &&
+                git pull origin develop &&
+                docker compose down &&
+                docker compose up -d --build
+              "
