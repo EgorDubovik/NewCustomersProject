@@ -119,7 +119,6 @@ services:
          - test-network
       volumes:
          - ./frontend:/app
-      working_dir: /app
       command: npm run build
       profiles: ['build-only']
 
