@@ -23,9 +23,10 @@ jobs:
          - name: Deploy to DEV Server
            run: |
               ssh ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }} "
-                cd customers &&
-                git checkout develop &&
-                git pull origin develop &&
-                docker compose down &&
-                docker compose up -d --build
+                 cd customers &&
+                 git fetch origin &&
+                 git checkout develop || git checkout -b develop origin/develop &&
+                 git pull origin develop &&
+                 docker compose down &&
+                 docker compose up -d --build
               "
