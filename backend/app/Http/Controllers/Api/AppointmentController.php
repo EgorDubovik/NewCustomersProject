@@ -28,6 +28,7 @@ class AppointmentController extends Controller
 				}
 
 			})
+			->orderBy('start', 'desc')
 			->limit(100)
 			->get();
 
