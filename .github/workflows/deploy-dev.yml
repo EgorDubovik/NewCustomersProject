@@ -27,6 +27,5 @@ jobs:
                  git fetch origin &&
                  git checkout develop || git checkout -b develop origin/develop &&
                  git pull origin develop &&
-                 docker compose down &&
-                 docker compose up -d --build
+                 docker-compose up --rm frontend_build
               "

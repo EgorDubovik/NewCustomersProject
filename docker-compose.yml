@@ -109,6 +109,20 @@ services:
          - nodejs
       networks:
          - test-network
+
+   frontend_build:
+      build:
+         context: ./frontend
+         dockerfile: Dockerfile
+      container_name: frontend_build
+      networks:
+         - test-network
+      volumes:
+         - ./frontend:/app
+      working_dir: /app
+      command: npm run build
+      profiles: ['build-only']
+
    certbot:
       image: certbot/certbot
       container_name: certbot
