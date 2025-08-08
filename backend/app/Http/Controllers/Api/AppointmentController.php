@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\CompanySettings\GeneralInfoSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -18,7 +19,12 @@ class AppointmentController extends Controller
 
 	public function index(Request $request)
 	{
-		$appointments = Appointment::with(['job.customer', 'techs'])
+		$appointments = Appointment::with([
+			'job.customer',
+			'job.services',
+			'job.payments',
+			'techs',
+		])
 			->where('company_id', $request->user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!$request->user()->isRole([Role::ADMIN, Role::DISP])) {
@@ -32,7 +38,9 @@ class AppointmentController extends Controller
 			->limit(1000)
 			->get();
 
-		$returnAppointments = $appointments->map(function ($appointment) {
+		$taxRate = GeneralInfoSettings::getSettingByKey($request->user()->company_id, 'taxRate');
+
+		$returnAppointments = $appointments->map(function ($appointment) use ($taxRate) {
 			return [
 				'id' => $appointment->id,
 				'start' => $appointment->start,
@@ -40,7 +48,7 @@ class AppointmentController extends Controller
 				'title' => $appointment->job->customer->name,
 				'status' => $appointment->status,
 				'techs' => $appointment->techs,
-				'paymentPending' => $appointment->job->remainingBalance > 0,
+				'paymentPending' => $appointment->job->calculateRemainingBalance($taxRate) > 0,
 			];
 		});
 
@@ -51,7 +59,12 @@ class AppointmentController extends Controller
 	// Get all active appointments
 	public function active(Request $request)
 	{
-		$appointments = Appointment::with(['job.customer', 'techs'])
+		$appointments = Appointment::with([
+			'job.customer',
+			'job.services',
+			'job.payments',
+			'techs',
+		])
 			->where('company_id', $request->user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!$request->user()->isRole([Role::ADMIN, Role::DISP])) {

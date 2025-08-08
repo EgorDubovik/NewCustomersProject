@@ -128,4 +128,18 @@ class Job extends Model
             return 0;
         return round($remaining, 2);
     }
+
+    // Для оптимизации надо использовать  так, обезательно надо загружить service, payments перед использованием
+    public function calculateRemainingBalance($taxRate)
+    {
+        $total = $this->services->sum('price');
+
+        $tax = $this->services->where('taxable', true)->sum(fn($service) => $service->price * $taxRate / 100);
+
+        $paid = $this->payments->sum('amount');
+
+        $remaining = ($total + $tax) - $paid;
+
+        return max(0, round($remaining, 2));
+    }
 }
